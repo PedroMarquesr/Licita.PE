@@ -14,8 +14,13 @@ import {
 
 import { ImMenu } from "react-icons/im"
 import { useState } from "react"
+import { usePathname } from "next/navigation"
 
 export default function MobileMenu() {
+  const pathName = usePathname()
+  const isLoginPage = pathName === "/login"
+  const showLoginButton = isLoginPage ? "Voltar" : "Login"
+
   const [isOpen, setIsOpen] = useState(false)
 
   return (
@@ -58,7 +63,7 @@ export default function MobileMenu() {
               <Drawer.Body py={6}>
                 <VStack align="stretch">
                   <Link
-                    href="/login"
+                    href={isLoginPage ? "/" : "/login"}
                     fontSize="lg"
                     p={3}
                     color="gray.700"
@@ -69,7 +74,7 @@ export default function MobileMenu() {
                     }}
                     transition="all 0.2s"
                   >
-                    Login
+                    {showLoginButton}
                   </Link>
                   <Separator />
                   <Link

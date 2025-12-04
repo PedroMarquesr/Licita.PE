@@ -4,7 +4,7 @@ import { Flex, Text, Box } from "@chakra-ui/react"
 import { usePathname } from "next/navigation"
 import useStore from "./login/components/globalStates/store"
 export default function Home() {
-  const user = useStore()
+  const user = useStore((state) => state.user)
 
   return (
     <>

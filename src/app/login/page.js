@@ -17,7 +17,6 @@ import { PiPassword } from "react-icons/pi"
 import useStore from "./components/globalStates/store"
 
 export default function Login() {
-  const user = useStore()
   return (
     <>
       <Flex
@@ -34,16 +33,7 @@ export default function Login() {
         boxShadow={"2xl"}
         p={{ base: 4, md: 6 }}
       >
-        {user?.uid && (
-          <Box bg="green.50" p={3} textAlign="center">
-            <Text fontWeight="bold" color="green.800">
-              ✅ Usuário logado: {user.displayName || user.email}
-            </Text>
-            <Text fontSize="sm" color="gray.600">
-              ID: {user.uid}
-            </Text>
-          </Box>
-        )}
+      
         <Flex justify={"center"}>
           <Image
             my={{ base: "3", md: "5" }}
