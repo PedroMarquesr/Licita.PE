@@ -58,6 +58,7 @@ export default function MobileMenu() {
               <Drawer.Body py={6}>
                 <VStack align="stretch">
                   <Link
+                    href="/login"
                     fontSize="lg"
                     p={3}
                     color="gray.700"

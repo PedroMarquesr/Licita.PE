@@ -1,8 +1,14 @@
 "use client"
 
 import { Flex, Button, Link } from "@chakra-ui/react"
+import { usePathname } from "next/navigation"
 
 export default function DesktopMenu() {
+  const pathName = usePathname()
+  const isLoginPage = pathName === "/login"
+
+  const showLoginButton = isLoginPage ? "Voltar" : "Login"
+
   return (
     <Flex>
       <Link color={"gray.500"} _hover={{ color: "black" }} px={"2"}>
@@ -22,7 +28,7 @@ export default function DesktopMenu() {
           bgColor: "blue.600",
         }}
       >
-        Login
+        <Link href={isLoginPage ? "/" : "/login"}>{showLoginButton}</Link>
       </Button>
     </Flex>
   )

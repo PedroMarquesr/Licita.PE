@@ -31,7 +31,7 @@ export default function Navbar() {
           alt="Licita.PE"
         />
         <Text
-          fontSize={{ base: "lg", md: "xl", lg: "2xl" }} // Adicionei base
+          fontSize={{ base: "lg", md: "xl", lg: "2xl" }}
           fontWeight="bold"
           color="#1d69b6"
         >
