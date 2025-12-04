@@ -1,5 +1,7 @@
 "use client"
 import { Text, Image, Link, Flex } from "@chakra-ui/react"
+import DesktopMenu from "./components/DesktopMenu/DesktopMenu"
+import MobileMenu from "./components/MobileMenu/MobileMenu"
 
 export default function Navbar() {
   return (
@@ -36,6 +38,12 @@ export default function Navbar() {
           Licita.PE
         </Text>{" "}
       </Link>
+      <Flex display={{ base: "none", md: "flex" }}>
+        <DesktopMenu />
+      </Flex>
+      <Flex display={{ base: "flex", md: "none" }}>
+        <MobileMenu />
+      </Flex>
     </Flex>
   )
 }
