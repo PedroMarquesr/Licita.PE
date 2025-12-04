@@ -7,7 +7,8 @@ export default function Home() {
   const user = useStore()
 
   return (
-    <Flex>
+    <>
+      {" "}
       {user?.uid && (
         <Box bg="green.50" p={3} textAlign="center">
           <Text fontWeight="bold" color="green.800">
@@ -18,6 +19,6 @@ export default function Home() {
           </Text>
         </Box>
       )}
-    </Flex>
+    </>
   )
 }

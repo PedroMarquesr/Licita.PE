@@ -15,6 +15,7 @@ const getUser = async (set) => {
     }
   })
 }
+
 const signOutUser = async (set) => {
   const auth = getAuth()
   return auth.signOut().then(() => {
