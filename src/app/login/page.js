@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import {
   Flex,
@@ -10,11 +10,11 @@ import {
   Icon,
   Field,
   Input,
-} from "@chakra-ui/react"
-import BtnGoogle from "./components/BtnGoogle/BtnGoogle"
-import { CiMail } from "react-icons/ci"
-import { PiPassword } from "react-icons/pi"
-import useStore from "./components/globalStates/store"
+} from "@chakra-ui/react";
+import BtnGoogle from "./components/BtnGoogle/BtnGoogle";
+import { CiMail } from "react-icons/ci";
+import { PiPassword } from "react-icons/pi";
+import useStore from "../../components/globalStates/store";
 
 export default function Login() {
   return (
@@ -33,7 +33,6 @@ export default function Login() {
         boxShadow={"2xl"}
         p={{ base: 4, md: 6 }}
       >
-      
         <Flex justify={"center"}>
           <Image
             my={{ base: "3", md: "5" }}
@@ -173,5 +172,5 @@ export default function Login() {
         </Flex>
       </Flex>
     </>
-  )
+  );
 }

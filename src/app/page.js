@@ -1,10 +1,10 @@
-"use client"
+"use client";
 
-import { Flex, Text, Box } from "@chakra-ui/react"
-import { usePathname } from "next/navigation"
-import useStore from "./login/components/globalStates/store"
+import { Flex, Text, Box } from "@chakra-ui/react";
+import { usePathname } from "next/navigation";
+import useStore from "../components/globalStates/store";
 export default function Home() {
-  const user = useStore((state) => state.user)
+  const user = useStore((state) => state.user);
 
   return (
     <>
@@ -20,5 +20,5 @@ export default function Home() {
         </Box>
       )}
     </>
-  )
+  );
 }
