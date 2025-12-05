@@ -63,7 +63,7 @@ export default function Sidebar() {
 
       <Flex
         as="button"
-        cursor={"progress"}
+        cursor={"pointer"}
         onClick={signOut}
         align="center"
         p="3"
