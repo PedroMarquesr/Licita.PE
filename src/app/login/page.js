@@ -1,4 +1,4 @@
-"use client";
+"use client"
 
 import {
   Flex,
@@ -10,11 +10,11 @@ import {
   Icon,
   Field,
   Input,
-} from "@chakra-ui/react";
-import BtnGoogle from "./components/BtnGoogle/BtnGoogle";
-import { CiMail } from "react-icons/ci";
-import { PiPassword } from "react-icons/pi";
-import useStore from "../../components/globalStates/store";
+} from "@chakra-ui/react"
+import BtnGoogle from "./components/BtnGoogle/BtnGoogle"
+import { CiMail } from "react-icons/ci"
+import { PiPassword } from "react-icons/pi"
+import useStore from "../../components/globalStates/store"
 
 export default function Login() {
   return (
@@ -24,7 +24,7 @@ export default function Login() {
         flexDir={"column"}
         border={"1px solid"}
         borderColor="gray.200"
-        w={{ base: "90%", md: "40%" }}
+        w={{ base: "90%", md: "32%" }}
         mx={"auto"}
         my={{ base: "3", md: "5" }}
         borderRadius={"20px"}
@@ -172,5 +172,5 @@ export default function Login() {
         </Flex>
       </Flex>
     </>
-  );
+  )
 }
