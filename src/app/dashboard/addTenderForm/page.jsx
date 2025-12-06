@@ -3,6 +3,7 @@
 import { Flex, Button, Text } from "@chakra-ui/react";
 import HeaderPage from "../components/HeaderPage/HeaderPage";
 import BiddingWizard from "./components/BiddingWizard/BiddingWizard";
+
 import { useState } from "react";
 import { setDoc, doc, serverTimestamp } from "firebase/firestore";
 import { db } from "@/components/libs/firebaseinit";

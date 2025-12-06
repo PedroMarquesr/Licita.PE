@@ -1,8 +1,8 @@
-"use client"
+"use client";
 
-import MenuDashboardMb from "./components/MenuDashboardMb/MenuDashboardMb"
-import Sidebar from "./components/Sidebar/Sidebar"
-import { Flex } from "@chakra-ui/react"
+import MenuDashboardMb from "./components/MenuDashboardMb/MenuDashboardMb";
+import Sidebar from "./components/Sidebar/Sidebar";
+import { Flex } from "@chakra-ui/react";
 
 export default function DashboardLayout({ children }) {
   return (
@@ -14,9 +14,9 @@ export default function DashboardLayout({ children }) {
       <Flex display={{ base: "flex", md: "none" }}>
         <MenuDashboardMb />
       </Flex>
-      <Flex ml={12} flex={1}>
+      <Flex ml={{ base: "0px", md: 12 }} flex={1}>
         {children}
       </Flex>
     </>
-  )
+  );
 }

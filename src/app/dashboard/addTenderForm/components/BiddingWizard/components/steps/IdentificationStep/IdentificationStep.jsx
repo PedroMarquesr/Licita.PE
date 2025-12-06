@@ -146,7 +146,11 @@ export default function IdentificationStep({ biddingData, setBiddingData }) {
           <Text fontSize="lg" fontWeight="semibold" color="gray.700" mb={3}>
             Configurações da Licitação
           </Text>
-          <Grid templateColumns={{ base: "1fr", md: "1fr 1fr 1fr" }} gap={4}>
+          <Grid
+            templateColumns={{ base: "1fr", sm: "1fr", md: "1fr 1fr 1fr" }}
+            gap={4}
+            w={"100%"}
+          >
             <CustomSelect
               legend="Critério de Julgamento"
               placeholder="Selecione"
