@@ -6,10 +6,13 @@ import BiddingWizard from "./components/BiddingWizard/BiddingWizard";
 
 import { useState } from "react";
 import { setDoc, doc, serverTimestamp } from "firebase/firestore";
+import { Timestamp } from "firebase/firestore";
 import { db } from "@/components/libs/firebaseinit";
+
 import { v4 as uuidv4 } from "uuid";
 
 export default function AddTenderFormFixed() {
+  const combineDate = new Date();
   const [biddingData, setBiddingData] = useState({
     responsibleAgency: "",
     portalAgencyCode: "",

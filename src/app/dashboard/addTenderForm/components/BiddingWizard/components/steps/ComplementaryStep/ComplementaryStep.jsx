@@ -129,6 +129,7 @@ export default function ComplementaryStep({ biddingData, setBiddingData }) {
               {predefinedTags.map((tag) => (
                 <WrapItem key={tag}>
                   <Button
+                    bg={"black"}
                     size="sm"
                     variant="outline"
                     onClick={() => {
