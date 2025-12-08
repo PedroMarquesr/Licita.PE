@@ -1,7 +1,8 @@
-"use client";
+"use client"
 
-import { Flex, Text, Grid, GridItem } from "@chakra-ui/react";
-import InputDefaultForm from "../components/InputDefaultForm/InputDefaultForm.jsx";
+import { Flex, Text, Grid, GridItem } from "@chakra-ui/react"
+import { Timestamp } from "firebase/firestore"
+import InputDefaultForm from "../components/InputDefaultForm/InputDefaultForm.jsx"
 
 export default function DatesStep({ biddingData, setBiddingData }) {
   return (
@@ -26,9 +27,12 @@ export default function DatesStep({ biddingData, setBiddingData }) {
             <InputDefaultForm
               typeInput={"date"}
               legend={"Data*"}
-              inputValue={biddingData.disputeDate}
+              inputValue={biddingData.disputeDateDisplay}
               onChange={(e) =>
-                setBiddingData({ ...biddingData, disputeDate: e.target.value })
+                setBiddingData({
+                  ...biddingData,
+                  disputeDateDisplay: e.target.value,
+                })
               }
               flex={1}
               layout="vertical"
@@ -36,9 +40,12 @@ export default function DatesStep({ biddingData, setBiddingData }) {
             <InputDefaultForm
               typeInput={"time"}
               legend={"Horário*"}
-              inputValue={biddingData.disputeTime}
+              inputValue={biddingData.disputeTimeDisplay}
               onChange={(e) =>
-                setBiddingData({ ...biddingData, disputeTime: e.target.value })
+                setBiddingData({
+                  ...biddingData,
+                  disputeTimeDisplay: e.target.value,
+                })
               }
               flex={1}
               maxW={"20"}
@@ -54,11 +61,11 @@ export default function DatesStep({ biddingData, setBiddingData }) {
             <InputDefaultForm
               typeInput={"date"}
               legend={"Data"}
-              inputValue={biddingData.proposalDeadlineDate}
+              inputValue={biddingData.proposalDeadlineDateDisplay}
               onChange={(e) =>
                 setBiddingData({
                   ...biddingData,
-                  proposalDeadlineDate: e.target.value,
+                  proposalDeadlineDateDisplay: e.target.value,
                 })
               }
               flex={1}
@@ -68,11 +75,11 @@ export default function DatesStep({ biddingData, setBiddingData }) {
             <InputDefaultForm
               typeInput={"time"}
               legend={"Hora limite"}
-              inputValue={biddingData.proposalDeadlineTime}
+              inputValue={biddingData.proposalDeadlineTimeDisplay}
               onChange={(e) =>
                 setBiddingData({
                   ...biddingData,
-                  proposalDeadlineTime: e.target.value,
+                  proposalDeadlineTimeDisplay: e.target.value,
                 })
               }
               maxW={"20"}
@@ -89,11 +96,11 @@ export default function DatesStep({ biddingData, setBiddingData }) {
             <InputDefaultForm
               typeInput={"date"}
               legend={"Data*"}
-              inputValue={biddingData.proposalOpeningDate}
+              inputValue={biddingData.proposalOpeningDateDisplay}
               onChange={(e) =>
                 setBiddingData({
                   ...biddingData,
-                  proposalOpeningDate: e.target.value,
+                  proposalOpeningDateDisplay: e.target.value,
                 })
               }
               flex={1}
@@ -101,11 +108,11 @@ export default function DatesStep({ biddingData, setBiddingData }) {
             <InputDefaultForm
               typeInput={"time"}
               legend={"Horário*"}
-              inputValue={biddingData.proposalOpeningTime}
+              inputValue={biddingData.proposalOpeningTimeDisplay}
               onChange={(e) =>
                 setBiddingData({
                   ...biddingData,
-                  proposalOpeningTime: e.target.value,
+                  proposalOpeningTimeDisplay: e.target.value,
                 })
               }
               maxW={"20"}
@@ -122,11 +129,11 @@ export default function DatesStep({ biddingData, setBiddingData }) {
             <InputDefaultForm
               typeInput={"date"}
               legend={"Data"}
-              inputValue={biddingData.closingDate}
+              inputValue={biddingData.closingDateDisplay}
               onChange={(e) =>
                 setBiddingData({
                   ...biddingData,
-                  closingDate: e.target.value,
+                  closingDateDisplay: e.target.value,
                 })
               }
               flex={1}
@@ -148,5 +155,5 @@ export default function DatesStep({ biddingData, setBiddingData }) {
         </GridItem>
       </Grid>
     </Flex>
-  );
+  )
 }

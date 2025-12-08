@@ -1,18 +1,18 @@
-"use client";
+"use client"
 
-import { Flex, Button, Text } from "@chakra-ui/react";
-import HeaderPage from "../components/HeaderPage/HeaderPage";
-import BiddingWizard from "./components/BiddingWizard/BiddingWizard";
+import { Flex, Button, Text } from "@chakra-ui/react"
+import HeaderPage from "../components/HeaderPage/HeaderPage"
+import BiddingWizard from "./components/BiddingWizard/BiddingWizard"
 
-import { useState } from "react";
-import { setDoc, doc, serverTimestamp } from "firebase/firestore";
-import { Timestamp } from "firebase/firestore";
-import { db } from "@/components/libs/firebaseinit";
+import { useState } from "react"
+import { setDoc, doc, serverTimestamp } from "firebase/firestore"
+import { Timestamp } from "firebase/firestore"
+import { db } from "@/components/libs/firebaseinit"
 
-import { v4 as uuidv4 } from "uuid";
+import { v4 as uuidv4 } from "uuid"
 
 export default function AddTenderFormFixed() {
-  const combineDate = new Date();
+  const combineDate = new Date()
   const [biddingData, setBiddingData] = useState({
     responsibleAgency: "",
     portalAgencyCode: "",
@@ -27,12 +27,18 @@ export default function AddTenderFormFixed() {
     biddingType: "", // "Dispensa de Licitação, Pregão eletronico, Convite eletrônico, Concorrência, Tomada de Preços, Inexigibilidade"
 
     disputeDate: "",
-    disputeTime: "",
     proposalDeadlineDate: "",
-    proposalDeadlineTime: "",
     proposalOpeningDate: "",
-    proposalOpeningTime: "",
+    proposalOpeningDate: "",
     closingDate: "",
+
+    disputeDateDisplay: "",
+    disputeTimeDisplay: "",
+    proposalDeadlineDateDisplay: "",
+    proposalDeadlineTimeDisplay: "",
+    proposalOpeningDateDisplay: "",
+    proposalOpeningTimeDisplay: "",
+    closingDateDisplay: "",
 
     disputePortal: "",
     executionLocation: "",
@@ -49,25 +55,49 @@ export default function AddTenderFormFixed() {
     observations: "",
 
     result: "",
-  });
+  })
+
+  const toTimestamp = (dateString, timeString) => {
+    if (!dateString) return null
+    const dateTimeString = timeString
+      ? `${dateString}T${timeString}:00`
+      : `${dateString}T00:00:00`
+    return Timestamp.fromDate(new Date(dateTimeString))
+  }
 
   const handleSave = async () => {
     try {
-      const docId = uuidv4();
+      const docId = uuidv4()
 
       await setDoc(doc(db, "biddings", docId), {
         ...biddingData,
+        disputeDate: toTimestamp(
+          biddingData.disputeDateDisplay,
+          biddingData.disputeTimeDisplay
+        ),
+
+        proposalDeadlineDate: toTimestamp(
+          biddingData.proposalDeadlineDateDisplay,
+          biddingData.proposalDeadlineTimeDisplay
+        ),
+        proposalOpeningDate: toTimestamp(
+          biddingData.proposalOpeningDateDisplay,
+          biddingData.proposalOpeningTimeDisplay
+        ),
+        closingDate: toTimestamp(biddingData.closingDateDisplay),
         id: docId,
         userId: "seu-user-id-aqui",
         createdAt: serverTimestamp(),
-      });
+      })
 
-      console.log("Licitação salva com sucesso!");
-      window.location.reload();
+      console.log("Licitação salva com sucesso!")
+      console.log(`Data da disputa em timestamp: ${biddingData.disputeDate}`)
+
+      window.location.reload()
     } catch (error) {
-      console.error("Erro ao salvar:", error);
+      console.error("Erro ao salvar:", error)
     }
-  };
+  }
 
   return (
     <Flex
@@ -98,5 +128,5 @@ export default function AddTenderFormFixed() {
       </Flex>
       <Flex>{JSON.stringify(biddingData, null, 2)}</Flex>
     </Flex>
-  );
+  )
 }
