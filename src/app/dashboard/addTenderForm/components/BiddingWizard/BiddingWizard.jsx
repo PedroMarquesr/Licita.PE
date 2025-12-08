@@ -1,22 +1,27 @@
-"use client";
+"use client"
 
-import { Flex, Text } from "@chakra-ui/react";
-import MenuForm from "./components/MenuForm/MenuForm";
+import { Flex, Text } from "@chakra-ui/react"
+import MenuForm from "./components/MenuForm/MenuForm"
 
-import IdentificationStep from "./components/steps/IdentificationStep/IdentificationStep";
-import DatesStep from "./components/steps/DatesStep/DatesStep";
-import LocalStep from "./components/steps/LocalStep/LocalStep";
-import ComplementaryStep from "./components/steps/ComplementaryStep/ComplementaryStep";
+import IdentificationStep from "./components/steps/IdentificationStep/IdentificationStep"
+import DatesStep from "./components/steps/DatesStep/DatesStep"
+import LocalStep from "./components/steps/LocalStep/LocalStep"
+import ComplementaryStep from "./components/steps/ComplementaryStep/ComplementaryStep"
 
-import { useState } from "react";
+import { useState } from "react"
 
-export default function BiddingWizard({ biddingData, setBiddingData }) {
-  const [activeStep, setActiveStep] = useState(1);
+export default function BiddingWizard({
+  biddingData,
+  setBiddingData,
+  date,
+  setDate,
+}) {
+  const [activeStep, setActiveStep] = useState(1)
 
   const handleStepChange = (stepId) => {
-    console.log("Mudando para step:", stepId);
-    setActiveStep(stepId);
-  };
+    console.log("Mudando para step:", stepId)
+    setActiveStep(stepId)
+  }
 
   const renderStepContent = () => {
     switch (activeStep) {
@@ -28,34 +33,36 @@ export default function BiddingWizard({ biddingData, setBiddingData }) {
               setBiddingData={setBiddingData}
             />
           </>
-        );
+        )
       case 2:
         return (
           <DatesStep
             biddingData={biddingData}
             setBiddingData={setBiddingData}
+            date={date}
+            setDate={setDate}
           />
-        );
+        )
       case 3:
         return (
           <LocalStep
             biddingData={biddingData}
             setBiddingData={setBiddingData}
           />
-        );
+        )
       case 4:
-        return <Text>Step 4</Text>;
+        return <Text>Step 4</Text>
       case 5:
         return (
           <ComplementaryStep
             biddingData={biddingData}
             setBiddingData={setBiddingData}
           />
-        );
+        )
       default:
-        return <IdentificationStep />;
+        return <IdentificationStep />
     }
-  };
+  }
 
   return (
     <Flex
@@ -79,5 +86,5 @@ export default function BiddingWizard({ biddingData, setBiddingData }) {
         {renderStepContent()}
       </Flex>
     </Flex>
-  );
+  )
 }

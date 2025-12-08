@@ -12,7 +12,16 @@ import { db } from "@/components/libs/firebaseinit"
 import { v4 as uuidv4 } from "uuid"
 
 export default function AddTenderFormFixed() {
-  const combineDate = new Date()
+  const [date, setDate] = useState({
+    disputeDateDisplay: "",
+    disputeTimeDisplay: "",
+    proposalDeadlineDateDisplay: "",
+    proposalDeadlineTimeDisplay: "",
+    proposalOpeningDateDisplay: "",
+    proposalOpeningTimeDisplay: "",
+    closingDateDisplay: "",
+  })
+
   const [biddingData, setBiddingData] = useState({
     responsibleAgency: "",
     portalAgencyCode: "",
@@ -31,14 +40,6 @@ export default function AddTenderFormFixed() {
     proposalOpeningDate: "",
     proposalOpeningDate: "",
     closingDate: "",
-
-    disputeDateDisplay: "",
-    disputeTimeDisplay: "",
-    proposalDeadlineDateDisplay: "",
-    proposalDeadlineTimeDisplay: "",
-    proposalOpeningDateDisplay: "",
-    proposalOpeningTimeDisplay: "",
-    closingDateDisplay: "",
 
     disputePortal: "",
     executionLocation: "",
@@ -72,17 +73,17 @@ export default function AddTenderFormFixed() {
       await setDoc(doc(db, "biddings", docId), {
         ...biddingData,
         disputeDate: toTimestamp(
-          biddingData.disputeDateDisplay,
-          biddingData.disputeTimeDisplay
+          date.disputeDateDisplay,
+          date.disputeTimeDisplay
         ),
 
         proposalDeadlineDate: toTimestamp(
-          biddingData.proposalDeadlineDateDisplay,
-          biddingData.proposalDeadlineTimeDisplay
+          date.proposalDeadlineDateDisplay,
+          date.proposalDeadlineTimeDisplay
         ),
         proposalOpeningDate: toTimestamp(
-          biddingData.proposalOpeningDateDisplay,
-          biddingData.proposalOpeningTimeDisplay
+          date.proposalOpeningDateDisplay,
+          date.proposalOpeningTimeDisplay
         ),
         closingDate: toTimestamp(biddingData.closingDateDisplay),
         id: docId,
@@ -119,6 +120,8 @@ export default function AddTenderFormFixed() {
         <BiddingWizard
           biddingData={biddingData}
           setBiddingData={setBiddingData}
+          date={date}
+          setDate={setDate}
         />
       </Flex>
       <Flex justify="center" w="100%" mt={6}>
