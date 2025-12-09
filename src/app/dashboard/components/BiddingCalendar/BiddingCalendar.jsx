@@ -1,56 +1,66 @@
-"use client";
+"use client"
 
-import { Flex, Box, Tag, Text, Grid, GridItem } from "@chakra-ui/react";
-import { collection, getDocs } from "firebase/firestore";
-import { db } from "@/components/libs/firebaseinit";
-import { useState, useEffect } from "react";
+import { Flex, Box, Tag, Text, Grid, GridItem } from "@chakra-ui/react"
+import { collection, getDocs } from "firebase/firestore"
+import { db } from "@/components/libs/firebaseinit"
+import { useState, useEffect } from "react"
 
 export default function BiddingCalendar() {
-  const [biddings, setBiddings] = useState([]);
+  const [biddings, setBiddings] = useState([])
+  const [biddingsSort, setBiddingsSort] = useState([])
 
   useEffect(() => {
     const fetchBiddings = async () => {
-      const querySnapshot = await getDocs(collection(db, "biddings"));
+      const querySnapshot = await getDocs(collection(db, "biddings"))
       const biddingsData = querySnapshot.docs.map((doc) => ({
         id: doc.id,
         ...doc.data(),
-      }));
-      setBiddings(biddingsData);
-    };
-    fetchBiddings();
-  }, []);
+      }))
+
+      setBiddings(biddingsData)
+
+      const biddingsSorted = biddingsData.sort((a, b) => {
+        const dateA = a.disputeDate?.toDate?.() ?? new Date(a.disputeDate)
+        const dateB = b.disputeDate?.toDate?.() ?? new Date(b.disputeDate)
+        return dateA - dateB
+      })
+      setBiddingsSort(biddingsSorted)
+      console.log("Ordenado:", biddingsSorted)
+    }
+    fetchBiddings()
+  }, [])
 
   const groupBiddingsByDate = () => {
-    const grouped = {};
+    const grouped = {}
 
     biddings.forEach((bidding) => {
-      if (!bidding || !bidding.disputeDate) return;
+      if (!bidding || !bidding.disputeDate) return
 
-      const dateKey = formatDate(bidding.disputeDate);
+      const dateKey = formatDate(bidding.disputeDate)
 
       if (!grouped[dateKey]) {
-        grouped[dateKey] = [];
+        grouped[dateKey] = []
       }
 
-      grouped[dateKey].push(bidding);
-    });
+      grouped[dateKey].push(bidding)
+    })
 
-    return grouped;
-  };
+    return grouped
+  }
 
   const formatDate = (dateString) => {
-    if (!dateString) return "Data não definida";
+    if (!dateString) return "Data não definida"
 
-    const date = new Date(dateString);
+    const date = new Date(dateString)
 
     if (isNaN(date.getTime())) {
-      return "Data inválida";
+      return "Data inválida"
     }
 
-    return date.toLocaleDateString("pt-BR");
-  };
+    return date.toLocaleDateString("pt-BR")
+  }
 
-  const groupedBiddings = groupBiddingsByDate();
+  const groupedBiddings = groupBiddingsByDate()
 
   return (
     <Flex direction="column" gap={1} w={"100%"}>
@@ -98,6 +108,9 @@ export default function BiddingCalendar() {
           ))}
         </Box>
       ))}
+      {biddingsSort.map((item) => (
+        <Text key={item.id}>{String(item.disputeDate)}</Text>
+      ))}
     </Flex>
-  );
+  )
 }
