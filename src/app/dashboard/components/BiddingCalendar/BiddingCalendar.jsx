@@ -7,110 +7,81 @@ import { useState, useEffect } from "react"
 
 export default function BiddingCalendar() {
   const [biddings, setBiddings] = useState([])
-  const [biddingsSort, setBiddingsSort] = useState([])
 
   useEffect(() => {
-    const fetchBiddings = async () => {
-      const querySnapshot = await getDocs(collection(db, "biddings"))
-      const biddingsData = querySnapshot.docs.map((doc) => ({
+    async function fetchBiddings() {
+      const snapshot = await getDocs(collection(db, "biddings"))
+      const data = snapshot.docs.map((doc) => ({
         id: doc.id,
         ...doc.data(),
       }))
-
-      setBiddings(biddingsData)
-
-      const biddingsSorted = biddingsData.sort((a, b) => {
-        const dateA = a.disputeDate?.toDate?.() ?? new Date(a.disputeDate)
-        const dateB = b.disputeDate?.toDate?.() ?? new Date(b.disputeDate)
-        return dateA - dateB
-      })
-      setBiddingsSort(biddingsSorted)
-      console.log("Ordenado:", biddingsSorted)
+      setBiddings(data)
     }
     fetchBiddings()
   }, [])
 
-  const groupBiddingsByDate = () => {
+  function toDate(value) {
+    if (!value) return null
+    if (value.toDate) return value.toDate()
+    return new Date(value)
+  }
+
+  const sortedBiddings = [...biddings].sort((a, b) => {
+    return toDate(b.disputeDate) - toDate(a.disputeDate)
+  })
+
+  function groupByDate(biddings) {
     const grouped = {}
 
     biddings.forEach((bidding) => {
-      if (!bidding || !bidding.disputeDate) return
+      const date = toDate(bidding.disputeDate)
+      if (!date) return
 
-      const dateKey = formatDate(bidding.disputeDate)
+      const key = date.toLocaleDateString("pt-BR")
 
-      if (!grouped[dateKey]) {
-        grouped[dateKey] = []
+      if (!grouped[key]) {
+        grouped[key] = []
       }
-
-      grouped[dateKey].push(bidding)
+      grouped[key].push(bidding)
     })
-
     return grouped
   }
 
-  const formatDate = (dateString) => {
-    if (!dateString) return "Data não definida"
+  function formatTime(value) {
+    const date = toDate(value)
+    if (!date) return "Horário não definido"
 
-    const date = new Date(dateString)
-
-    if (isNaN(date.getTime())) {
-      return "Data inválida"
-    }
-
-    return date.toLocaleDateString("pt-BR")
+    return date.toLocaleTimeString("pt-BR", {
+      hour: "2-digit",
+      minute: "2-digit",
+    })
   }
 
-  const groupedBiddings = groupBiddingsByDate()
+  const groupedBiddings = groupByDate(sortedBiddings)
 
   return (
-    <Flex direction="column" gap={1} w={"100%"}>
-      {Object.entries(groupedBiddings).map(([date, biddingsForDate]) => (
-        <Box key={date}>
-          <Flex bgColor={"blue.300"} p={2}>
-            <Text fontSize="lg" fontWeight="bold" color="gray.700">
-              {date}
-            </Text>
-          </Flex>
-          {biddingsForDate.map((bidding) => (
-            <Grid
-              key={bidding.id}
-              templateColumns="auto 1fr auto"
-              gap={3}
-              alignItems="center"
-              p={2}
-              border="1px solid"
-              borderColor="gray.200"
-              borderRadius="md"
-              bg="white"
-              mb={1}
-            >
-              <GridItem>
-                <Text fontWeight="bold" color="gray.800">
-                  {bidding.identificationNumber}
-                </Text>
-              </GridItem>
-              <GridItem>
-                <Text fontSize="sm" color="gray.600">
-                  {bidding.responsibleAgency}
-                </Text>
-              </GridItem>
+    <>
+      <Flex direction="column" gap={4} w={"100%"}>
+        {Object.entries(groupedBiddings).map(([date, items]) => (
+          <Box key={date}>
+            <Flex bg="blue.300" p={1}>
+              <Text fontWeight="bold">{date}</Text>
+            </Flex>
 
-              <GridItem>
-                <Text fontSize="sm" color="gray.600">
-                  ⏰ {bidding.disputeTime || "Horário não definido"}
-                </Text>
-
-                <Flex gap={1} wrap="wrap">
-                  {/* // teste */}
-                </Flex>
-              </GridItem>
-            </Grid>
-          ))}
-        </Box>
-      ))}
-      {biddingsSort.map((item) => (
-        <Text key={item.id}>{String(item.disputeDate)}</Text>
-      ))}
-    </Flex>
+            {items.map((bidding) => (
+              <Grid key={bidding.id} templateColumns="repeat(6, 1fr)">
+                <Text>{bidding.identificationNumber}</Text>
+                <Text>{bidding.responsibleAgency}</Text>
+                <Text>{bidding.processNumber}</Text>
+                <Text>{bidding.biddingType}</Text>
+                <Text>{bidding.modality}</Text>
+                <Text>{!bidding.modality ? null : bidding.modality}</Text>
+                <Text>⏰ {formatTime(bidding.disputeDate)}</Text>{" "}
+              </Grid>
+            ))}
+          </Box>
+        ))}
+      </Flex>
+    </>
   )
 }
