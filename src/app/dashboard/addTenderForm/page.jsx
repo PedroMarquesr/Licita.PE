@@ -1,8 +1,17 @@
 "use client"
 
-import { Flex, Button, Text } from "@chakra-ui/react"
+import {
+  Flex,
+  Button,
+  CloseButton,
+  Dialog,
+  Portal,
+  Text,
+} from "@chakra-ui/react"
 import HeaderPage from "../components/HeaderPage/HeaderPage"
 import BiddingWizard from "./components/BiddingWizard/BiddingWizard"
+
+import SaveDialogSucess from "./components/SaveSucessDialog/SaveSucessDialog"
 
 import { useState } from "react"
 import { setDoc, doc, serverTimestamp } from "firebase/firestore"
@@ -57,6 +66,7 @@ export default function AddTenderFormFixed() {
 
     result: "",
   })
+  const [dialogOpen, setDialogOpen] = useState(false)
 
   const toTimestamp = (dateString, timeString) => {
     if (!dateString) return null
@@ -90,6 +100,7 @@ export default function AddTenderFormFixed() {
         userId: "seu-user-id-aqui",
         createdAt: serverTimestamp(),
       })
+      setDialogOpen(true)
 
       console.log("Licitação salva com sucesso!")
       console.log(`Data da disputa em timestamp: ${biddingData.disputeDate}`)
@@ -107,6 +118,7 @@ export default function AddTenderFormFixed() {
       h="100%"
       align="center"
       px={{ base: "2", md: "4" }}
+      mb={"5%"}
       maxW="100%"
       overflow="hidden"
     >
@@ -124,12 +136,25 @@ export default function AddTenderFormFixed() {
           setDate={setDate}
         />
       </Flex>
-      <Flex justify="center" w="100%" mt={6}>
-        <Button colorScheme="blue" size="lg" onClick={handleSave}>
+      <Flex justify="center" w="100%">
+        <Button
+          colorScheme="blue"
+          size="lg"
+          onClick={handleSave}
+          colorPalette={"blue"}
+          _hover={{ backgroundColor: "blue.400" }}
+        >
           Salvar Licitação
         </Button>
+        <Button onClick={() => setDialogOpen(true)}>
+          <Text>Abrir dialogo</Text>
+        </Button>
+
+        <SaveDialogSucess
+          open={dialogOpen}
+          messageSucess={"Processo cadastrado com sucesso! "}
+        />
       </Flex>
-      <Flex>{JSON.stringify(biddingData, null, 2)}</Flex>
     </Flex>
   )
 }

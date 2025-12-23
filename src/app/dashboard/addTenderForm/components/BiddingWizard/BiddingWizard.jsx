@@ -69,7 +69,7 @@ export default function BiddingWizard({
       border="1px solid"
       borderRadius="20px"
       borderColor="gray.300"
-      h="100vh"
+      h={{ base: "100%" }}
       minH="600px"
       w="100%"
       maxW="1200px"
