@@ -1,103 +1,133 @@
-"use client";
+"use client"
 
-import { Flex, Box, Tag, Text, Grid, GridItem } from "@chakra-ui/react";
-import { collection, getDocs } from "firebase/firestore";
-import { db } from "@/components/libs/firebaseinit";
-import { useState, useEffect } from "react";
+import {
+  Flex,
+  Stack,
+  Box,
+  Tag,
+  Text,
+  Grid,
+  Badge,
+  Separator,
+} from "@chakra-ui/react"
+import { collection, getDocs } from "firebase/firestore"
+import { db } from "@/components/libs/firebaseinit"
+import { useState, useEffect } from "react"
+
+import CustomItemGrid from "./components/CustomItemGrid/CustomItemGrid"
 
 export default function BiddingCalendar() {
-  const [biddings, setBiddings] = useState([]);
+  const [biddings, setBiddings] = useState([])
 
   useEffect(() => {
-    const fetchBiddings = async () => {
-      const querySnapshot = await getDocs(collection(db, "biddings"));
-      const biddingsData = querySnapshot.docs.map((doc) => ({
+    async function fetchBiddings() {
+      const snapshot = await getDocs(collection(db, "biddings"))
+      const data = snapshot.docs.map((doc) => ({
         id: doc.id,
         ...doc.data(),
-      }));
-      setBiddings(biddingsData);
-    };
-    fetchBiddings();
-  }, []);
+      }))
+      setBiddings(data)
+    }
+    fetchBiddings()
+  }, [])
 
-  const groupBiddingsByDate = () => {
-    const grouped = {};
+  function toDate(value) {
+    if (!value) return null
+    if (value.toDate) return value.toDate()
+    return new Date(value)
+  }
+
+  const sortedBiddings = [...biddings].sort((a, b) => {
+    return toDate(b.disputeDate) - toDate(a.disputeDate)
+  })
+
+  function groupByDate(biddings) {
+    const grouped = {}
 
     biddings.forEach((bidding) => {
-      if (!bidding || !bidding.disputeDate) return;
+      const date = toDate(bidding.disputeDate)
+      if (!date) return
 
-      const dateKey = formatDate(bidding.disputeDate);
+      const key = date.toLocaleDateString("pt-BR")
 
-      if (!grouped[dateKey]) {
-        grouped[dateKey] = [];
+      if (!grouped[key]) {
+        grouped[key] = []
       }
+      grouped[key].push(bidding)
+    })
+    return grouped
+  }
 
-      grouped[dateKey].push(bidding);
-    });
+  function formatTime(value) {
+    const date = toDate(value)
+    if (!date) return "Horário não definido"
 
-    return grouped;
-  };
+    return date.toLocaleTimeString("pt-BR", {
+      hour: "2-digit",
+      minute: "2-digit",
+    })
+  }
 
-  const formatDate = (dateString) => {
-    if (!dateString) return "Data não definida";
-
-    const date = new Date(dateString);
-
-    if (isNaN(date.getTime())) {
-      return "Data inválida";
-    }
-
-    return date.toLocaleDateString("pt-BR");
-  };
-
-  const groupedBiddings = groupBiddingsByDate();
+  const groupedBiddings = groupByDate(sortedBiddings)
 
   return (
-    <Flex direction="column" gap={1} w={"100%"}>
-      {Object.entries(groupedBiddings).map(([date, biddingsForDate]) => (
-        <Box key={date}>
-          <Flex bgColor={"blue.300"} p={2}>
-            <Text fontSize="lg" fontWeight="bold" color="gray.700">
-              {date}
-            </Text>
-          </Flex>
-          {biddingsForDate.map((bidding) => (
-            <Grid
-              key={bidding.id}
-              templateColumns="auto 1fr auto"
-              gap={3}
-              alignItems="center"
-              p={2}
-              border="1px solid"
-              borderColor="gray.200"
-              borderRadius="md"
-              bg="white"
-              mb={1}
-            >
-              <GridItem>
-                <Text fontWeight="bold" color="gray.800">
-                  {bidding.identificationNumber}
-                </Text>
-              </GridItem>
-              <GridItem>
-                <Text fontSize="sm" color="gray.600">
-                  {bidding.responsibleAgency}
-                </Text>
-              </GridItem>
+    <>
+      <Flex direction="column" gap={4} w={"100%"}>
+        {Object.entries(groupedBiddings).map(([date, items]) => (
+          <Box
+            key={date}
+            _hover={{ backgroundColor: "blue.100", fontWeight: "semibold" }}
+          >
+            <Flex bg="blue.200" p={1} borderRadius={"10px"}>
+              <Text fontWeight="bold">{date}</Text>
+            </Flex>
 
-              <GridItem>
-                <Text fontSize="sm" color="gray.600">
-                  ⏰ {bidding.disputeTime || "Horário não definido"}
-                </Text>
-
-                <Flex gap={1} wrap="wrap">
-                  {/* // teste */}
-                </Flex>
-              </GridItem>
-            </Grid>
-          ))}
-        </Box>
-      ))}
-    </Flex>
-  );
+            {items.map((bidding) => (
+              <Stack pt={"2"} _hover={{ backgroundColor: "blue.200" }}>
+                <Grid
+                  key={bidding.id}
+                  templateColumns="repeat(7, 1fr)"
+                  gap={3}
+                  alignContent={"center"}
+                  alignItems={"center"}
+                >
+                  <CustomItemGrid textGrid={bidding.identificationNumber} />
+                  <CustomItemGrid textGrid={bidding.responsibleAgency} />
+                  <CustomItemGrid textGrid={bidding.processNumber} />
+                  <CustomItemGrid textGrid={bidding.biddingType} />
+                  <CustomItemGrid textGrid={bidding.modality} />
+                  <CustomItemGrid
+                    textGrid={
+                      bidding.tags
+                        ? bidding.tags.map((item, index) => (
+                            <span key={index}>
+                              <Badge
+                                colorPalette={
+                                  item === "Acompanhamento"
+                                    ? "purple"
+                                    : item === "Alta Prioridade"
+                                    ? "red"
+                                    : "green"
+                                }
+                              >
+                                {item}
+                              </Badge>
+                              <br />
+                            </span>
+                          ))
+                        : "sem observações"
+                    }
+                  />
+                  <CustomItemGrid
+                    textGrid={`⏰ ${formatTime(bidding.disputeDate)}`}
+                  />
+                </Grid>
+                <Separator borderColor={"gray.300"} />
+              </Stack>
+            ))}
+          </Box>
+        ))}
+      </Flex>
+    </>
+  )
 }
