@@ -1,9 +1,20 @@
 "use client"
 
-import { Flex, Box, Tag, Text, Grid, GridItem } from "@chakra-ui/react"
+import {
+  Flex,
+  Stack,
+  Box,
+  Tag,
+  Text,
+  Grid,
+  Badge,
+  Separator,
+} from "@chakra-ui/react"
 import { collection, getDocs } from "firebase/firestore"
 import { db } from "@/components/libs/firebaseinit"
 import { useState, useEffect } from "react"
+
+import CustomItemGrid from "./components/CustomItemGrid/CustomItemGrid"
 
 export default function BiddingCalendar() {
   const [biddings, setBiddings] = useState([])
@@ -63,21 +74,56 @@ export default function BiddingCalendar() {
     <>
       <Flex direction="column" gap={4} w={"100%"}>
         {Object.entries(groupedBiddings).map(([date, items]) => (
-          <Box key={date}>
-            <Flex bg="blue.300" p={1}>
+          <Box
+            key={date}
+            _hover={{ backgroundColor: "blue.100", fontWeight: "semibold" }}
+          >
+            <Flex bg="blue.200" p={1} borderRadius={"10px"}>
               <Text fontWeight="bold">{date}</Text>
             </Flex>
 
             {items.map((bidding) => (
-              <Grid key={bidding.id} templateColumns="repeat(6, 1fr)">
-                <Text>{bidding.identificationNumber}</Text>
-                <Text>{bidding.responsibleAgency}</Text>
-                <Text>{bidding.processNumber}</Text>
-                <Text>{bidding.biddingType}</Text>
-                <Text>{bidding.modality}</Text>
-                <Text>{!bidding.modality ? null : bidding.modality}</Text>
-                <Text>⏰ {formatTime(bidding.disputeDate)}</Text>{" "}
-              </Grid>
+              <Stack pt={"2"} _hover={{ backgroundColor: "blue.200" }}>
+                <Grid
+                  key={bidding.id}
+                  templateColumns="repeat(7, 1fr)"
+                  gap={3}
+                  alignContent={"center"}
+                  alignItems={"center"}
+                >
+                  <CustomItemGrid textGrid={bidding.identificationNumber} />
+                  <CustomItemGrid textGrid={bidding.responsibleAgency} />
+                  <CustomItemGrid textGrid={bidding.processNumber} />
+                  <CustomItemGrid textGrid={bidding.biddingType} />
+                  <CustomItemGrid textGrid={bidding.modality} />
+                  <CustomItemGrid
+                    textGrid={
+                      bidding.tags
+                        ? bidding.tags.map((item, index) => (
+                            <span key={index}>
+                              <Badge
+                                colorPalette={
+                                  item === "Acompanhamento"
+                                    ? "purple"
+                                    : item === "Alta Prioridade"
+                                    ? "red"
+                                    : "green"
+                                }
+                              >
+                                {item}
+                              </Badge>
+                              <br />
+                            </span>
+                          ))
+                        : "sem observações"
+                    }
+                  />
+                  <CustomItemGrid
+                    textGrid={`⏰ ${formatTime(bidding.disputeDate)}`}
+                  />
+                </Grid>
+                <Separator borderColor={"gray.300"} />
+              </Stack>
             ))}
           </Box>
         ))}

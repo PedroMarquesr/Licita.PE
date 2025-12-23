@@ -66,7 +66,7 @@ export default function OverviewSimple() {
         />
       </Flex>
 
-      <Flex w={"90%"} mt="3%">
+      <Flex w={"95%"} mt="3%">
         <BiddingCalendar />
       </Flex>
     </Flex>

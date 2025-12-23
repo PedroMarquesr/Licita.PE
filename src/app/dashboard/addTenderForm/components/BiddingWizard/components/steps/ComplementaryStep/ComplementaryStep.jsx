@@ -1,4 +1,4 @@
-"use client";
+"use client"
 
 import {
   Flex,
@@ -12,39 +12,39 @@ import {
   Wrap,
   WrapItem,
   IconButton,
-} from "@chakra-ui/react";
-import { IoCloseCircle, IoCloseOutline } from "react-icons/io5";
-import { useState } from "react";
-import InputDefaultForm from "../components/InputDefaultForm/InputDefaultForm.jsx";
+} from "@chakra-ui/react"
+import { IoCloseCircle, IoCloseOutline } from "react-icons/io5"
+import { useState } from "react"
+import InputDefaultForm from "../components/InputDefaultForm/InputDefaultForm.jsx"
 
 export default function ComplementaryStep({ biddingData, setBiddingData }) {
-  const [newTag, setNewTag] = useState("");
+  const [newTag, setNewTag] = useState("")
 
   const handleAddTag = () => {
     if (newTag.trim() && !biddingData.tags?.includes(newTag.trim())) {
       setBiddingData({
         ...biddingData,
         tags: [...(biddingData.tags || []), newTag.trim()],
-      });
-      setNewTag("");
+      })
+      setNewTag("")
     }
-  };
+  }
 
   const handleRemoveTag = (tagToRemove) => {
     setBiddingData({
       ...biddingData,
       tags: biddingData.tags?.filter((tag) => tag !== tagToRemove) || [],
-    });
-  };
+    })
+  }
 
   const handleKeyPress = (e) => {
     if (e.key === "Enter") {
-      e.preventDefault();
-      handleAddTag();
+      e.preventDefault()
+      handleAddTag()
     }
-  };
+  }
 
-  const predefinedTags = ["Acompanhamento", "Alta Prioridade"];
+  const predefinedTags = ["Acompanhamento", "Alta Prioridade"]
 
   return (
     <Flex direction="column" w="100%" align="center" gap={6}>
@@ -88,22 +88,6 @@ export default function ComplementaryStep({ biddingData, setBiddingData }) {
                         <IoCloseOutline />
                       </Text>
                     </Button>
-                    {/* <IconButton
-                      icon={<IoCloseOutline />}
-                      size="2xs"
-                      ml={2}
-                      colorPalette={
-                        tag === "Acompanhamento"
-                          ? "purple.500"
-                          : tag === "Alta Prioridade"
-                          ? "red.500"
-                          : "green.500"
-                      }
-                      color="whiteAlpha.200"
-                      _hover={{ bg: "rgba(255,255,255,0.2)" }}
-                      onClick={() => handleRemoveTag(tag)}
-                      aria-label={`Remover tag ${tag}`}
-                    /> */}
                   </Badge>
                 </WrapItem>
               ))}
@@ -137,7 +121,7 @@ export default function ComplementaryStep({ biddingData, setBiddingData }) {
                         setBiddingData({
                           ...biddingData,
                           tags: [...(biddingData.tags || []), tag],
-                        });
+                        })
                       }
                     }}
                     isDisabled={biddingData.tags?.includes(tag)}
@@ -229,5 +213,5 @@ export default function ComplementaryStep({ biddingData, setBiddingData }) {
         </GridItem>
       </Grid>
     </Flex>
-  );
+  )
 }
