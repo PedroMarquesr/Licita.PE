@@ -15,6 +15,8 @@ import { db } from "@/components/libs/firebaseinit";
 import { useState, useEffect } from "react";
 
 import CustomItemGrid from "./components/CustomItemGrid/CustomItemGrid";
+import CustomTitleColumn from "./components/CustomTitleColumn/CustomTitleColumn";
+import { base } from "motion/react-client";
 
 export default function BiddingCalendar() {
   const [biddings, setBiddings] = useState([]);
@@ -69,7 +71,10 @@ export default function BiddingCalendar() {
   }
 
   const groupedBiddings = groupByDate(sortedBiddings);
-
+  const gridTemplate = {
+    base: "1fr",
+    md: "1.2fr 2.5fr 1.5fr 1.5fr 1.2fr 1.5fr 1.2fr 2fr 1fr 1fr",
+  };
   return (
     <>
       <Flex direction="column" gap={4} w={"100%"}>
@@ -78,26 +83,66 @@ export default function BiddingCalendar() {
             <Flex bg="blue.200" p={1} borderRadius={"10px"}>
               <Text fontWeight="bold">{date}</Text>
             </Flex>
+            <Grid
+              templateColumns={gridTemplate}
+              gap={3}
+              alignItems="center"
+              display={{ base: "none", md: "grid" }}
+            >
+              <CustomTitleColumn TitleColumn="Código" />
+              <CustomTitleColumn TitleColumn="Órgão" />
+              <CustomTitleColumn TitleColumn="Processo" />
+              <CustomTitleColumn TitleColumn="Modalidade" />
+              <CustomTitleColumn TitleColumn="Modo" />
+              <CustomTitleColumn TitleColumn="Flag" />
+              <CustomTitleColumn TitleColumn="Cod Portal" />
+              <CustomTitleColumn TitleColumn="Portal" />
+              <CustomTitleColumn TitleColumn="Horário" />
+              <CustomTitleColumn TitleColumn="Status" />
+            </Grid>
 
             {items.map((bidding) => (
               <Stack
                 pt={"2"}
-                _hover={{ backgroundColor: "blue.200" }}
+                _hover={{ backgroundColor: "blue.100" }}
                 key={bidding.id}
               >
                 <Grid
-                  templateColumns="repeat(7, 1fr)"
+                  templateColumns={{
+                    base: "8, 1fr",
+                    md: "1.2fr 2.5fr 1.5fr 1.5fr 1.2fr 1.5fr 1.2fr 2fr 1fr 1fr",
+                  }}
                   gap={3}
                   alignContent="center"
                   alignItems="center"
                 >
-                  <CustomItemGrid textGrid={bidding.identificationNumber} />
-                  <CustomItemGrid textGrid={bidding.responsibleAgency} />
-                  <CustomItemGrid textGrid={bidding.processNumber} />
-                  <CustomItemGrid textGrid={bidding.biddingType} />
-                  <CustomItemGrid textGrid={bidding.modality} />
+                  <CustomItemGrid
+                    titleColumn={"Código: "}
+                    textGrid={bidding.identificationNumber}
+                    color={"blue.600"}
+                    fontWeight={"bold"}
+                  />
+                  <CustomItemGrid
+                    titleColumn={"Órgão: "}
+                    textGrid={bidding.responsibleAgency}
+                    color="gray.700"
+                  />
+                  <CustomItemGrid
+                    titleColumn={"Processo: "}
+                    textGrid={bidding.processNumber}
+                    display={{ base: "none", md: "block" }}
+                  />
+                  <CustomItemGrid
+                    titleColumn={"Modalidade: "}
+                    textGrid={bidding.biddingType}
+                  />
+                  <CustomItemGrid
+                    titleColumn={"Modo: "}
+                    textGrid={bidding.modality}
+                  />
 
                   <CustomItemGrid
+                    titleColumn={"Flag: "}
                     textGrid={
                       bidding.tags
                         ? bidding.tags.map((item, index) => (
@@ -110,6 +155,7 @@ export default function BiddingCalendar() {
                                   ? "red"
                                   : "green"
                               }
+                              mr={1}
                             >
                               {item}
                             </Badge>
@@ -118,14 +164,20 @@ export default function BiddingCalendar() {
                     }
                   />
                   <CustomItemGrid
-                    textGrid={`Código: ${bidding.portalAgencyCode}`}
+                    titleColumn={"Cod Portal: "}
+                    textGrid={bidding.portalAgencyCode}
                   />
-
-                  <CustomItemGrid textGrid={bidding.disputePortalName} />
 
                   <CustomItemGrid
+                    titleColumn={"Portal: "}
+                    textGrid={bidding.disputePortalName}
+                  />
+
+                  <CustomItemGrid
+                    titleColumn={"Horário: "}
                     textGrid={`⏰ ${formatTime(bidding.disputeDate)}`}
                   />
+                  <CustomItemGrid titleColumn={"Status: "} />
                 </Grid>
 
                 <Separator borderColor="gray.300" />
