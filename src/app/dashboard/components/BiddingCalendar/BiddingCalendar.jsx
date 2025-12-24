@@ -15,6 +15,7 @@ import { db } from "@/components/libs/firebaseinit";
 import { useState, useEffect } from "react";
 
 import CustomItemGrid from "./components/CustomItemGrid/CustomItemGrid";
+import CustomTitleColumn from "./components/CustomTitleColumn/CustomTitleColumn";
 
 export default function BiddingCalendar() {
   const [biddings, setBiddings] = useState([]);
@@ -78,15 +79,30 @@ export default function BiddingCalendar() {
             <Flex bg="blue.200" p={1} borderRadius={"10px"}>
               <Text fontWeight="bold">{date}</Text>
             </Flex>
-
+            <Grid
+              templateColumns="repeat(9, 1fr)"
+              gap={3}
+              alignContent="center"
+              alignItems="center"
+            >
+              <CustomTitleColumn TitleColumn={"Código"} />
+              <CustomTitleColumn TitleColumn={"Órgão"} />
+              <CustomTitleColumn TitleColumn={"Processo"} />
+              <CustomTitleColumn TitleColumn={"Modalidade"} />
+              <CustomTitleColumn TitleColumn={"Modo"} />
+              <CustomTitleColumn TitleColumn={"Flag"} />
+              <CustomTitleColumn TitleColumn={"Cod Portal"} />
+              <CustomTitleColumn TitleColumn={"Portal"} />
+              <CustomTitleColumn TitleColumn={"Horário"} />
+            </Grid>
             {items.map((bidding) => (
               <Stack
                 pt={"2"}
-                _hover={{ backgroundColor: "blue.200" }}
+                _hover={{ backgroundColor: "blue.100" }}
                 key={bidding.id}
               >
                 <Grid
-                  templateColumns="repeat(7, 1fr)"
+                  templateColumns="repeat(9, 1fr)"
                   gap={3}
                   alignContent="center"
                   alignItems="center"
