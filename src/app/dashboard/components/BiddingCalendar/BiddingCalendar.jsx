@@ -81,12 +81,12 @@ export default function BiddingCalendar() {
 
             {items.map((bidding) => (
               <Stack
+                pt={"2"}
+                _hover={{ backgroundColor: "blue.200" }}
                 key={bidding.id}
-                pt="2"
-                _hover={{ backgroundColor: "gray.200" }}
               >
                 <Grid
-                  templateColumns="repeat(9, 1fr)"
+                  templateColumns="repeat(7, 1fr)"
                   gap={3}
                   alignContent="center"
                   alignItems="center"
