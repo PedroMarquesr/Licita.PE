@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import {
   Flex,
@@ -7,18 +7,18 @@ import {
   Dialog,
   Portal,
   Text,
-} from "@chakra-ui/react"
-import HeaderPage from "../components/HeaderPage/HeaderPage"
-import BiddingWizard from "./components/BiddingWizard/BiddingWizard"
+} from "@chakra-ui/react";
+import HeaderPage from "../components/HeaderPage/HeaderPage";
+import BiddingWizard from "./components/BiddingWizard/BiddingWizard";
 
-import SaveDialogSucess from "./components/SaveSucessDialog/SaveSucessDialog"
+import SaveDialogSucess from "./components/SaveSucessDialog/SaveSucessDialog";
 
-import { useState } from "react"
-import { setDoc, doc, serverTimestamp } from "firebase/firestore"
-import { Timestamp } from "firebase/firestore"
-import { db } from "@/components/libs/firebaseinit"
+import { useState } from "react";
+import { setDoc, doc, serverTimestamp } from "firebase/firestore";
+import { Timestamp } from "firebase/firestore";
+import { db } from "@/components/libs/firebaseinit";
 
-import { v4 as uuidv4 } from "uuid"
+import { v4 as uuidv4 } from "uuid";
 
 export default function AddTenderFormFixed() {
   const [date, setDate] = useState({
@@ -29,7 +29,7 @@ export default function AddTenderFormFixed() {
     proposalOpeningDateDisplay: "",
     proposalOpeningTimeDisplay: "",
     closingDateDisplay: "",
-  })
+  });
 
   const [biddingData, setBiddingData] = useState({
     responsibleAgency: "",
@@ -47,9 +47,9 @@ export default function AddTenderFormFixed() {
     disputeDate: "",
     proposalDeadlineDate: "",
     proposalOpeningDate: "",
-    proposalOpeningDate: "",
     closingDate: "",
 
+    disputePortalName: "",
     disputePortal: "",
     executionLocation: "",
 
@@ -65,20 +65,20 @@ export default function AddTenderFormFixed() {
     observations: "",
 
     result: "",
-  })
-  const [dialogOpen, setDialogOpen] = useState(false)
+  });
+  const [dialogOpen, setDialogOpen] = useState(false);
 
   const toTimestamp = (dateString, timeString) => {
-    if (!dateString) return null
+    if (!dateString) return null;
     const dateTimeString = timeString
       ? `${dateString}T${timeString}:00`
-      : `${dateString}T00:00:00`
-    return Timestamp.fromDate(new Date(dateTimeString))
-  }
+      : `${dateString}T00:00:00`;
+    return Timestamp.fromDate(new Date(dateTimeString));
+  };
 
   const handleSave = async () => {
     try {
-      const docId = uuidv4()
+      const docId = uuidv4();
 
       await setDoc(doc(db, "biddings", docId), {
         ...biddingData,
@@ -99,17 +99,17 @@ export default function AddTenderFormFixed() {
         id: docId,
         userId: "seu-user-id-aqui",
         createdAt: serverTimestamp(),
-      })
-      setDialogOpen(true)
+      });
+      setDialogOpen(true);
 
-      console.log("Licitação salva com sucesso!")
-      console.log(`Data da disputa em timestamp: ${biddingData.disputeDate}`)
+      console.log("Licitação salva com sucesso!");
+      console.log(`Data da disputa em timestamp: ${biddingData.disputeDate}`);
 
-      window.location.reload()
+      window.location.reload();
     } catch (error) {
-      console.error("Erro ao salvar:", error)
+      console.error("Erro ao salvar:", error);
     }
-  }
+  };
 
   return (
     <Flex
@@ -146,9 +146,6 @@ export default function AddTenderFormFixed() {
         >
           Salvar Licitação
         </Button>
-        <Button onClick={() => setDialogOpen(true)}>
-          <Text>Abrir dialogo</Text>
-        </Button>
 
         <SaveDialogSucess
           open={dialogOpen}
@@ -156,5 +153,5 @@ export default function AddTenderFormFixed() {
         />
       </Flex>
     </Flex>
-  )
+  );
 }

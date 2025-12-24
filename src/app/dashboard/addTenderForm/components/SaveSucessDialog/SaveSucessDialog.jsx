@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import {
   Button,
@@ -7,8 +7,8 @@ import {
   Dialog,
   Portal,
   Text,
-} from "@chakra-ui/react"
-import { FaCheckCircle } from "react-icons/fa"
+} from "@chakra-ui/react";
+import { FaCheckCircle } from "react-icons/fa";
 
 export default function SaveDialogSucess({ messageSucess, open }) {
   return (
@@ -18,13 +18,8 @@ export default function SaveDialogSucess({ messageSucess, open }) {
         <Dialog.Positioner>
           <Dialog.Content>
             <Dialog.Body>
-              <Flex
-                alignContent={"center"}
-                textAlign={"center"}
-                justify={"center"}
-                border={"red"}
-              >
-                <Text color={"green.300"} fontSize={"3xl"}>
+              <Flex pt={4} justifyContent={"center"} alignItems={"center"}>
+                <Text color={"green.300"} fontSize={"3xl"} pr={4}>
                   <FaCheckCircle />
                 </Text>
                 <Text fontSize={"2xl"}>{messageSucess}</Text>
@@ -34,5 +29,5 @@ export default function SaveDialogSucess({ messageSucess, open }) {
         </Dialog.Positioner>
       </Portal>
     </Dialog.Root>
-  )
+  );
 }

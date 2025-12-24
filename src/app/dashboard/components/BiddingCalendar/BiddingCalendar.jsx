@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import {
   Flex,
@@ -9,75 +9,72 @@ import {
   Grid,
   Badge,
   Separator,
-} from "@chakra-ui/react"
-import { collection, getDocs } from "firebase/firestore"
-import { db } from "@/components/libs/firebaseinit"
-import { useState, useEffect } from "react"
+} from "@chakra-ui/react";
+import { collection, getDocs } from "firebase/firestore";
+import { db } from "@/components/libs/firebaseinit";
+import { useState, useEffect } from "react";
 
-import CustomItemGrid from "./components/CustomItemGrid/CustomItemGrid"
+import CustomItemGrid from "./components/CustomItemGrid/CustomItemGrid";
 
 export default function BiddingCalendar() {
-  const [biddings, setBiddings] = useState([])
+  const [biddings, setBiddings] = useState([]);
 
   useEffect(() => {
     async function fetchBiddings() {
-      const snapshot = await getDocs(collection(db, "biddings"))
+      const snapshot = await getDocs(collection(db, "biddings"));
       const data = snapshot.docs.map((doc) => ({
         id: doc.id,
         ...doc.data(),
-      }))
-      setBiddings(data)
+      }));
+      setBiddings(data);
     }
-    fetchBiddings()
-  }, [])
+    fetchBiddings();
+  }, []);
 
   function toDate(value) {
-    if (!value) return null
-    if (value.toDate) return value.toDate()
-    return new Date(value)
+    if (!value) return null;
+    if (value.toDate) return value.toDate();
+    return new Date(value);
   }
 
   const sortedBiddings = [...biddings].sort((a, b) => {
-    return toDate(b.disputeDate) - toDate(a.disputeDate)
-  })
+    return toDate(b.disputeDate) - toDate(a.disputeDate);
+  });
 
   function groupByDate(biddings) {
-    const grouped = {}
+    const grouped = {};
 
     biddings.forEach((bidding) => {
-      const date = toDate(bidding.disputeDate)
-      if (!date) return
+      const date = toDate(bidding.disputeDate);
+      if (!date) return;
 
-      const key = date.toLocaleDateString("pt-BR")
+      const key = date.toLocaleDateString("pt-BR");
 
       if (!grouped[key]) {
-        grouped[key] = []
+        grouped[key] = [];
       }
-      grouped[key].push(bidding)
-    })
-    return grouped
+      grouped[key].push(bidding);
+    });
+    return grouped;
   }
 
   function formatTime(value) {
-    const date = toDate(value)
-    if (!date) return "Horário não definido"
+    const date = toDate(value);
+    if (!date) return "Horário não definido";
 
     return date.toLocaleTimeString("pt-BR", {
       hour: "2-digit",
       minute: "2-digit",
-    })
+    });
   }
 
-  const groupedBiddings = groupByDate(sortedBiddings)
+  const groupedBiddings = groupByDate(sortedBiddings);
 
   return (
     <>
       <Flex direction="column" gap={4} w={"100%"}>
         {Object.entries(groupedBiddings).map(([date, items]) => (
-          <Box
-            key={date}
-            _hover={{ backgroundColor: "blue.100", fontWeight: "semibold" }}
-          >
+          <Box key={date} _hover={{ backgroundColor: "gray.100" }}>
             <Flex bg="blue.200" p={1} borderRadius={"10px"}>
               <Text fontWeight="bold">{date}</Text>
             </Flex>
@@ -86,10 +83,10 @@ export default function BiddingCalendar() {
               <Stack
                 key={bidding.id}
                 pt="2"
-                _hover={{ backgroundColor: "blue.200" }}
+                _hover={{ backgroundColor: "gray.200" }}
               >
                 <Grid
-                  templateColumns="repeat(7, 1fr)"
+                  templateColumns="repeat(9, 1fr)"
                   gap={3}
                   alignContent="center"
                   alignItems="center"
@@ -120,6 +117,11 @@ export default function BiddingCalendar() {
                         : "sem observações"
                     }
                   />
+                  <CustomItemGrid
+                    textGrid={`Código: ${bidding.portalAgencyCode}`}
+                  />
+
+                  <CustomItemGrid textGrid={bidding.disputePortalName} />
 
                   <CustomItemGrid
                     textGrid={`⏰ ${formatTime(bidding.disputeDate)}`}
@@ -133,5 +135,5 @@ export default function BiddingCalendar() {
         ))}
       </Flex>
     </>
-  )
+  );
 }
