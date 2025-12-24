@@ -74,10 +74,7 @@ export default function BiddingCalendar() {
     <>
       <Flex direction="column" gap={4} w={"100%"}>
         {Object.entries(groupedBiddings).map(([date, items]) => (
-          <Box
-            key={date}
-            _hover={{ backgroundColor: "blue.100", fontWeight: "semibold" }}
-          >
+          <Box key={date} _hover={{ backgroundColor: "gray.100" }}>
             <Flex bg="blue.200" p={1} borderRadius={"10px"}>
               <Text fontWeight="bold">{date}</Text>
             </Flex>
@@ -91,41 +88,47 @@ export default function BiddingCalendar() {
                 <Grid
                   templateColumns="repeat(7, 1fr)"
                   gap={3}
-                  alignContent={"center"}
-                  alignItems={"center"}
+                  alignContent="center"
+                  alignItems="center"
                 >
                   <CustomItemGrid textGrid={bidding.identificationNumber} />
                   <CustomItemGrid textGrid={bidding.responsibleAgency} />
                   <CustomItemGrid textGrid={bidding.processNumber} />
                   <CustomItemGrid textGrid={bidding.biddingType} />
                   <CustomItemGrid textGrid={bidding.modality} />
+
                   <CustomItemGrid
                     textGrid={
                       bidding.tags
                         ? bidding.tags.map((item, index) => (
-                            <span key={index}>
-                              <Badge
-                                colorPalette={
-                                  item === "Acompanhamento"
-                                    ? "purple"
-                                    : item === "Alta Prioridade"
-                                    ? "red"
-                                    : "green"
-                                }
-                              >
-                                {item}
-                              </Badge>
-                              <br />
-                            </span>
+                            <Badge
+                              key={`${bidding.id}-tag-${index}`}
+                              colorPalette={
+                                item === "Acompanhamento"
+                                  ? "purple"
+                                  : item === "Alta Prioridade"
+                                  ? "red"
+                                  : "green"
+                              }
+                            >
+                              {item}
+                            </Badge>
                           ))
                         : "sem observações"
                     }
                   />
                   <CustomItemGrid
+                    textGrid={`Código: ${bidding.portalAgencyCode}`}
+                  />
+
+                  <CustomItemGrid textGrid={bidding.disputePortalName} />
+
+                  <CustomItemGrid
                     textGrid={`⏰ ${formatTime(bidding.disputeDate)}`}
                   />
                 </Grid>
-                <Separator borderColor={"gray.300"} />
+
+                <Separator borderColor="gray.300" />
               </Stack>
             ))}
           </Box>

@@ -24,6 +24,17 @@ export default function LocalStep({ biddingData, setBiddingData }) {
           </Text>
           <Flex gap={3} direction="column">
             <InputDefaultForm
+              legend={"Nome do Portal"}
+              placeholder={"Compras.BR"}
+              inputValue={biddingData.disputePortalName}
+              onChange={(e) =>
+                setBiddingData({
+                  ...biddingData,
+                  disputePortalName: e.target.value,
+                })
+              }
+            />
+            <InputDefaultForm
               legend={"URL do Portal*"}
               placeholder={"https://portal-de-licitacoes.com.br"}
               inputValue={biddingData.disputePortal}
