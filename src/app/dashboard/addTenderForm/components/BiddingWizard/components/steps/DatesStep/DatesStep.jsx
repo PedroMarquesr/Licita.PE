@@ -1,7 +1,7 @@
-"use client";
+"use client"
 
-import { Flex, Text, Grid, GridItem } from "@chakra-ui/react";
-import InputDefaultForm from "../components/InputDefaultForm/InputDefaultForm.jsx";
+import { Flex, Text, Grid, GridItem } from "@chakra-ui/react"
+import InputDefaultForm from "../components/InputDefaultForm/InputDefaultForm.jsx"
 
 export default function DatesStep({ biddingData, setBiddingData }) {
   return (
@@ -148,5 +148,5 @@ export default function DatesStep({ biddingData, setBiddingData }) {
         </GridItem>
       </Grid>
     </Flex>
-  );
+  )
 }

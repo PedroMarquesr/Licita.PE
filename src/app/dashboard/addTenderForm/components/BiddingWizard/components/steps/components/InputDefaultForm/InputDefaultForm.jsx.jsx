@@ -1,6 +1,6 @@
-"use client";
+"use client"
 
-import { Flex, Field, Text, Fieldset, Stack, Input } from "@chakra-ui/react";
+import { Flex, Field, Text, Fieldset, Stack, Input } from "@chakra-ui/react"
 
 export default function InputDefaultForm({
   inputValue,
@@ -30,7 +30,7 @@ export default function InputDefaultForm({
         <Input
           type={typeInput}
           maxLength={maxLength}
-          value={inputValue}
+          value={inputValue ?? ""}
           borderColor="gray.300"
           _hover={{ borderColor: "gray.500" }}
           _focus={{ borderColor: "primary.500", boxShadow: "outline" }}
@@ -44,5 +44,5 @@ export default function InputDefaultForm({
         />
       </Flex>
     </Fieldset.Root>
-  );
+  )
 }
