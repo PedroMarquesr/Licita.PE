@@ -1,33 +1,33 @@
-"use client";
+"use client"
 
-import { Flex } from "@chakra-ui/react";
+import { Flex } from "@chakra-ui/react"
 
-import HeaderPage from "./components/HeaderPage/HeaderPage";
-import BiddingCalendar from "./components/BiddingCalendar/BiddingCalendar";
-import CardOverview from "./components/CardOverview/CardOverview";
+import HeaderPage from "./components/HeaderPage/HeaderPage"
+import BiddingCalendar from "./components/BiddingCalendar/BiddingCalendar"
+import CardOverview from "./components/CardOverview/CardOverview"
 
-import { collection, query, where, getDocs } from "firebase/firestore";
-import { db } from "@/components/libs/firebaseinit";
-import { useEffect, useState } from "react";
+import { collection, query, where, getDocs } from "firebase/firestore"
+import { db } from "@/components/libs/firebaseinit"
+import { useEffect, useState } from "react"
 
-import { IoMdTrendingUp } from "react-icons/io";
-import { HiMiniDocumentChartBar } from "react-icons/hi2";
-import { RiTimer2Fill } from "react-icons/ri";
+import { IoMdTrendingUp } from "react-icons/io"
+import { HiMiniDocumentChartBar } from "react-icons/hi2"
+import { RiTimer2Fill } from "react-icons/ri"
 
 export default function OverviewSimple() {
-  const [totalBiddings, setTotalBiddings] = useState(0);
+  const [totalBiddings, setTotalBiddings] = useState(0)
 
   useEffect(() => {
     const fetchBiddings = async () => {
       try {
-        const querySnapshot = await getDocs(collection(db, "biddings"));
-        setTotalBiddings(querySnapshot.size);
+        const querySnapshot = await getDocs(collection(db, "biddings"))
+        setTotalBiddings(querySnapshot.size)
       } catch (error) {
-        console.error();
+        console.error()
       }
-    };
-    fetchBiddings();
-  }, []);
+    }
+    fetchBiddings()
+  }, [])
 
   return (
     <Flex
@@ -54,19 +54,22 @@ export default function OverviewSimple() {
           cardTitle={"Editais cadastrados"}
           cardContent={totalBiddings}
           cardIcon={<IoMdTrendingUp />}
-          bgcolor={"blue.500"}
+          bgIconColor={"blue.500"}
+          bgColor={"blue.100"}
         />
         <CardOverview
           cardTitle={"Em Análise"}
           cardContent={"5"}
           cardIcon={<HiMiniDocumentChartBar />}
-          bgcolor={"green.500"}
+          bgIconColor={"green.500"}
+          bgColor={"green.100"}
         />
         <CardOverview
           cardTitle={"Taxa de sucesso"}
           cardContent={"5%"}
           cardIcon={<RiTimer2Fill />}
-          bgcolor={"purple.500"}
+          bgIconColor={"purple.500"}
+          bgColor={"purple.100"}
           cardSubTitle={"de sucesso neste mês"}
         />
       </Flex>
@@ -75,5 +78,5 @@ export default function OverviewSimple() {
         <BiddingCalendar />
       </Flex>
     </Flex>
-  );
+  )
 }
