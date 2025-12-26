@@ -6,6 +6,7 @@ import { db } from "@/components/libs/firebaseinit"
 import { useState, useEffect } from "react"
 import CustomItemGrid from "./components/CustomItemGrid/CustomItemGrid"
 import CustomTitleColumn from "./components/CustomTitleColumn/CustomTitleColumn"
+import { getBiddingDisplayStatus } from "@/utils/biddingStatus"
 
 export default function BiddingCalendar() {
   const [biddings, setBiddings] = useState([])
@@ -107,7 +108,10 @@ export default function BiddingCalendar() {
       </Flex>
     )
   }
-
+  const handleDisplayStatus = (date) => {
+    const now = new Date()
+    const statusAtualizado = date < now ? "Agendado" : "Aguardando atualização"
+  }
   return (
     <Flex direction="column" gap={4} w="100%">
       {Object.keys(groupedBiddings).length === 0 ? (
@@ -232,7 +236,7 @@ export default function BiddingCalendar() {
                   />
                   <CustomItemGrid
                     titleColumn="Status: "
-                    textGrid={bidding.status || "Pendente"}
+                    textGrid={getBiddingDisplayStatus(bidding)}
                     color={
                       bidding.status === "Concluído"
                         ? "green.500"
