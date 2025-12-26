@@ -4,8 +4,10 @@ import { Flex, Box, Text, Grid, Badge, Spinner, Alert } from "@chakra-ui/react"
 import { collection, getDocs } from "firebase/firestore"
 import { db } from "@/components/libs/firebaseinit"
 import { useState, useEffect } from "react"
+
 import CustomItemGrid from "./components/CustomItemGrid/CustomItemGrid"
 import CustomTitleColumn from "./components/CustomTitleColumn/CustomTitleColumn"
+import BiddingCalendarMenu from "./components/BiddingCalendarMenu/BiddingCalendarMenu"
 import { getBiddingDisplayStatus } from "@/utils/biddingStatus"
 
 import { RiTimer2Fill } from "react-icons/ri"
@@ -99,7 +101,7 @@ export default function BiddingCalendar() {
 
   const gridTemplate = {
     base: "1fr",
-    md: "1.2fr 2.5fr 1.5fr 1.5fr 1.2fr 1.5fr 1.2fr 2fr 1fr 1fr",
+    md: "1.2fr 2.5fr 1.5fr 1.5fr 1.2fr 1.5fr 1.2fr 2fr 1fr 1fr 0.5fr",
   }
 
   if (loading) {
@@ -169,7 +171,7 @@ export default function BiddingCalendar() {
                 <Grid
                   templateColumns={{
                     base: "1fr",
-                    md: "1.2fr 2.5fr 1.5fr 1.5fr 1.2fr 1.5fr 1.2fr 2fr 1fr 1fr",
+                    md: "1.2fr 2.5fr 1.5fr 1.5fr 1.2fr 1.5fr 1.2fr 2fr 1fr 1fr 0.5fr",
                   }}
                   gap={3}
                   alignItems="center"
@@ -231,15 +233,7 @@ export default function BiddingCalendar() {
                   />
                   <CustomItemGrid
                     titleColumn="Horário: "
-                    textGrid={
-                      <Flex alignItems={"center"}>
-                        {" "}
-                        <Text mr={1}>
-                          <RiTimer2Fill />
-                        </Text>{" "}
-                        <Box>{formatTime(bidding.disputeDate)}</Box>
-                      </Flex>
-                    }
+                    textGrid={formatTime(bidding.disputeDate)}
                   />
                   <CustomItemGrid
                     titleColumn="Status: "
@@ -253,6 +247,7 @@ export default function BiddingCalendar() {
                         : "blue.600"
                     }
                   />
+                  <BiddingCalendarMenu />
                 </Grid>
               </Box>
             ))}

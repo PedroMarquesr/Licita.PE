@@ -1,13 +1,14 @@
-"use client";
+"use client"
 
-import { Flex, Text, Icon } from "@chakra-ui/react";
+import { Flex, Text, Icon } from "@chakra-ui/react"
 
 export default function CardOverview({
   cardTitle,
   cardContent,
   cardIcon,
-  bgcolor,
+  bgIconColor,
   cardSubTitle,
+  bgColor,
 }) {
   return (
     <Flex
@@ -20,7 +21,7 @@ export default function CardOverview({
       p={6}
       gap={6}
       align="center"
-      bg="white"
+      bg={bgColor}
       boxShadow="sm"
       _hover={{
         boxShadow: "md",
@@ -40,7 +41,7 @@ export default function CardOverview({
         justify="center"
         minW="60px"
         minH="60px"
-        bgColor={bgcolor}
+        bgColor={bgIconColor}
       >
         <Text fontSize={"2xl"} color={"gray.50"}>
           {cardIcon}
@@ -59,5 +60,5 @@ export default function CardOverview({
         </Text>
       </Flex>
     </Flex>
-  );
+  )
 }
