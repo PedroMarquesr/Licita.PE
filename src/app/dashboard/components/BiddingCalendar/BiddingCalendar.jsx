@@ -12,6 +12,8 @@ export default function BiddingCalendar() {
   const [biddings, setBiddings] = useState([])
   const [loading, setLoading] = useState(true)
 
+ 
+
   useEffect(() => {
     async function fetchBiddings() {
       try {
@@ -108,10 +110,7 @@ export default function BiddingCalendar() {
       </Flex>
     )
   }
-  const handleDisplayStatus = (date) => {
-    const now = new Date()
-    const statusAtualizado = date < now ? "Agendado" : "Aguardando atualização"
-  }
+
   return (
     <Flex direction="column" gap={4} w="100%">
       {Object.keys(groupedBiddings).length === 0 ? (
@@ -235,11 +234,14 @@ export default function BiddingCalendar() {
                   />
                   <CustomItemGrid
                     titleColumn="Status: "
-                    textGrid={handleDisplayStatus(bidding.disputeDate)}
+                    textGrid={getBiddingDisplayStatus(bidding)}
                     color={
-                      bidding.status === "Concluído"
+                      getBiddingDisplayStatus(bidding) === "Finalizada"
                         ? "green.500"
-                        : "orange.500"
+                        : getBiddingDisplayStatus(bidding) ===
+                          "Aguardando atualização"
+                        ? "orange.500"
+                        : "blue.600"
                     }
                   />
                 </Grid>
