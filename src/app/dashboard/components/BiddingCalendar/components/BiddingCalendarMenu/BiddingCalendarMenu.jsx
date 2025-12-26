@@ -61,6 +61,7 @@ export default function BiddingCalendarMenu() {
         <Button
           variant="ghost"
           size="sm"
+          w={2}
           color="gray.500"
           _hover={{
             backgroundColor: "gray.100",
@@ -72,11 +73,22 @@ export default function BiddingCalendarMenu() {
           borderRadius="md"
           p={1}
           minW="36px"
-          h="36px"
+          h={{ base: "auto", md: "36px" }}
         >
-          <Box fontSize="xl">
+          <Box fontSize="xl" display={{ base: "none", md: "flex" }}>
             <HiOutlineDotsVertical />
           </Box>
+          <Text
+            bgColor={"gray.800"}
+            color={"gray.200"}
+            w={"auto"}
+            ml={4}
+            px={2}
+            py={1}
+            display={{ base: "flex", md: "none" }}
+          >
+            Opções
+          </Text>
         </Button>
       </Menu.Trigger>
       <Portal>
