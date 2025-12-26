@@ -1,7 +1,7 @@
 export const BIDDING_STATUS = {
-  SCHEDULED: "scheduled",
-  SUSPENDED: "suspended",
-  RESCHEDULED: "rescheduled",
-  CANCELLED: "cancelled",
-  FINISHED: "finished",
+  SCHEDULED: "À iniciar",
+  SUSPENDED: "Suspenso",
+  RESCHEDULED: "Remarcado",
+  CANCELLED: "Cancelado",
+  FINISHED: "Finalizado",
 }
