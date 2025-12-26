@@ -138,7 +138,6 @@ export default function BiddingCalendar() {
               </Text>
             </Flex>
 
-            {/* Cabeçalho para desktop */}
             <Grid
               templateColumns={gridTemplate}
               gap={3}
@@ -236,7 +235,7 @@ export default function BiddingCalendar() {
                   />
                   <CustomItemGrid
                     titleColumn="Status: "
-                    textGrid={getBiddingDisplayStatus(bidding)}
+                    textGrid={handleDisplayStatus(bidding.disputeDate)}
                     color={
                       bidding.status === "Concluído"
                         ? "green.500"
