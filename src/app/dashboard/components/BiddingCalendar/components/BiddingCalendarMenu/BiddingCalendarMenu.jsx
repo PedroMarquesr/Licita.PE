@@ -1,21 +1,11 @@
 "use client"
-import {
-  Button,
-  Menu,
-  Portal,
-  Text,
-  IconButton,
-  Flex,
-  Box,
-} from "@chakra-ui/react"
+import { Button, Menu, Portal, Text, Flex, Box } from "@chakra-ui/react"
 import { HiOutlineDotsVertical } from "react-icons/hi"
 import { MdEdit } from "react-icons/md"
 import { FaTrash } from "react-icons/fa"
 
 import { FaMagnifyingGlass } from "react-icons/fa6"
 import { TbPlayerTrackNextFilled } from "react-icons/tb"
-
-import { CiEdit } from "react-icons/ci"
 
 export default function BiddingCalendarMenu() {
   return (
