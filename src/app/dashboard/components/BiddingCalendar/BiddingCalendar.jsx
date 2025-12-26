@@ -8,11 +8,11 @@ import CustomItemGrid from "./components/CustomItemGrid/CustomItemGrid"
 import CustomTitleColumn from "./components/CustomTitleColumn/CustomTitleColumn"
 import { getBiddingDisplayStatus } from "@/utils/biddingStatus"
 
+import { RiTimer2Fill } from "react-icons/ri"
+
 export default function BiddingCalendar() {
   const [biddings, setBiddings] = useState([])
   const [loading, setLoading] = useState(true)
-
- 
 
   useEffect(() => {
     async function fetchBiddings() {
@@ -47,7 +47,6 @@ export default function BiddingCalendar() {
     return null
   }
 
-  // Ordena por data de disputa (mais recente primeiro)
   const sortedBiddings = [...biddings].sort((a, b) => {
     const dateA = toDate(a.disputeDate)
     const dateB = toDate(b.disputeDate)
@@ -123,10 +122,12 @@ export default function BiddingCalendar() {
             key={date}
             _hover={{ backgroundColor: "gray.50" }}
             borderRadius="md"
+            border={"1px solid "}
+            borderColor={"gray.300"}
           >
             <Flex
               bg={date === "Sem data definida" ? "gray.200" : "blue.100"}
-              p={3}
+              p={1}
               borderTopRadius="md"
             >
               <Text
@@ -141,7 +142,7 @@ export default function BiddingCalendar() {
               templateColumns={gridTemplate}
               gap={3}
               alignItems="center"
-              p={3}
+              p={1}
               display={{ base: "none", md: "grid" }}
               bg="gray.50"
             >
@@ -160,7 +161,7 @@ export default function BiddingCalendar() {
             {items.map((bidding) => (
               <Box
                 key={bidding.id}
-                p={3}
+                p={1}
                 _hover={{ backgroundColor: "blue.50" }}
                 borderBottomWidth="1px"
                 borderBottomColor="gray.200"
@@ -230,7 +231,15 @@ export default function BiddingCalendar() {
                   />
                   <CustomItemGrid
                     titleColumn="Horário: "
-                    textGrid={`⏰ ${formatTime(bidding.disputeDate)}`}
+                    textGrid={
+                      <Flex alignItems={"center"}>
+                        {" "}
+                        <Text mr={1}>
+                          <RiTimer2Fill />
+                        </Text>{" "}
+                        <Box>{formatTime(bidding.disputeDate)}</Box>
+                      </Flex>
+                    }
                   />
                   <CustomItemGrid
                     titleColumn="Status: "
