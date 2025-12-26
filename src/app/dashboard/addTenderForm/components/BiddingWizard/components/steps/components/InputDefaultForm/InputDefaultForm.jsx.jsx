@@ -10,10 +10,7 @@ export default function InputDefaultForm({
   typeInput,
   maxLength,
   onBlur,
-  layout = "horizontal",
-  minWidth = "120px",
   maxW,
-  tAlign,
   width,
 }) {
   return (
