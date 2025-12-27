@@ -26,8 +26,9 @@ export default function BiddingPage() {
       overflow="hidden"
     >
       <HeaderPage
-        titleHeader={"Painel de Licitações"}
+        titleHeader={"Painel de Processos"}
         subTitleHeader={"Consulta completa das licitações cadastradas"}
+        backVisible={true}
       />
 
       <Flex
