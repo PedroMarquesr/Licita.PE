@@ -4,15 +4,6 @@ import { Flex } from "@chakra-ui/react";
 
 import HeaderPage from "../components/HeaderPage/HeaderPage";
 import BiddingCalendar from "../components/BiddingCalendar/BiddingCalendar";
-import MenuDashboardMb from "../components/MenuDashboardMb/MenuDashboardMb";
-
-import { collection, query, where, getDocs } from "firebase/firestore";
-import { db } from "@/components/libs/firebaseinit";
-import { useEffect, useState } from "react";
-
-import { IoMdTrendingUp } from "react-icons/io";
-import { HiMiniDocumentChartBar } from "react-icons/hi2";
-import { RiTimer2Fill } from "react-icons/ri";
 
 export default function BiddingPage() {
   return (
