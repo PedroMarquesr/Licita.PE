@@ -1,21 +1,22 @@
-"use client"
-import { Button, Menu, Portal, Text, Flex, Box } from "@chakra-ui/react"
-import { HiOutlineDotsVertical } from "react-icons/hi"
-import { MdEdit } from "react-icons/md"
-import { FaTrash } from "react-icons/fa"
+"use client";
+import { Button, Menu, Portal, Text, Flex, Box } from "@chakra-ui/react";
+import { HiOutlineDotsVertical } from "react-icons/hi";
+import { MdEdit } from "react-icons/md";
+import { FaTrash } from "react-icons/fa";
 
-import { FaMagnifyingGlass } from "react-icons/fa6"
-import { TbPlayerTrackNextFilled } from "react-icons/tb"
+import { FaMagnifyingGlass } from "react-icons/fa6";
+import { TbPlayerTrackNextFilled } from "react-icons/tb";
 
 export default function BiddingCalendarMenu() {
   return (
     <Menu.Root positioning={{ placement: "bottom-end" }}>
       <Menu.Trigger asChild>
-        <Button
-          variant="ghost"
+        <Box
+          cursor={"pointer"}
+          as={"button"}
           size="sm"
           w={2}
-          color="gray.500"
+          color="gray.700"
           _hover={{
             backgroundColor: "gray.100",
             color: "blue.500",
@@ -28,21 +29,23 @@ export default function BiddingCalendarMenu() {
           minW="36px"
           h={{ base: "auto", md: "36px" }}
         >
-          <Box fontSize="xl" display={{ base: "none", md: "flex" }}>
+          <Text fontSize={"xl"} display={{ base: "none", md: "flex" }}>
             <HiOutlineDotsVertical />
-          </Box>
+          </Text>
           <Text
+            textAlign={"center"}
+            justifyContent={"center"}
+            borderRadius="md"
             bgColor={"gray.800"}
             color={"gray.200"}
-            w={"auto"}
-            ml={4}
+            w={20}
             px={2}
             py={1}
             display={{ base: "flex", md: "none" }}
           >
             Opções
           </Text>
-        </Button>
+        </Box>
       </Menu.Trigger>
       <Portal>
         <Menu.Positioner>
@@ -133,5 +136,5 @@ export default function BiddingCalendarMenu() {
         </Menu.Positioner>
       </Portal>
     </Menu.Root>
-  )
+  );
 }
