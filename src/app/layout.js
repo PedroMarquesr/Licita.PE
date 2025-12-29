@@ -4,6 +4,7 @@ import { Provider } from "@/components/ui/provider"
 import Navbar from "@/components/Navbar/Navbar"
 import { usePathname } from "next/navigation"
 import { Flex } from "@chakra-ui/react"
+import "@/app/globals.css"
 
 export default function RootLayout({ children }) {
   const pathName = usePathname()

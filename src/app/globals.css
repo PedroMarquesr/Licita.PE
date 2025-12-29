@@ -1,0 +1,55 @@
+@media print {
+  .no-print {
+    display: none !important;
+  }
+
+  * {
+    box-shadow: none !important;
+    font-size: 15px;
+    gap: 3 !important;
+    margin-bottom: 3 !important;
+  }
+
+  body {
+    background: white;
+    color: black;
+  }
+
+  .print-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  .print-grid-2 {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+
+  .print-grid-3 {
+    grid-template-columns: repeat(3, 1fr) !important;
+    margin: 1px;
+  }
+  .print-grid-4 {
+    grid-template-columns: repeat(4, 1fr) !important;
+  }
+  .print-grid-item {
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  .print-title {
+    font-size: 20px;
+    font-weight: bold;
+    margin-bottom: 12px;
+  }
+
+  .print-section {
+    margin-bottom: 2px;
+    page-break-inside: avoid;
+  }
+  .print-tight {
+    padding: 0 !important;
+  }
+
+  .page-break {
+    page-break-before: always;
+  }
+}
