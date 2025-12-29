@@ -1,22 +1,24 @@
-"use client"
-import { Box, Flex, Text, Icon } from "@chakra-ui/react"
-import { FaPlus } from "react-icons/fa"
-import { IoLogOutSharp } from "react-icons/io5"
-import { MdDashboard } from "react-icons/md"
-import { useRouter } from "next/navigation"
+"use client";
+import { Box, Flex, Text, Icon } from "@chakra-ui/react";
+import { FaPlus } from "react-icons/fa";
+import { IoLogOutSharp } from "react-icons/io5";
+import { MdDashboard } from "react-icons/md";
+import { RiFolderOpenLine } from "react-icons/ri";
 
-import useStore from "@/components/globalStates/store"
+import { useRouter } from "next/navigation";
+
+import useStore from "@/components/globalStates/store";
 
 export default function Sidebar() {
-  const user = useStore((state) => state.user)
-  const signOutUser = useStore((state) => state.signOutUser)
+  const user = useStore((state) => state.user);
+  const signOutUser = useStore((state) => state.signOutUser);
 
-  const router = useRouter()
+  const router = useRouter();
 
   const signOut = async () => {
-    await signOutUser()
-    router.push("/")
-  }
+    await signOutUser();
+    router.push("/");
+  };
 
   const menuItems = [
     { icon: MdDashboard, label: "Dashboard", link: "/dashboard" },
@@ -25,9 +27,15 @@ export default function Sidebar() {
       label: "Cadastro de licitação",
       link: "/dashboard/addTenderForm",
     },
-  ]
+    {
+      icon: RiFolderOpenLine,
+      label: "Painel de Processos",
+      link: "/dashboard/biddings",
+    },
+    ,
+  ];
 
-  if (!user?.uid) return null
+  if (!user?.uid) return null;
 
   return (
     <Box
@@ -75,5 +83,5 @@ export default function Sidebar() {
         <Text whiteSpace="nowrap">Sair</Text>
       </Flex>
     </Box>
-  )
+  );
 }
