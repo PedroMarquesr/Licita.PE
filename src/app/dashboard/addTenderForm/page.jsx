@@ -105,8 +105,6 @@ export default function AddTenderFormFixed() {
       await setDoc(doc(db, "biddings", docId), dataToSave)
       setDialogOpen(true)
 
-      console.log("Licitação salva com sucesso! ID:", docId)
-
       setBiddingData({
         responsibleAgency: "",
         portalAgencyCode: "",

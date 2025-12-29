@@ -1,6 +1,6 @@
-"use client";
-import { Flex, Text, Button, Link } from "@chakra-ui/react";
-import { FaChevronLeft } from "react-icons/fa";
+"use client"
+import { Flex, Text, Button, Link } from "@chakra-ui/react"
+import { FaChevronLeft } from "react-icons/fa"
 
 export default function HeaderPage({
   titleHeader,
@@ -8,7 +8,7 @@ export default function HeaderPage({
   backVisible,
 }) {
   return (
-    <Flex pl={{ base: "0", md: "5%" }} w={"100%"}>
+    <Flex pl={{ base: "0", md: "5%" }} w={"100%"} className="no-print">
       <Flex align={"center"}>
         <Button
           display={backVisible ? "flex" : "none"}
@@ -38,5 +38,5 @@ export default function HeaderPage({
         </Flex>
       </Flex>
     </Flex>
-  );
+  )
 }

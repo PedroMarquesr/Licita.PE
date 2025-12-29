@@ -1,12 +1,6 @@
 export function getBiddingDisplayStatus(bidding) {
-  console.log("BIDDING RECEBIDA:", bidding)
-  console.log("STATUS RECEBIDO:", bidding.status)
-
   const now = new Date()
   const disputeDate = bidding.disputeDate?.toDate?.()
-
-  console.log("DISPUTE DATE:", disputeDate)
-  console.log("NOW:", now)
 
   if (!disputeDate) return "Data inválida"
 
