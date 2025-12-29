@@ -43,7 +43,7 @@ export default function MenuDashboardMb() {
   if (!user?.uid) return null
 
   return (
-    <Flex w="100%" justify="right">
+    <Flex w="100%" justify="right" className="no-print">
       <Drawer.Root open={isOpen} onOpenChange={(e) => setIsOpen(e.open)}>
         <Drawer.Trigger asChild>
           <Button
