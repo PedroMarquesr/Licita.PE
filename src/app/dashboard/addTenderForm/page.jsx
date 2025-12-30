@@ -139,6 +139,14 @@ export default function AddTenderFormFixed() {
         result: "",
         status: BIDDING_STATUS.SCHEDULED,
         isFavorite: false,
+        supplyType: {
+          type: "",
+          duration: {
+            value: null,
+            unit: "",
+          },
+          installments: null,
+        },
       })
       setDialogOpen(true)
       window.location.reload()
