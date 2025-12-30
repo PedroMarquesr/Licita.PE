@@ -141,11 +141,9 @@ export default function AddTenderFormFixed() {
         isFavorite: false,
         supplyType: {
           type: "",
-          duration: {
-            value: null,
-            unit: "",
-          },
-          installments: null,
+          duration: null,
+          unit: null,
+          installmentDelivery: false,
         },
       })
       setDialogOpen(true)

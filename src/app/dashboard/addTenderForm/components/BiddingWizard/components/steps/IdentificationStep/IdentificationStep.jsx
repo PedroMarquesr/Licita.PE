@@ -27,10 +27,11 @@ export default function IdentificationStep({ biddingData, setBiddingData }) {
     { label: "Inexigibilidade", value: "Inexigibilidade" },
   ]
   const supplyTypeOptions = [
-    { label: "Registro de Preços", value: "Registro de Preços" },
-    { label: "Entrega Parcelada", value: "Entrega Parcelada" },
+    { label: "Registro de Preços", value: "Registro_de_Preços" },
+    { label: "Entrega Parcelada", value: "Entrega_Parcelada" },
     { label: "Entrega Imediata", value: "Entrega Imediata" },
     { label: "Serviço", value: "Serviço" },
+    { label: "teste", value: "teste" },
   ]
   const formatCNPJ = (cnpj) => {
     const numbers = cnpj.replace(/\D/g, "")
@@ -210,20 +211,14 @@ export default function IdentificationStep({ biddingData, setBiddingData }) {
                   ...biddingData,
                   supplyType: {
                     ...biddingData.supplyType,
-                    type: value,
+                    type: value[0] || "",
                   },
                 })
               }
             />
-
-            {(biddingData.supplyType.type === "Entrega Parcelada" ||
-              biddingData.supplyType.type === "Registro de Preços" ||
-              biddingData.supplyType.type === "Serviço") && <Text>teste</Text>}
-
-            {/* {biddingData.supplyType &&
-              JSON.stringify(biddingData.supplyType.duration.value)} */}
           </Grid>
         </GridItem>
+        {biddingData.supplyType?.type === "teste" && <Text>Funcionou</Text>}
         <GridItem colSpan={{ base: 1, md: 2 }}>
           <Text fontSize="lg" fontWeight="semibold" color="gray.700" mb={3}>
             Objeto
