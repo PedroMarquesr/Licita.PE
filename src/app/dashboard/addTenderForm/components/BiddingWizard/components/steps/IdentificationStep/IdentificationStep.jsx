@@ -33,6 +33,13 @@ export default function IdentificationStep({ biddingData, setBiddingData }) {
     { label: "Serviço", value: "Serviço" },
     { label: "teste", value: "teste" },
   ]
+
+  const unitOptions = [
+    { label: "Dias", value: "Dias" },
+    { label: "Meses", value: "Meses" },
+    { label: "Anos", value: "Anos" },
+    { label: "Parcelas", value: "Parcelas" },
+  ]
   const formatCNPJ = (cnpj) => {
     const numbers = cnpj.replace(/\D/g, "")
     if (numbers.length !== 14) return cnpj
@@ -195,6 +202,67 @@ export default function IdentificationStep({ biddingData, setBiddingData }) {
             />
           </Grid>
         </GridItem>
+        {/* <GridItem colSpan={{ base: 1, md: 2 }}>
+          <Grid
+            templateColumns={{ base: "1fr", sm: "1fr", md: "1fr 1fr 1fr" }}
+            gap={4}
+            w={"100%"}
+          >
+            <CustomSelect
+              legend="Forma de execução"
+              placeholder="Selecione"
+              options={supplyTypeOptions}
+              value={biddingData.supplyType?.type || ""}
+              onValueChange={(value) =>
+                setBiddingData({
+                  ...biddingData,
+                  supplyType: {
+                    ...biddingData.supplyType,
+                    type: value[0] || "",
+                  },
+                })
+              }
+            />
+            {biddingData.supplyType?.type != "Entrega Imediata" && (
+              <>
+                <CustomSelect
+                  legend="Duração/Parcelas"
+                  placeholder="Selecione"
+                  options={unitOptions}
+                  value={biddingData.supplyType?.unit || ""}
+                  onValueChange={(value) =>
+                    setBiddingData({
+                      ...biddingData,
+                      supplyType: {
+                        ...biddingData.supplyType,
+                        unit: value[0] || "",
+                      },
+                    })
+                  }
+                />
+                <InputDefaultForm
+                  legend={"Quantidade"}
+                  placeholder={"Quantidade de parcelas/duração"}
+                  inputValue={biddingData.supplyType?.duration}
+                  typeInput={"number"}
+                  onChange={(e) =>
+                    setBiddingData({
+                      ...biddingData,
+                      supplyType: {
+                        ...biddingData.supplyType,
+                        duration: e.target.value,
+                      },
+                    })
+                  }
+                />
+              </>
+            )}
+          </Grid>
+        </GridItem>
+
+        {JSON.stringify(biddingData.supplyType?.unit)}
+        {JSON.stringify(biddingData.supplyType?.duration)} */}
+
         <GridItem colSpan={{ base: 1, md: 2 }}>
           <Grid
             templateColumns={{ base: "1fr", sm: "1fr", md: "1fr 1fr 1fr" }}
@@ -216,9 +284,61 @@ export default function IdentificationStep({ biddingData, setBiddingData }) {
                 })
               }
             />
+
+            {/* Renderização condicional melhorada */}
+            {biddingData.supplyType?.type &&
+              biddingData.supplyType?.type !== "Entrega Imediata" && (
+                <>
+                  <CustomSelect
+                    legend="Duração/Parcelas"
+                    placeholder="Selecione"
+                    options={unitOptions}
+                    value={biddingData.supplyType?.unit || ""}
+                    onValueChange={(value) =>
+                      setBiddingData({
+                        ...biddingData,
+                        supplyType: {
+                          ...biddingData.supplyType,
+                          unit: value[0] || "",
+                        },
+                      })
+                    }
+                  />
+                  <InputDefaultForm
+                    legend="Quantidade"
+                    placeholder={
+                      biddingData.supplyType?.unit === "Parcelas"
+                        ? "Número de parcelas"
+                        : "Quantidade de dias/meses/anos"
+                    }
+                    inputValue={biddingData.supplyType?.duration || ""}
+                    typeInput="number"
+                    min={
+                      biddingData.supplyType?.unit === "Parcelas" ? "1" : "0"
+                    }
+                    onChange={(e) =>
+                      setBiddingData({
+                        ...biddingData,
+                        supplyType: {
+                          ...biddingData.supplyType,
+                          duration: e.target.value,
+                        },
+                      })
+                    }
+                  />
+                </>
+              )}
+
+            {/* Se for Entrega Imediata, preenche os espaços */}
+            {biddingData.supplyType?.type === "Entrega Imediata" && (
+              <>
+                <div /> {/* Espaço vazio para manter o layout */}
+                <div /> {/* Espaço vazio para manter o layout */}
+              </>
+            )}
           </Grid>
         </GridItem>
-        {biddingData.supplyType?.type === "teste" && <Text>Funcionou</Text>}
+
         <GridItem colSpan={{ base: 1, md: 2 }}>
           <Text fontSize="lg" fontWeight="semibold" color="gray.700" mb={3}>
             Objeto

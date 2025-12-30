@@ -141,8 +141,8 @@ export default function AddTenderFormFixed() {
         isFavorite: false,
         supplyType: {
           type: "",
-          duration: null,
-          unit: null,
+          duration: "",
+          unit: "",
           installmentDelivery: false,
         },
       })
