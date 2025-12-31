@@ -1,8 +1,8 @@
-"use client"
+"use client";
 
-import { Flex, Text, Grid, GridItem } from "@chakra-ui/react"
-import InputDefaultForm from "../components/InputDefaultForm/InputDefaultForm.jsx"
-import CustomSelect from "./components/CustomSelect/CustomSelect"
+import { Flex, Text, Grid, GridItem } from "@chakra-ui/react";
+import InputDefaultForm from "../components/InputDefaultForm/InputDefaultForm.jsx";
+import CustomSelect from "./components/CustomSelect/CustomSelect";
 
 export default function IdentificationStep({ biddingData, setBiddingData }) {
   const modalityOptions = [
@@ -10,14 +10,14 @@ export default function IdentificationStep({ biddingData, setBiddingData }) {
     { label: "Aberto/Fechado", value: "Aberto/Fechado" },
     { label: "Fechado/Aberto", value: "Fechado/Aberto" },
     { label: "Fechado", value: "Fechado" },
-  ]
+  ];
   const judgmentCriteriaOptions = [
     { label: "Menor preço", value: "Menor preço" },
     { label: "Maior desconto", value: "Maior desconto" },
     { label: "Técnica e preço", value: "Técnica e preço" },
     { label: "Maior lance", value: "Maior lance" },
     { label: "Melhor técnica", value: "Melhor técnica" },
-  ]
+  ];
   const biddingTypeOptions = [
     { label: "Dispensa de Licitação", value: "Dispensa de Licitação" },
     { label: "Pregão eletrônico", value: "Pregão eletrônico" },
@@ -25,29 +25,29 @@ export default function IdentificationStep({ biddingData, setBiddingData }) {
     { label: "Concorrência", value: "Concorrência" },
     { label: "Tomada de Preços", value: "Tomada de Preços" },
     { label: "Inexigibilidade", value: "Inexigibilidade" },
-  ]
+  ];
   const supplyTypeOptions = [
     { label: "Registro de Preços", value: "Registro_de_Preços" },
     { label: "Entrega Parcelada", value: "Entrega_Parcelada" },
     { label: "Entrega Imediata", value: "Entrega Imediata" },
     { label: "Serviço", value: "Serviço" },
     { label: "teste", value: "teste" },
-  ]
+  ];
 
   const unitOptions = [
     { label: "Dias", value: "Dias" },
     { label: "Meses", value: "Meses" },
     { label: "Anos", value: "Anos" },
     { label: "Parcelas", value: "Parcelas" },
-  ]
+  ];
   const formatCNPJ = (cnpj) => {
-    const numbers = cnpj.replace(/\D/g, "")
-    if (numbers.length !== 14) return cnpj
+    const numbers = cnpj.replace(/\D/g, "");
+    if (numbers.length !== 14) return cnpj;
     return `${numbers.slice(0, 2)}.${numbers.slice(2, 5)}.${numbers.slice(
       5,
       8
-    )}/${numbers.slice(8, 12)}-${numbers.slice(12, 14)}`
-  }
+    )}/${numbers.slice(8, 12)}-${numbers.slice(12, 14)}`;
+  };
 
   return (
     <Flex direction="column" w="100%" align="center" gap={6}>
@@ -103,11 +103,11 @@ export default function IdentificationStep({ biddingData, setBiddingData }) {
               }
               onBlur={() => {
                 if (biddingData.agencyCnpj.length === 14) {
-                  const formatted = formatCNPJ(biddingData.agencyCnpj)
+                  const formatted = formatCNPJ(biddingData.agencyCnpj);
                   setBiddingData({
                     ...biddingData,
                     agencyCnpj: formatted,
-                  })
+                  });
                 }
               }}
             />
@@ -202,66 +202,6 @@ export default function IdentificationStep({ biddingData, setBiddingData }) {
             />
           </Grid>
         </GridItem>
-        {/* <GridItem colSpan={{ base: 1, md: 2 }}>
-          <Grid
-            templateColumns={{ base: "1fr", sm: "1fr", md: "1fr 1fr 1fr" }}
-            gap={4}
-            w={"100%"}
-          >
-            <CustomSelect
-              legend="Forma de execução"
-              placeholder="Selecione"
-              options={supplyTypeOptions}
-              value={biddingData.supplyType?.type || ""}
-              onValueChange={(value) =>
-                setBiddingData({
-                  ...biddingData,
-                  supplyType: {
-                    ...biddingData.supplyType,
-                    type: value[0] || "",
-                  },
-                })
-              }
-            />
-            {biddingData.supplyType?.type != "Entrega Imediata" && (
-              <>
-                <CustomSelect
-                  legend="Duração/Parcelas"
-                  placeholder="Selecione"
-                  options={unitOptions}
-                  value={biddingData.supplyType?.unit || ""}
-                  onValueChange={(value) =>
-                    setBiddingData({
-                      ...biddingData,
-                      supplyType: {
-                        ...biddingData.supplyType,
-                        unit: value[0] || "",
-                      },
-                    })
-                  }
-                />
-                <InputDefaultForm
-                  legend={"Quantidade"}
-                  placeholder={"Quantidade de parcelas/duração"}
-                  inputValue={biddingData.supplyType?.duration}
-                  typeInput={"number"}
-                  onChange={(e) =>
-                    setBiddingData({
-                      ...biddingData,
-                      supplyType: {
-                        ...biddingData.supplyType,
-                        duration: e.target.value,
-                      },
-                    })
-                  }
-                />
-              </>
-            )}
-          </Grid>
-        </GridItem>
-
-        {JSON.stringify(biddingData.supplyType?.unit)}
-        {JSON.stringify(biddingData.supplyType?.duration)} */}
 
         <GridItem colSpan={{ base: 1, md: 2 }}>
           <Grid
@@ -285,7 +225,6 @@ export default function IdentificationStep({ biddingData, setBiddingData }) {
               }
             />
 
-            {/* Renderização condicional melhorada */}
             {biddingData.supplyType?.type &&
               biddingData.supplyType?.type !== "Entrega Imediata" && (
                 <>
@@ -306,6 +245,8 @@ export default function IdentificationStep({ biddingData, setBiddingData }) {
                   />
                   <InputDefaultForm
                     legend="Quantidade"
+                    width={"25%"}
+                    border={"1px solid red"}
                     placeholder={
                       biddingData.supplyType?.unit === "Parcelas"
                         ? "Número de parcelas"
@@ -329,11 +270,10 @@ export default function IdentificationStep({ biddingData, setBiddingData }) {
                 </>
               )}
 
-            {/* Se for Entrega Imediata, preenche os espaços */}
             {biddingData.supplyType?.type === "Entrega Imediata" && (
               <>
-                <div /> {/* Espaço vazio para manter o layout */}
-                <div /> {/* Espaço vazio para manter o layout */}
+                <div />
+                <div />
               </>
             )}
           </Grid>
@@ -357,5 +297,5 @@ export default function IdentificationStep({ biddingData, setBiddingData }) {
         </GridItem>
       </Grid>
     </Flex>
-  )
+  );
 }
