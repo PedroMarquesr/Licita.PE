@@ -47,11 +47,9 @@ export default async function BiddingDetails({ params }) {
       flexDir="column"
       w="100%"
       h="100%"
-      m={"auto"}
       align="center"
       px={{ base: "2", md: "4" }}
       maxW="100%"
-      overflow="hidden"
     >
       <HeaderPage
         titleHeader={"Visualização do Processo"}
