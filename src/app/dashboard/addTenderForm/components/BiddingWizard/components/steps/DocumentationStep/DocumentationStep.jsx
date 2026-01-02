@@ -45,38 +45,6 @@ export default function DocumentationStep({ biddingData, setBiddingData }) {
     })
   }
 
-  //   return (
-  //     <Stack>
-  //       {documentationChecklist.map((section, index) => (
-  //         <Stack key={section.title}>
-  //           <Text style={{ fontWeight: "bold" }}>{section.title}</Text>{" "}
-  //           <Grid
-  //             templateColumns={{ base: "repeat(1, 1fr)", md: "repeat(4, 1fr)" }}
-  //             key={index}
-  //             style={{ marginBottom: 16 }}
-  //           >
-  //             {" "}
-  //             <>
-  //               {section.items.map((item, itemIndex) => (
-  //                 <Checkbox.Root key={itemIndex} colorPalette="blue">
-  //                   <Checkbox.HiddenInput />
-  //                   <Checkbox.Control />
-  //                   <Checkbox.Label> {item}</Checkbox.Label>
-  //                 </Checkbox.Root>
-  //               ))}{" "}
-  //             </>
-  //           </Grid>
-  //           <InputDefaultForm
-  //             legend={"Adicionar específicação ou comentário: "}
-  //             inputValue={value}
-  //             onChange={(e) => setValue(e.target.value)}
-  //           />
-  //         </Stack>
-  //       ))}
-  //     </Stack>
-  //   )
-  // }
-
   return (
     <Stack spacing={6}>
       {documentationChecklist.map((section) => (
