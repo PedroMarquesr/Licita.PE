@@ -1,3 +1,8 @@
+@page {
+  size: A4;
+  margin: 8mm;
+}
+
 @media print {
   .no-print {
     display: none !important;
@@ -7,7 +12,6 @@
     box-shadow: none !important;
     font-size: 15px;
     gap: 3 !important;
-    margin-bottom: 3 !important;
   }
 
   body {
