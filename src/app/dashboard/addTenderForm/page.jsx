@@ -145,6 +145,14 @@ export default function AddTenderFormFixed() {
           unit: "",
           installmentDelivery: false,
         },
+
+        documentation: {
+          habilitacaoJuridica: [],
+          habilitacaoFiscal: [],
+          qualificacaoEconomicoFinanceira: [],
+          qualificacaoTecnica: [],
+          declaracoes: [],
+        },
       })
       setDialogOpen(true)
       window.location.reload()

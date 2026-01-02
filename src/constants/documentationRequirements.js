@@ -1,5 +1,6 @@
 export const documentationChecklist = [
   {
+    key: "habilitacaojuridica",
     title: "Habilitação Jurídica",
     items: [
       "Ato Constitutivo (contrato social, estatuto social ou requerimento de empresário)",
@@ -11,6 +12,7 @@ export const documentationChecklist = [
     ],
   },
   {
+    key: "habilitacaifiscaletrabalhista",
     title: "Habilitação Fiscal e Trabalhista",
     items: [
       "Cartão de CNPJ",
@@ -25,6 +27,7 @@ export const documentationChecklist = [
     ],
   },
   {
+    key: "qualificacaoeconomicofinanceira",
     title: "Qualificação Econômico-Financeira",
     items: [
       "Balanço patrimonial",
@@ -34,6 +37,7 @@ export const documentationChecklist = [
     ],
   },
   {
+    key: "qualificacaotecnica",
     title: "Qualificação Técnica",
     items: [
       "Atestado(s) de Capacidade Técnica Profissional",
@@ -43,6 +47,7 @@ export const documentationChecklist = [
     ],
   },
   {
+    key: "outrasdeclaracoes",
     title: "Outras Declarações",
     items: [
       "Declaração Menor/Aprendiz",
@@ -56,4 +61,4 @@ export const documentationChecklist = [
       "Carta de Solidariedade",
     ],
   },
-];
+]
