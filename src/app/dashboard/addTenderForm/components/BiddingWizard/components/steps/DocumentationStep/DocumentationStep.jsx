@@ -1,72 +1,89 @@
 "use client"
 
-import {
-  Flex,
-  Text,
-  Grid,
-  Box,
-  GridItem,
-  Input,
-  Stack,
-  Checkbox,
-  Separator,
-} from "@chakra-ui/react"
+import { Text, Grid, Box, Stack, Checkbox } from "@chakra-ui/react"
 
 import InputDefaultForm from "../components/InputDefaultForm/InputDefaultForm.jsx"
 import { documentationChecklist } from "@/constants/documentationRequirements"
 
-import { useState } from "react"
-
 export default function DocumentationStep({ biddingData, setBiddingData }) {
   const handleCheckboxChange = (sectionKey, item) => {
-    const currentSection = biddingData.documentation?.[sectionKey] || []
+    const currentItems = biddingData.documentation?.[sectionKey] || []
 
-    const isChecked = currentSection.includes(item)
-    const updatedSection = isChecked
-      ? currentSection.filter((i) => i !== item)
-      : [...currentSection, item]
+    const updatedItems = currentItems.includes(item)
+      ? currentItems.filter((i) => i !== item)
+      : [...currentItems, item]
 
     setBiddingData({
       ...biddingData,
       documentation: {
         ...biddingData.documentation,
-        [sectionKey]: updatedSection,
+        [sectionKey]: updatedItems,
       },
     })
   }
 
-  const handleCommentChange = (sectionKey, comment) => {
+  const handleToggleAll = (sectionKey, items) => {
+    const currentItems = biddingData.documentation?.[sectionKey] || []
+
+    const isAllChecked = items.every((item) => currentItems.includes(item))
+
     setBiddingData({
       ...biddingData,
       documentation: {
-        ...(biddingData.docuemntation?.comments || {}),
-        [sectionKey]: comment,
+        ...biddingData.documentation,
+        [sectionKey]: isAllChecked ? [] : items,
+      },
+    })
+  }
+
+  const handleCommentChange = (sectionKey, value) => {
+    setBiddingData({
+      ...biddingData,
+      documentation: {
+        ...biddingData.documentation,
+        comments: {
+          ...biddingData.documentation?.comments,
+          [sectionKey]: value,
+        },
       },
     })
   }
 
   return (
     <Stack spacing={6}>
-      {documentationChecklist.map((section) => (
-        <Box key={section.key} borderWidth="1px" borderRadius="md" p={4}>
-          <Text fontSize="lg" fontWeight="bold" mb={3}>
-            {section.title}
-          </Text>
+      {documentationChecklist.map((section) => {
+        const selectedItems = biddingData.documentation?.[section.key] || []
 
-          <Grid
-            templateColumns={{ base: "1fr", md: "repeat(4, 1fr)" }}
-            gap={3}
-            mb={4}
-          >
-            {section.items.map((item) => {
-              const isChecked =
-                biddingData.documentation?.[section.key]?.includes(item) ||
-                false
+        const isAllChecked =
+          section.items.length > 0 &&
+          section.items.every((item) => selectedItems.includes(item))
 
-              return (
+        return (
+          <Box key={section.key} borderWidth="1px" borderRadius="md" p={4}>
+            <Text fontSize="lg" fontWeight="bold" mb={3}>
+              {section.title}
+            </Text>
+
+            <Checkbox.Root
+              checked={isAllChecked}
+              onChange={() => handleToggleAll(section.key, section.items)}
+              colorPalette="blue"
+              mb={3}
+            >
+              <Checkbox.HiddenInput />
+              <Checkbox.Control />
+              <Checkbox.Label fontWeight="bold">Marcar todos</Checkbox.Label>
+            </Checkbox.Root>
+
+            <Grid
+              templateColumns={{ base: "1fr", md: "repeat(4, 1fr)" }}
+              gap={3}
+              mb={4}
+            >
+              {section.items.map((item) => (
                 <Checkbox.Root
                   key={item}
-                  checked={isChecked}
+                  checked={selectedItems.includes(item)}
                   onChange={() => handleCheckboxChange(section.key, item)}
                   colorPalette="blue"
                 >
@@ -74,20 +91,20 @@ export default function DocumentationStep({ biddingData, setBiddingData }) {
                   <Checkbox.Control />
                   <Checkbox.Label fontSize="sm">{item}</Checkbox.Label>
                 </Checkbox.Root>
-              )
-            })}
-          </Grid>
+              ))}
+            </Grid>
 
-          <InputDefaultForm
-            legend="Comentário adicional"
-            placeholder="Adicione observações específicas para esta seção"
-            inputValue={
-              biddingData.documentation?.comments?.[section.key] || ""
-            }
-            onChange={(e) => handleCommentChange(section.key, e.target.value)}
-          />
-        </Box>
-      ))}
+            <InputDefaultForm
+              legend="Comentário adicional"
+              placeholder="Adicione observações específicas para esta seção"
+              inputValue={
+                biddingData.documentation?.comments?.[section.key] || ""
+              }
+              onChange={(e) => handleCommentChange(section.key, e.target.value)}
+            />
+          </Box>
+        )
+      })}
     </Stack>
   )
 }
