@@ -65,11 +65,6 @@ export default function AddTenderFormFixed() {
 
   const handleSave = async () => {
     try {
-      if (!biddingData.disputeDate || !biddingData.identificationNumber) {
-        alert("Preencha a data da disputa e o código do pregão!")
-        return
-      }
-
       const docId = uuidv4()
 
       const dataToSave = {
