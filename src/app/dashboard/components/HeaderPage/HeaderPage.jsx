@@ -14,14 +14,13 @@ export default function HeaderPage({
           display={backVisible ? "flex" : "none"}
           mr={"5"}
           bgColor="gray.50"
-          color="gray.600"
           transition="transform 0.3s ease-in-out"
           _hover={{
             transform: "scale(1.05)",
             backgroundColor: "#dbeafe",
           }}
         >
-          <Link href={"/dashboard"}>
+          <Link color="blue.600" href={"/dashboard"}>
             <FaChevronLeft />
           </Link>
         </Button>

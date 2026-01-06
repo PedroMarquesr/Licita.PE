@@ -80,7 +80,7 @@ export default function BiddingWizard({
       w="100%"
       maxW="1200px"
       p={{ base: "3%", md: "4%" }}
-      mt="3%"
+      mt="2"
       mb="3%"
       boxShadow="2xl"
       flexDirection="column"
