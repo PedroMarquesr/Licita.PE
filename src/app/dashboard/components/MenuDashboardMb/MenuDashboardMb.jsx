@@ -16,6 +16,8 @@ import { MdDashboard } from "react-icons/md"
 import { FaPlus } from "react-icons/fa"
 import { ImMenu } from "react-icons/im"
 import { IoLogOutSharp } from "react-icons/io5"
+import { RiFolderOpenLine } from "react-icons/ri"
+
 import { useState } from "react"
 import { useRouter } from "next/navigation"
 import useStore from "@/components/globalStates/store"
@@ -37,6 +39,11 @@ export default function MenuDashboardMb() {
       icon: FaPlus,
       label: "Cadastro de licitação",
       link: "/dashboard/addTenderForm",
+    },
+    {
+      icon: RiFolderOpenLine,
+      label: "Painel de Processos",
+      link: "/dashboard/biddings",
     },
   ]
 
