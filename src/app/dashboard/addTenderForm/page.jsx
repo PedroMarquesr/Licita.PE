@@ -177,21 +177,41 @@ export default function AddTenderFormFixed() {
         subTitleHeader={"Preencha os dados para cadastrar uma nova licitação"}
         backVisible={true}
       />
+      <Flex
+        display={{ base: "none", md: "flex" }}
+        justify={{ base: "center", md: "end" }}
+        w="100%"
+        pr={{ base: "0", md: "10" }}
+      >
+        <Button
+          colorPalette={"blue"}
+          size="md"
+          onClick={handleSave}
+          _hover={{ backgroundColor: "blue.400", color: "white" }}
+        >
+          Salvar Processo
+        </Button>
 
+        <SaveDialogSucess
+          open={dialogOpen}
+          onClose={() => setDialogOpen(false)}
+          messageSucess={"Processo cadastrado com sucesso! "}
+        />
+      </Flex>
       <Flex w="100%" justify="center">
         <BiddingWizard
           biddingData={biddingData}
           setBiddingData={setBiddingData}
         />
       </Flex>
-      <Flex justify="center" w="100%" mt={6}>
-        <Button
-          colorScheme="blue"
-          size="lg"
-          onClick={handleSave}
-          _hover={{ backgroundColor: "blue.400" }}
-        >
-          Salvar Licitação
+      <Flex
+        display={{ base: "flex", md: "none" }}
+        justify="center"
+        w="100%"
+        pr={{ base: "0", md: "10" }}
+      >
+        <Button colorPalette={"blue"} size="md" onClick={handleSave}>
+          Salvar Processo
         </Button>
 
         <SaveDialogSucess
