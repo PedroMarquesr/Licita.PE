@@ -34,12 +34,14 @@ export default function FeatureCard({ cardTitle, cardSubTitle, cardIcon }) {
             {cardIcon}
           </Text>
         </Flex>
-        <Text p={"1"} color={"#0b3c5d"} fontWeight={"bold"}>
-          {cardTitle}
-        </Text>
-        <Text p={"1"} color="gray.700" fontStyle={"italic"}>
-          {cardSubTitle}
-        </Text>
+        <Flex flexDir={"column"} p={2}>
+          <Text p={"1"} color={"#0b3c5d"} fontWeight={"bold"}>
+            {cardTitle}
+          </Text>
+          <Text p={"1"} color="gray.700" fontStyle={"italic"}>
+            {cardSubTitle}
+          </Text>
+        </Flex>
       </Flex>
     </>
   )
