@@ -1,6 +1,6 @@
-"use client"
+"use client";
 
-import { Flex, Grid, GridItem, Text, Image } from "@chakra-ui/react"
+import { Flex, Grid, GridItem, Text, Image, List } from "@chakra-ui/react";
 
 export default function Footer() {
   return (
@@ -26,8 +26,16 @@ export default function Footer() {
           <Flex justify={"center"}>
             <Text>Produto</Text>
           </Flex>
-          <Flex justify={"center"}>
-            <Text>Produto</Text>
+          <Flex
+            // justify={"center"}
+            flexDir={"column"}
+            alignItems={"center"}
+          >
+            <List.Root listStyleType="none" mt={2} pl={12}>
+              <List.Item>Recursos</List.Item>
+              <List.Item>Preços</List.Item>
+              <List.Item>Demonstração</List.Item>
+            </List.Root>
           </Flex>{" "}
         </GridItem>
 
@@ -35,13 +43,34 @@ export default function Footer() {
           <Flex justify={"center"}>
             <Text>Empresa</Text>
           </Flex>{" "}
+          <Flex
+            // justify={"center"}
+            flexDir={"column"}
+            alignItems={"center"}
+          >
+            <List.Root listStyleType="none" mt={2} pl={3}>
+              {" "}
+              <List.Item>Sobre Nós</List.Item>
+              <List.Item>Contato</List.Item>
+            </List.Root>
+          </Flex>{" "}
         </GridItem>
         <GridItem>
           <Flex justify={"center"}>
             <Text>Legal</Text>
           </Flex>{" "}
+          <Flex
+            // justify={"center"}
+            flexDir={"column"}
+            alignItems={"center"}
+          >
+            <List.Root listStyleType="none" mt={2} pl={12}>
+              {" "}
+              <List.Item>Termos de uso</List.Item>
+            </List.Root>
+          </Flex>{" "}
         </GridItem>
       </Grid>
     </Flex>
-  )
+  );
 }
