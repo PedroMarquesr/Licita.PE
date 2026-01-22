@@ -1,15 +1,15 @@
-"use client"
+"use client";
 
-import { Flex, Button, Text } from "@chakra-ui/react"
-import HeaderPage from "../components/HeaderPage/HeaderPage"
-import BiddingWizard from "./components/BiddingWizard/BiddingWizard"
-import SaveDialogSucess from "./components/SaveSucessDialog/SaveSucessDialog"
-import { BIDDING_STATUS } from "@/constants/biddingStatus.js"
-import { useState } from "react"
-import { setDoc, doc, serverTimestamp } from "firebase/firestore"
-import { Timestamp } from "firebase/firestore"
-import { db } from "@/components/libs/firebaseinit"
-import { v4 as uuidv4 } from "uuid"
+import { Flex, Button, Text } from "@chakra-ui/react";
+import HeaderPage from "../components/HeaderPage/HeaderPage";
+import BiddingWizard from "./components/BiddingWizard/BiddingWizard";
+import SaveDialogSucess from "./components/SaveSucessDialog/SaveSucessDialog";
+import { BIDDING_STATUS } from "@/constants/biddingStatus.js";
+import { useState } from "react";
+import { setDoc, doc, serverTimestamp } from "firebase/firestore";
+import { Timestamp } from "firebase/firestore";
+import { db } from "@/components/libs/firebaseinit";
+import { v4 as uuidv4 } from "uuid";
 
 export default function AddTenderFormFixed() {
   const [biddingData, setBiddingData] = useState({
@@ -52,53 +52,53 @@ export default function AddTenderFormFixed() {
     result: "",
     status: BIDDING_STATUS.SCHEDULED,
     isFavorite: false,
-  })
-  const [dialogOpen, setDialogOpen] = useState(false)
+  });
+  const [dialogOpen, setDialogOpen] = useState(false);
 
   const toTimestamp = (dateString, timeString) => {
-    if (!dateString) return null
+    if (!dateString) return null;
     const dateTimeString = timeString
       ? `${dateString}T${timeString}:00`
-      : `${dateString}T00:00:00`
-    return Timestamp.fromDate(new Date(dateTimeString))
-  }
+      : `${dateString}T00:00:00`;
+    return Timestamp.fromDate(new Date(dateTimeString));
+  };
 
   const handleSave = async () => {
     try {
-      const docId = uuidv4()
+      const docId = uuidv4();
 
       const dataToSave = {
         ...biddingData,
         disputeDate: toTimestamp(
           biddingData.disputeDate,
-          biddingData.disputeTime
+          biddingData.disputeTime,
         ),
         proposalDeadlineDate: toTimestamp(
           biddingData.proposalDeadlineDate,
-          biddingData.proposalDeadlineTime
+          biddingData.proposalDeadlineTime,
         ),
         proposalOpeningDate: toTimestamp(
           biddingData.proposalOpeningDate,
-          biddingData.proposalOpeningTime
+          biddingData.proposalOpeningTime,
         ),
         closingDate: toTimestamp(
           biddingData.closingDate,
-          biddingData.closingTime
+          biddingData.closingTime,
         ),
-      }
+      };
 
-      delete dataToSave.disputeTime
-      delete dataToSave.proposalDeadlineTime
-      delete dataToSave.proposalOpeningTime
-      delete dataToSave.closingTime
+      delete dataToSave.disputeTime;
+      delete dataToSave.proposalDeadlineTime;
+      delete dataToSave.proposalOpeningTime;
+      delete dataToSave.closingTime;
 
-      dataToSave.id = docId
-      dataToSave.status = BIDDING_STATUS.SCHEDULED
-      dataToSave.userId = "seu-user-id-aqui"
-      dataToSave.createdAt = serverTimestamp()
+      dataToSave.id = docId;
+      dataToSave.status = BIDDING_STATUS.SCHEDULED;
+      dataToSave.userId = "seu-user-id-aqui";
+      dataToSave.createdAt = serverTimestamp();
 
-      await setDoc(doc(db, "biddings", docId), dataToSave)
-      setDialogOpen(true)
+      await setDoc(doc(db, "biddings", docId), dataToSave);
+      setDialogOpen(true);
 
       setBiddingData({
         responsibleAgency: "",
@@ -148,13 +148,13 @@ export default function AddTenderFormFixed() {
           qualificacaoTecnica: [],
           declaracoes: [],
         },
-      })
-      setDialogOpen(true)
-      window.location.reload()
+      });
+      setDialogOpen(true);
+      window.location.reload();
     } catch (error) {
-      console.error("Erro ao salvar:", error)
+      console.error("Erro ao salvar:", error);
     }
-  }
+  };
 
   return (
     <Flex
@@ -216,5 +216,5 @@ export default function AddTenderFormFixed() {
         />
       </Flex>
     </Flex>
-  )
+  );
 }
