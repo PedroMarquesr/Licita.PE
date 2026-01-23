@@ -112,7 +112,6 @@ export default function FeatureSection() {
           </SlideFromRight>
 
           <Flex flexDir={"column"} gap={"1"}>
-            {/* Primeira linha de cards */}
             <Flex flexDir={{ base: "column", md: "row" }} align={"center"}>
               <ScaleIn delay={0.3}>
                 <FeatureCard
