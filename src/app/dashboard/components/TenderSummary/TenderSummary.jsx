@@ -1,32 +1,43 @@
-"use client";
+"use client"
 
-import { Flex, Text } from "@chakra-ui/react";
-import { collection, getDocs } from "firebase/firestore";
-import { db } from "@/components/libs/firebaseinit";
-import { useState, useEffect } from "react";
+import { Flex, Text } from "@chakra-ui/react"
+import { collection, query, orderBy, limit, getDocs } from "firebase/firestore"
+import { db } from "@/components/libs/firebaseinit"
+import { useState, useEffect } from "react"
+import { SiOpencollective } from "react-icons/si"
 
 export default function TenderSummary() {
-  function getWeekRange() {
-    const now = new Date();
+  const [biddings, setBiddings] = useState([])
 
-    const day = now.getDay();
-    const diffToMonday = day === 0 ? -6 : 1 - day;
+  useEffect(() => {
+    const fetchBiddings = async () => {
+      try {
+        const biddingsRef = collection(db, "biddings")
+        const q = query(biddingsRef, orderBy("disputeDate"), limit(3))
 
-    const startOfWeek = new Date(now);
+        const querySnapshot = await getDocs(q)
+        const listaTemporaria = []
 
-    startOfWeek.setDate(now.getDate() + diffToMonday);
-    startOfWeek.setHours(0, 0, 0, 0);
-
-    const endOfWeek = new Date(startOfWeek);
-    endOfWeek.setDate(startOfWeek.getDate() + 6);
-    endOfWeek.setHours(23, 59, 59, 999);
-
-    return { startOfWeek, endOfWeek };
-  }
-
+        querySnapshot.forEach((doc) => {
+          listaTemporaria.push({ id: doc.id, ...doc.data() })
+        })
+        setBiddings(listaTemporaria)
+        console.log(listaTemporaria)
+      } catch (error) {
+        console.log("Erro ao buscar dados: ", error)
+      } finally {
+        // setLoading(false)
+      }
+    }
+    fetchBiddings()
+  }, [])
   return (
-    <Flex>
-      <Text>Tender Summary </Text>
+    <Flex direction="column">
+      {biddings.map((bidding) => (
+        <Text color={"black"} key={bidding.id}>
+          {bidding.agencyCity}
+        </Text>
+      ))}
     </Flex>
-  );
+  )
 }
