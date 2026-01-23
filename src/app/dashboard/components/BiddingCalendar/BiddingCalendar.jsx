@@ -1,113 +1,115 @@
-"use client"
+"use client";
 
-import { Flex, Box, Text, Grid, Badge, Spinner, Alert } from "@chakra-ui/react"
-import { collection, getDocs } from "firebase/firestore"
-import { db } from "@/components/libs/firebaseinit"
-import { useState, useEffect } from "react"
+import { Flex, Box, Text, Grid, Badge, Spinner, Alert } from "@chakra-ui/react";
+import { collection, getDocs } from "firebase/firestore";
+import { db } from "@/components/libs/firebaseinit";
+import { useState, useEffect } from "react";
 
-import CustomItemGrid from "./components/CustomItemGrid/CustomItemGrid"
-import CustomTitleColumn from "./components/CustomTitleColumn/CustomTitleColumn"
-import BiddingCalendarMenu from "./components/BiddingCalendarMenu/BiddingCalendarMenu"
-import { getBiddingDisplayStatus } from "@/utils/biddingStatus"
+import CustomItemGrid from "./components/CustomItemGrid/CustomItemGrid";
+import CustomTitleColumn from "./components/CustomTitleColumn/CustomTitleColumn";
+import BiddingCalendarMenu from "./components/BiddingCalendarMenu/BiddingCalendarMenu";
+import TenderSummary from "../TenderSummary/TenderSummary";
+
+import { getBiddingDisplayStatus } from "@/utils/biddingStatus";
 
 export default function BiddingCalendar() {
-  const [biddings, setBiddings] = useState([])
-  const [loading, setLoading] = useState(true)
+  const [biddings, setBiddings] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     async function fetchBiddings() {
       try {
-        setLoading(true)
-        const snapshot = await getDocs(collection(db, "biddings"))
+        setLoading(true);
+        const snapshot = await getDocs(collection(db, "biddings"));
         const data = snapshot.docs.map((doc) => ({
           id: doc.id,
           ...doc.data(),
-        }))
-        setBiddings(data)
+        }));
+        setBiddings(data);
       } catch (error) {
-        console.error("Erro ao buscar dados:", error)
+        console.error("Erro ao buscar dados:", error);
       } finally {
-        setLoading(false)
+        setLoading(false);
       }
     }
-    fetchBiddings()
-  }, [])
+    fetchBiddings();
+  }, []);
 
   // Função para converter Timestamp para Date
   const toDate = (timestamp) => {
-    if (!timestamp) return null
+    if (!timestamp) return null;
     // Se for Timestamp do Firestore
     if (timestamp.toDate) {
-      return timestamp.toDate()
+      return timestamp.toDate();
     }
     // Se for objeto com seconds (outro formato)
     if (timestamp.seconds) {
-      return new Date(timestamp.seconds * 1000)
+      return new Date(timestamp.seconds * 1000);
     }
-    return null
-  }
+    return null;
+  };
 
   const sortedBiddings = [...biddings].sort((a, b) => {
-    const dateA = toDate(a.disputeDate)
-    const dateB = toDate(b.disputeDate)
+    const dateA = toDate(a.disputeDate);
+    const dateB = toDate(b.disputeDate);
 
-    if (!dateA && !dateB) return 0
-    if (!dateA) return 1 // Sem data vai para o final
-    if (!dateB) return -1
+    if (!dateA && !dateB) return 0;
+    if (!dateA) return 1; // Sem data vai para o final
+    if (!dateB) return -1;
 
-    return dateB - dateA
-  })
+    return dateB - dateA;
+  });
 
   function groupByDate(biddings) {
-    const grouped = {}
-    const noDateGroup = "Sem data definida"
+    const grouped = {};
+    const noDateGroup = "Sem data definida";
 
     biddings.forEach((bidding) => {
-      const date = toDate(bidding.disputeDate)
+      const date = toDate(bidding.disputeDate);
 
-      let key
+      let key;
       if (!date) {
-        key = noDateGroup
+        key = noDateGroup;
       } else {
         // Formata como DD/MM/YYYY
-        const day = String(date.getDate()).padStart(2, "0")
-        const month = String(date.getMonth() + 1).padStart(2, "0")
-        const year = date.getFullYear()
-        key = `${day}/${month}/${year}`
+        const day = String(date.getDate()).padStart(2, "0");
+        const month = String(date.getMonth() + 1).padStart(2, "0");
+        const year = date.getFullYear();
+        key = `${day}/${month}/${year}`;
       }
 
       if (!grouped[key]) {
-        grouped[key] = []
+        grouped[key] = [];
       }
-      grouped[key].push(bidding)
-    })
+      grouped[key].push(bidding);
+    });
 
-    return grouped
+    return grouped;
   }
 
   function formatTime(timestamp) {
-    const date = toDate(timestamp)
-    if (!date) return "Horário não definido"
+    const date = toDate(timestamp);
+    if (!date) return "Horário não definido";
 
     return date.toLocaleTimeString("pt-BR", {
       hour: "2-digit",
       minute: "2-digit",
-    })
+    });
   }
 
-  const groupedBiddings = groupByDate(sortedBiddings)
+  const groupedBiddings = groupByDate(sortedBiddings);
 
   const gridTemplate = {
     base: "1fr",
     md: "1.2fr 2.5fr 1.5fr 1.5fr 1.2fr 1.5fr 1.2fr 2fr 1fr 1fr 0.5fr",
-  }
+  };
 
   if (loading) {
     return (
       <Flex justify="center" align="center" h="200px">
         <Spinner size="xl" color="blue.500" />
       </Flex>
-    )
+    );
   }
 
   return (
@@ -209,8 +211,8 @@ export default function BiddingCalendar() {
                                 item === "Acompanhamento"
                                   ? "purple"
                                   : item === "Alta Prioridade"
-                                  ? "red"
-                                  : "green"
+                                    ? "red"
+                                    : "green"
                               }
                               mr={1}
                               mb={1}
@@ -240,9 +242,9 @@ export default function BiddingCalendar() {
                       getBiddingDisplayStatus(bidding) === "Finalizada"
                         ? "green.500"
                         : getBiddingDisplayStatus(bidding) ===
-                          "Aguardando atualização"
-                        ? "orange.500"
-                        : "blue.600"
+                            "Aguardando atualização"
+                          ? "orange.500"
+                          : "blue.600"
                     }
                   />
                   <BiddingCalendarMenu biddingId={bidding.id} />
@@ -253,5 +255,5 @@ export default function BiddingCalendar() {
         ))
       )}
     </Flex>
-  )
+  );
 }
