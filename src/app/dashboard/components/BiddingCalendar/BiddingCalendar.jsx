@@ -8,7 +8,6 @@ import { useState, useEffect } from "react";
 import CustomItemGrid from "./components/CustomItemGrid/CustomItemGrid";
 import CustomTitleColumn from "./components/CustomTitleColumn/CustomTitleColumn";
 import BiddingCalendarMenu from "./components/BiddingCalendarMenu/BiddingCalendarMenu";
-import TenderSummary from "../TenderSummary/TenderSummary";
 
 import { getBiddingDisplayStatus } from "@/utils/biddingStatus";
 
