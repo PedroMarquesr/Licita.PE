@@ -23,6 +23,10 @@ import {
 import { db } from "@/components/libs/firebaseinit";
 import { useState, useEffect } from "react";
 
+import BiddingCalendarMenu from "../BiddingCalendar/components/BiddingCalendarMenu/BiddingCalendarMenu";
+
+import { getBiddingDisplayStatus } from "@/utils/biddingStatus";
+
 export default function TenderSummary() {
   const [biddings, setBiddings] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -219,7 +223,7 @@ export default function TenderSummary() {
           <Grid
             templateColumns={{
               base: "1fr",
-              md: "repeat(6, 1fr)",
+              md: "repeat(7, 1fr)",
             }}
             gap={4}
             bg="gray.50"
@@ -258,6 +262,11 @@ export default function TenderSummary() {
                 Data
               </Text>
             </GridItem>
+            <GridItem>
+              <Text fontWeight="bold" color="gray.600">
+                Ação
+              </Text>
+            </GridItem>
           </Grid>
 
           {biddings.map((bidding) => (
@@ -265,7 +274,7 @@ export default function TenderSummary() {
               key={bidding.id}
               templateColumns={{
                 base: "1fr",
-                md: "repeat(6, 1fr)",
+                md: "repeat(7, 1fr)",
               }}
               border="1px solid"
               borderColor="gray.200"
@@ -305,31 +314,38 @@ export default function TenderSummary() {
                   borderRadius="full"
                   display="inline-block"
                   bg={
-                    bidding.status === "Aberta"
+                    bidding.status === "scheduled"
                       ? "green.100"
-                      : bidding.status === "Fechada"
+                      : bidding.status === "finished"
                         ? "red.100"
-                        : bidding.status === "Suspensa"
+                        : bidding.status === "suspended"
                           ? "yellow.100"
-                          : "gray.100"
+                          : bidding.status === "Aguardando atualização"
+                            ? "orange.100"
+                            : "gray.100"
                   }
                   color={
-                    bidding.status === "Aberta"
+                    bidding.status === "finished"
                       ? "green.800"
-                      : bidding.status === "Fechada"
+                      : bidding.status === "finished"
                         ? "red.800"
-                        : bidding.status === "Suspensa"
+                        : bidding.status === "suspended"
                           ? "yellow.800"
-                          : "gray.800"
+                          : bidding.status === "Aguardando atualização"
+                            ? "orange.800"
+                            : "gray.800"
                   }
                 >
                   <Text fontSize="xs" fontWeight="medium">
-                    {bidding.status || "N/A"}
+                    {getBiddingDisplayStatus(bidding) || "N/A"}
                   </Text>
                 </Flex>
               </GridItem>
               <GridItem>
                 <Text fontSize="sm">{bidding.formattedDate}</Text>
+              </GridItem>
+              <GridItem>
+                <BiddingCalendarMenu biddingId={bidding.id} />
               </GridItem>
             </Grid>
           ))}
