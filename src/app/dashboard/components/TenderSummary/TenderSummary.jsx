@@ -1,6 +1,17 @@
 "use client";
 
-import { Flex, Text, Spinner, Alert } from "@chakra-ui/react";
+import {
+  Flex,
+  Text,
+  Spinner,
+  Alert,
+  Grid,
+  GridItem,
+  Box,
+  Heading,
+  Button,
+  HStack,
+} from "@chakra-ui/react";
 import {
   collection,
   query,
@@ -16,69 +27,77 @@ export default function TenderSummary() {
   const [biddings, setBiddings] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [timeRange, setTimeRange] = useState("week"); // 'week' ou '7days'
 
-  useEffect(() => {
-    const fetchBiddings = async () => {
-      try {
-        setLoading(true);
-        setError(null);
+  const fetchBiddingsByWeek = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      setTimeRange("week");
 
-        const today = new Date();
+      const today = new Date();
 
-        const firstDayOfWeek = new Date(today);
-        const dayOfWeek = today.getDay();
-        const diffToSunday = dayOfWeek;
+      const firstDayOfWeek = new Date(today);
+      const dayOfWeek = today.getDay();
+      firstDayOfWeek.setDate(today.getDate() - dayOfWeek);
+      firstDayOfWeek.setHours(0, 0, 0, 0);
 
-        firstDayOfWeek.setDate(today.getDate() - diffToSunday);
-        firstDayOfWeek.setHours(0, 0, 0, 0);
+      const lastDayOfWeek = new Date(firstDayOfWeek);
+      lastDayOfWeek.setDate(firstDayOfWeek.getDate() + 6);
+      lastDayOfWeek.setHours(23, 59, 59, 999);
 
-        const lastDayOfWeek = new Date(firstDayOfWeek);
-        lastDayOfWeek.setDate(firstDayOfWeek.getDate() + 6);
-        lastDayOfWeek.setHours(23, 59, 59, 999);
+      console.log(
+        "Primeiro dia da semana:",
+        firstDayOfWeek.toLocaleDateString(),
+      );
+      console.log("Último dia da semana:", lastDayOfWeek.toLocaleDateString());
 
-        console.log("Primeiro dia da semana:", firstDayOfWeek);
-        console.log("Último dia da semana:", lastDayOfWeek);
+      const biddingsRef = collection(db, "biddings");
+      const startTimestamp = Timestamp.fromDate(firstDayOfWeek);
+      const endTimestamp = Timestamp.fromDate(lastDayOfWeek);
 
-        const biddingsRef = collection(db, "biddings");
+      const q = query(
+        biddingsRef,
+        where("disputeDate", ">=", startTimestamp),
+        where("disputeDate", "<=", endTimestamp),
+        orderBy("disputeDate", "asc"),
+      );
 
-        const startTimestamp = Timestamp.fromDate(firstDayOfWeek);
-        const endTimestamp = Timestamp.fromDate(lastDayOfWeek);
+      const querySnapshot = await getDocs(q);
+      const listaTemporaria = [];
 
-        const q = query(
-          biddingsRef,
-          where("disputeDate", ">=", startTimestamp),
-          where("disputeDate", "<=", endTimestamp),
-          orderBy("disputeDate", "asc"),
-        );
-
-        const querySnapshot = await getDocs(q);
-        const listaTemporaria = [];
-
-        querySnapshot.forEach((doc) => {
-          listaTemporaria.push({
-            id: doc.id,
-            ...doc.data(),
-            disputeDate:
-              doc.data().disputeDate?.toDate?.() || doc.data().disputeDate,
-          });
+      querySnapshot.forEach((doc) => {
+        const data = doc.data();
+        listaTemporaria.push({
+          id: doc.id,
+          ...data,
+          disputeDate: data.disputeDate?.toDate?.() || data.disputeDate,
+          formattedDate:
+            data.disputeDate?.toDate?.()?.toLocaleDateString("pt-BR") || "",
         });
+      });
 
-        console.log("Documentos encontrados:", listaTemporaria.length);
-        setBiddings(listaTemporaria);
-      } catch (error) {
-        console.error("Erro ao buscar dados: ", error);
+      console.log("Documentos encontrados:", listaTemporaria);
+      setBiddings(listaTemporaria);
+    } catch (error) {
+      console.error("Erro ao buscar dados: ", error);
+      if (error.code === "failed-precondition") {
+        setError(
+          `Erro: É necessário criar um índice composto no Firestore para a query. Clique no link no console para criar.`,
+        );
+      } else {
         setError(`Erro ao carregar: ${error.message}`);
-      } finally {
-        setLoading(false);
       }
-    };
-
-    fetchBiddings();
-  }, []);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const fetchLast7Days = async () => {
     try {
       setLoading(true);
+      setError(null);
+      setTimeRange("7days");
 
       const today = new Date();
       const sevenDaysAgo = new Date(today);
@@ -103,9 +122,13 @@ export default function TenderSummary() {
       const listaTemporaria = [];
 
       querySnapshot.forEach((doc) => {
+        const data = doc.data();
         listaTemporaria.push({
           id: doc.id,
-          ...doc.data(),
+          ...data,
+          disputeDate: data.disputeDate?.toDate?.() || data.disputeDate,
+          formattedDate:
+            data.disputeDate?.toDate?.()?.toLocaleDateString("pt-BR") || "",
         });
       });
 
@@ -117,6 +140,10 @@ export default function TenderSummary() {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    fetchBiddingsByWeek();
+  }, []);
 
   if (loading) {
     return (
@@ -134,63 +161,184 @@ export default function TenderSummary() {
     );
   }
 
-  if (error) {
-    return (
-      <Flex direction="column" gap={2} p={4}>
-        <Alert status="error" mb={4}>
-          {error}
-        </Alert>
-        <Text
-          color="blue.500"
-          cursor="pointer"
-          onClick={fetchLast7Days}
-          textDecoration="underline"
-        >
-          Tentar buscar últimas licitações (7 dias)
-        </Text>
-      </Flex>
-    );
-  }
-
   return (
-    <Flex direction="column" gap={2} p={4}>
-      <Text fontSize="xl" fontWeight="bold" mb={4}>
-        Licitações da Semana
-      </Text>
+    <Flex p={4} flexDir={"column"} m={"auto"}>
+      <Flex justify="space-between" align="center" mb={6}>
+        <Heading size="lg">Processos</Heading>
+        <HStack spacing={4}>
+          <Button
+            colorScheme={timeRange === "week" ? "blue" : "gray"}
+            onClick={fetchBiddingsByWeek}
+            size="sm"
+          >
+            Esta Semana
+          </Button>
+          <Button
+            colorScheme={timeRange === "7days" ? "blue" : "gray"}
+            onClick={fetchLast7Days}
+            size="sm"
+          >
+            Últimos 7 Dias
+          </Button>
+        </HStack>
+      </Flex>
+
+      {error && (
+        <Alert status="error" mb={4} borderRadius="md">
+          <Box flex="1">
+            <Text>{error}</Text>
+            <Text fontSize="sm" mt={2}>
+              Dica: Verifique se há índice composto no Firestore para as queries
+              com múltiplas condições.
+            </Text>
+          </Box>
+        </Alert>
+      )}
 
       {biddings.length === 0 ? (
-        <Text color="gray.500" fontStyle="italic">
-          Nenhuma licitação encontrada para esta semana.
-        </Text>
+        <Flex
+          direction="column"
+          align="center"
+          justify="center"
+          h="200px"
+          border="1px dashed"
+          borderColor="gray.300"
+          borderRadius="md"
+        >
+          <Text color="gray.500" fontSize="lg" mb={2}>
+            Nenhuma licitação encontrada
+          </Text>
+          <Text color="gray.400">
+            {timeRange === "week"
+              ? "Não há licitações para esta semana"
+              : "Não há licitações nos últimos 7 dias"}
+          </Text>
+        </Flex>
       ) : (
-        biddings.map((bidding) => (
-          <Flex
-            key={bidding.id}
-            borderBottom="1px solid #eee"
-            py={3}
-            justifyContent="space-between"
-            alignItems="center"
+        <Box overflowX="auto">
+          <Grid
+            templateColumns={{
+              base: "1fr",
+              md: "repeat(6, 1fr)",
+            }}
+            gap={4}
+            bg="gray.50"
+            p={4}
+            borderRadius="md"
+            mb={2}
+            display={{ base: "none", md: "grid" }}
           >
-            <Flex direction="column">
-              <Text color="black" fontWeight="medium">
-                {bidding.agencyCity || "Cidade não informada"}
+            <GridItem>
+              <Text fontWeight="bold" color="gray.600">
+                Número
               </Text>
-              {bidding.disputeDate && (
-                <Text fontSize="sm" color="gray.600">
-                  {new Date(
-                    bidding.disputeDate.seconds * 1000,
-                  ).toLocaleDateString()}
+            </GridItem>
+            <GridItem>
+              <Text fontWeight="bold" color="gray.600">
+                Órgão
+              </Text>
+            </GridItem>
+            <GridItem>
+              <Text fontWeight="bold" color="gray.600">
+                Portal
+              </Text>
+            </GridItem>
+            <GridItem>
+              <Text fontWeight="bold" color="gray.600">
+                Modalidade
+              </Text>
+            </GridItem>
+            <GridItem>
+              <Text fontWeight="bold" color="gray.600">
+                Status
+              </Text>
+            </GridItem>
+            <GridItem>
+              <Text fontWeight="bold" color="gray.600">
+                Data
+              </Text>
+            </GridItem>
+          </Grid>
+
+          {biddings.map((bidding) => (
+            <Grid
+              key={bidding.id}
+              templateColumns={{
+                base: "1fr",
+                md: "repeat(6, 1fr)",
+              }}
+              border="1px solid"
+              borderColor="gray.200"
+              borderRadius="md"
+              px={1}
+              mb={1}
+              alignItems="center"
+              _hover={{ bg: "gray.50" }}
+            >
+              <GridItem>
+                <Text fontWeight="medium">
+                  {bidding.identificationNumber || "N/A"}
                 </Text>
-              )}
-            </Flex>
-            {bidding.processNumber && (
-              <Text fontSize="sm" color="blue.600">
-                {bidding.processNumber}
-              </Text>
-            )}
-          </Flex>
-        ))
+                <Text
+                  fontSize="sm"
+                  color="gray.500"
+                  display={{ base: "block", md: "none" }}
+                >
+                  {bidding.formattedDate}
+                </Text>
+              </GridItem>
+              <GridItem>
+                <Text fontSize="sm" noOfLines={2}>
+                  {bidding.responsibleAgency || "N/A"}
+                </Text>
+              </GridItem>
+              <GridItem>
+                <Text fontSize="sm">{bidding.disputePortalName || "N/A"}</Text>
+              </GridItem>
+              <GridItem>
+                <Text fontSize="sm">{bidding.modality || "N/A"}</Text>
+              </GridItem>
+              <GridItem>
+                <Flex
+                  px={3}
+                  py={1}
+                  borderRadius="full"
+                  display="inline-block"
+                  bg={
+                    bidding.status === "Aberta"
+                      ? "green.100"
+                      : bidding.status === "Fechada"
+                        ? "red.100"
+                        : bidding.status === "Suspensa"
+                          ? "yellow.100"
+                          : "gray.100"
+                  }
+                  color={
+                    bidding.status === "Aberta"
+                      ? "green.800"
+                      : bidding.status === "Fechada"
+                        ? "red.800"
+                        : bidding.status === "Suspensa"
+                          ? "yellow.800"
+                          : "gray.800"
+                  }
+                >
+                  <Text fontSize="xs" fontWeight="medium">
+                    {bidding.status || "N/A"}
+                  </Text>
+                </Flex>
+              </GridItem>
+              <GridItem>
+                <Text fontSize="sm">{bidding.formattedDate}</Text>
+              </GridItem>
+            </Grid>
+          ))}
+        </Box>
       )}
+
+      <Text fontSize="sm" color="gray.500" mt={4}>
+        Total: {biddings.length} licitações encontradas
+      </Text>
     </Flex>
   );
 }
