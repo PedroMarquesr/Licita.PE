@@ -31,7 +31,7 @@ export default function TenderSummary() {
   const [biddings, setBiddings] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
-  const [timeRange, setTimeRange] = useState("week") // 'week' ou '7days'
+  const [timeRange, setTimeRange] = useState("week")
 
   const fetchBiddingsByWeek = async () => {
     try {
@@ -165,6 +165,18 @@ export default function TenderSummary() {
     )
   }
 
+  const checkIfToday = (biddingDate) => {
+    if (!biddingDate) return false
+
+    const today = new Date()
+
+    return (
+      biddingDate.getDate() === today.getDate() &&
+      biddingDate.getMonth() === today.getMonth() &&
+      biddingDate.getFullYear() === today.getFullYear()
+    )
+  }
+
   return (
     <Flex p={4} flexDir={"column"} m={"auto"}>
       <Flex justify="space-between" align="center" mb={6}>
@@ -283,14 +295,21 @@ export default function TenderSummary() {
               border="1px solid"
               borderColor="gray.200"
               borderRadius="md"
+              bgColor={
+                checkIfToday(bidding.disputeDate) ? "yellow.200" : "gray.200"
+              }
               px={1}
               mb={1}
               alignItems="center"
-              _hover={{ bg: "gray.50" }}
+              _hover={
+                checkIfToday(bidding.disputeDate)
+                  ? { bg: "yellow.100" }
+                  : { bg: "gray.50" }
+              }
               textAlign={"center"}
               fontSize={"sm"}
             >
-              <GridItem textAlign={"start"} fontSize={"x-small"}>
+              <GridItem textAlign={"start"} fontSize={"x-small"} lineHeight="1">
                 <Text fontWeight="medium">
                   {bidding.identificationNumber || "N/A"}
                 </Text>
@@ -343,7 +362,12 @@ export default function TenderSummary() {
                   </Text>
                 </Flex>
               </GridItem>
-              <GridItem fontSize={"x-small"}>
+              <GridItem
+                fontSize={"x-small"}
+                fontWeight={
+                  checkIfToday(bidding.disputeDate) ? "bold" : "normal"
+                }
+              >
                 <Text>{bidding.formattedDate}</Text>
               </GridItem>
               <GridItem fontSize={"x-small"}>
