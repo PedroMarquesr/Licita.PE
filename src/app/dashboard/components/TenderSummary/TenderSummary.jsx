@@ -1,4 +1,4 @@
-"use client";
+"use client"
 
 import {
   Flex,
@@ -11,7 +11,7 @@ import {
   Heading,
   Button,
   HStack,
-} from "@chakra-ui/react";
+} from "@chakra-ui/react"
 import {
   collection,
   query,
@@ -19,135 +19,135 @@ import {
   getDocs,
   where,
   Timestamp,
-} from "firebase/firestore";
-import { db } from "@/components/libs/firebaseinit";
-import { useState, useEffect } from "react";
+} from "firebase/firestore"
+import { db } from "@/components/libs/firebaseinit"
+import { useState, useEffect } from "react"
 
-import BiddingCalendarMenu from "../BiddingCalendar/components/BiddingCalendarMenu/BiddingCalendarMenu";
+import BiddingCalendarMenu from "../BiddingCalendar/components/BiddingCalendarMenu/BiddingCalendarMenu"
 
-import { getBiddingDisplayStatus } from "@/utils/biddingStatus";
+import { getBiddingDisplayStatus } from "@/utils/biddingStatus"
 
 export default function TenderSummary() {
-  const [biddings, setBiddings] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const [timeRange, setTimeRange] = useState("week"); // 'week' ou '7days'
+  const [biddings, setBiddings] = useState([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(null)
+  const [timeRange, setTimeRange] = useState("week") // 'week' ou '7days'
 
   const fetchBiddingsByWeek = async () => {
     try {
-      setLoading(true);
-      setError(null);
-      setTimeRange("week");
+      setLoading(true)
+      setError(null)
+      setTimeRange("week")
 
-      const today = new Date();
+      const today = new Date()
 
-      const firstDayOfWeek = new Date(today);
-      const dayOfWeek = today.getDay();
-      firstDayOfWeek.setDate(today.getDate() - dayOfWeek);
-      firstDayOfWeek.setHours(0, 0, 0, 0);
+      const firstDayOfWeek = new Date(today)
+      const dayOfWeek = today.getDay()
+      firstDayOfWeek.setDate(today.getDate() - dayOfWeek)
+      firstDayOfWeek.setHours(0, 0, 0, 0)
 
-      const lastDayOfWeek = new Date(firstDayOfWeek);
-      lastDayOfWeek.setDate(firstDayOfWeek.getDate() + 6);
-      lastDayOfWeek.setHours(23, 59, 59, 999);
+      const lastDayOfWeek = new Date(firstDayOfWeek)
+      lastDayOfWeek.setDate(firstDayOfWeek.getDate() + 6)
+      lastDayOfWeek.setHours(23, 59, 59, 999)
 
       console.log(
         "Primeiro dia da semana:",
-        firstDayOfWeek.toLocaleDateString(),
-      );
-      console.log("Último dia da semana:", lastDayOfWeek.toLocaleDateString());
+        firstDayOfWeek.toLocaleDateString()
+      )
+      console.log("Último dia da semana:", lastDayOfWeek.toLocaleDateString())
 
-      const biddingsRef = collection(db, "biddings");
-      const startTimestamp = Timestamp.fromDate(firstDayOfWeek);
-      const endTimestamp = Timestamp.fromDate(lastDayOfWeek);
+      const biddingsRef = collection(db, "biddings")
+      const startTimestamp = Timestamp.fromDate(firstDayOfWeek)
+      const endTimestamp = Timestamp.fromDate(lastDayOfWeek)
 
       const q = query(
         biddingsRef,
         where("disputeDate", ">=", startTimestamp),
         where("disputeDate", "<=", endTimestamp),
-        orderBy("disputeDate", "asc"),
-      );
+        orderBy("disputeDate", "asc")
+      )
 
-      const querySnapshot = await getDocs(q);
-      const listaTemporaria = [];
+      const querySnapshot = await getDocs(q)
+      const listaTemporaria = []
 
       querySnapshot.forEach((doc) => {
-        const data = doc.data();
+        const data = doc.data()
         listaTemporaria.push({
           id: doc.id,
           ...data,
           disputeDate: data.disputeDate?.toDate?.() || data.disputeDate,
           formattedDate:
             data.disputeDate?.toDate?.()?.toLocaleDateString("pt-BR") || "",
-        });
-      });
+        })
+      })
 
-      console.log("Documentos encontrados:", listaTemporaria);
-      setBiddings(listaTemporaria);
+      console.log("Documentos encontrados:", listaTemporaria)
+      setBiddings(listaTemporaria)
     } catch (error) {
-      console.error("Erro ao buscar dados: ", error);
+      console.error("Erro ao buscar dados: ", error)
       if (error.code === "failed-precondition") {
         setError(
-          `Erro: É necessário criar um índice composto no Firestore para a query. Clique no link no console para criar.`,
-        );
+          `Erro: É necessário criar um índice composto no Firestore para a query. Clique no link no console para criar.`
+        )
       } else {
-        setError(`Erro ao carregar: ${error.message}`);
+        setError(`Erro ao carregar: ${error.message}`)
       }
     } finally {
-      setLoading(false);
+      setLoading(false)
     }
-  };
+  }
 
   const fetchLast7Days = async () => {
     try {
-      setLoading(true);
-      setError(null);
-      setTimeRange("7days");
+      setLoading(true)
+      setError(null)
+      setTimeRange("7days")
 
-      const today = new Date();
-      const sevenDaysAgo = new Date(today);
-      sevenDaysAgo.setDate(today.getDate() - 7);
-      sevenDaysAgo.setHours(0, 0, 0, 0);
+      const today = new Date()
+      const sevenDaysAgo = new Date(today)
+      sevenDaysAgo.setDate(today.getDate() - 7)
+      sevenDaysAgo.setHours(0, 0, 0, 0)
 
-      const endDate = new Date(today);
-      endDate.setHours(23, 59, 59, 999);
+      const endDate = new Date(today)
+      endDate.setHours(23, 59, 59, 999)
 
-      const startTimestamp = Timestamp.fromDate(sevenDaysAgo);
-      const endTimestamp = Timestamp.fromDate(endDate);
+      const startTimestamp = Timestamp.fromDate(sevenDaysAgo)
+      const endTimestamp = Timestamp.fromDate(endDate)
 
-      const biddingsRef = collection(db, "biddings");
+      const biddingsRef = collection(db, "biddings")
       const q = query(
         biddingsRef,
         where("disputeDate", ">=", startTimestamp),
         where("disputeDate", "<=", endTimestamp),
-        orderBy("disputeDate", "desc"),
-      );
+        orderBy("disputeDate", "desc")
+      )
 
-      const querySnapshot = await getDocs(q);
-      const listaTemporaria = [];
+      const querySnapshot = await getDocs(q)
+      const listaTemporaria = []
 
       querySnapshot.forEach((doc) => {
-        const data = doc.data();
+        const data = doc.data()
         listaTemporaria.push({
           id: doc.id,
           ...data,
           disputeDate: data.disputeDate?.toDate?.() || data.disputeDate,
           formattedDate:
             data.disputeDate?.toDate?.()?.toLocaleDateString("pt-BR") || "",
-        });
-      });
+        })
+      })
 
-      setBiddings(listaTemporaria);
+      setBiddings(listaTemporaria)
     } catch (error) {
-      console.error("Erro na busca alternativa: ", error);
-      setError(error.message);
+      console.error("Erro na busca alternativa: ", error)
+      setError(error.message)
     } finally {
-      setLoading(false);
+      setLoading(false)
     }
-  };
+  }
 
   useEffect(() => {
-    fetchBiddingsByWeek();
-  }, []);
+    fetchBiddingsByWeek()
+  }, [])
 
   if (loading) {
     return (
@@ -162,7 +162,7 @@ export default function TenderSummary() {
         <Spinner size="xl" color="blue.500" />
         <Text mt={4}>Carregando licitações...</Text>
       </Flex>
-    );
+    )
   }
 
   return (
@@ -228,9 +228,13 @@ export default function TenderSummary() {
             gap={4}
             bg="gray.50"
             p={4}
+            alignContent={"space-between"}
+            justifyContent={"center"}
             borderRadius="md"
             mb={2}
             display={{ base: "none", md: "grid" }}
+            textAlign={"center"}
+            fontSize={"sm"}
           >
             <GridItem>
               <Text fontWeight="bold" color="gray.600">
@@ -283,31 +287,29 @@ export default function TenderSummary() {
               mb={1}
               alignItems="center"
               _hover={{ bg: "gray.50" }}
+              textAlign={"center"}
+              fontSize={"sm"}
             >
-              <GridItem>
+              <GridItem textAlign={"start"} fontSize={"x-small"}>
                 <Text fontWeight="medium">
                   {bidding.identificationNumber || "N/A"}
                 </Text>
-                <Text
-                  fontSize="sm"
-                  color="gray.500"
-                  display={{ base: "block", md: "none" }}
-                >
+                <Text color="gray.500" display={{ base: "block", md: "none" }}>
                   {bidding.formattedDate}
                 </Text>
               </GridItem>
-              <GridItem>
-                <Text fontSize="sm" noOfLines={2}>
+              <GridItem fontSize={"x-small"}>
+                <Text noOfLines={2} textAlign={"start"}>
                   {bidding.responsibleAgency || "N/A"}
                 </Text>
               </GridItem>
-              <GridItem>
-                <Text fontSize="sm">{bidding.disputePortalName || "N/A"}</Text>
+              <GridItem fontSize={"x-small"}>
+                <Text>{bidding.disputePortalName || "N/A"}</Text>
               </GridItem>
-              <GridItem>
-                <Text fontSize="sm">{bidding.modality || "N/A"}</Text>
+              <GridItem fontSize={"x-small"}>
+                <Text>{bidding.modality || "N/A"}</Text>
               </GridItem>
-              <GridItem>
+              <GridItem fontSize={"x-small"}>
                 <Flex
                   px={3}
                   py={1}
@@ -317,34 +319,34 @@ export default function TenderSummary() {
                     bidding.status === "scheduled"
                       ? "green.100"
                       : bidding.status === "finished"
-                        ? "red.100"
-                        : bidding.status === "suspended"
-                          ? "yellow.100"
-                          : bidding.status === "Aguardando atualização"
-                            ? "orange.100"
-                            : "gray.100"
+                      ? "red.100"
+                      : bidding.status === "suspended"
+                      ? "yellow.100"
+                      : bidding.status === "Aguardando atualização"
+                      ? "orange.100"
+                      : "gray.100"
                   }
                   color={
                     bidding.status === "finished"
                       ? "green.800"
                       : bidding.status === "finished"
-                        ? "red.800"
-                        : bidding.status === "suspended"
-                          ? "yellow.800"
-                          : bidding.status === "Aguardando atualização"
-                            ? "orange.800"
-                            : "gray.800"
+                      ? "red.800"
+                      : bidding.status === "suspended"
+                      ? "yellow.800"
+                      : bidding.status === "Aguardando atualização"
+                      ? "orange.800"
+                      : "gray.800"
                   }
                 >
-                  <Text fontSize="xs" fontWeight="medium">
+                  <Text fontSize={"x-small"} fontWeight="medium">
                     {getBiddingDisplayStatus(bidding) || "N/A"}
                   </Text>
                 </Flex>
               </GridItem>
-              <GridItem>
-                <Text fontSize="sm">{bidding.formattedDate}</Text>
+              <GridItem fontSize={"x-small"}>
+                <Text>{bidding.formattedDate}</Text>
               </GridItem>
-              <GridItem>
+              <GridItem fontSize={"x-small"}>
                 <BiddingCalendarMenu biddingId={bidding.id} />
               </GridItem>
             </Grid>
@@ -356,5 +358,5 @@ export default function TenderSummary() {
         Total: {biddings.length} licitações encontradas
       </Text>
     </Flex>
-  );
+  )
 }
