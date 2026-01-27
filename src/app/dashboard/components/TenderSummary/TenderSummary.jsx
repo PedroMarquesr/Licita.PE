@@ -289,7 +289,7 @@ export default function TenderSummary() {
             <Grid
               key={bidding.id}
               templateColumns={{
-                base: "1fr",
+                base: /*"1fr"*/ "repeat(7, 1fr)",
                 md: "repeat(7, 1fr)",
               }}
               border="1px solid"
