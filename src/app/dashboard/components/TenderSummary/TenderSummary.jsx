@@ -25,7 +25,7 @@ import { db } from "@/components/libs/firebaseinit"
 import { useState, useEffect } from "react"
 
 import BiddingCalendarMenu from "../BiddingCalendar/components/BiddingCalendarMenu/BiddingCalendarMenu"
-
+import MobileCardTenderSummary from "./components/MobileCardTenderSummary/MobileCardTenderSummary"
 import { getBiddingDisplayStatus } from "@/utils/biddingStatus"
 
 export default function TenderSummary() {
@@ -33,7 +33,7 @@ export default function TenderSummary() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
   const [timeRange, setTimeRange] = useState("week")
-  const [viewIsOpen, setViewIsOpen] = useState(false)
+  const [viewIsOpen, setViewIsOpen] = useState(true)
 
   const fetchBiddingsByWeek = async () => {
     try {
@@ -180,11 +180,11 @@ export default function TenderSummary() {
   }
 
   return (
-    <Flex flexDir={"column"} m={"auto"} justifyContent={"center"}>
+    <Flex flexDir={"column"} overflowX="hidden">
       <Switch.Root
         py={2}
         justifyContent={"left"}
-        w={"100vw"}
+        w={"100%"}
         onCheckedChange={() => setViewIsOpen(!viewIsOpen)}
         display={{ base: "block", md: "none" }}
         colorPalette={"blue"}
@@ -199,7 +199,7 @@ export default function TenderSummary() {
       </Switch.Root>
 
       {viewIsOpen && (
-        <Flex p={4} flexDir={"column"} m={"auto"}>
+        <Flex p={4} flexDir="column" w="100%">
           <Flex justify="space-between" align="center" mb={6}>
             <Heading size="lg">Processos</Heading>
             <HStack spacing={4}>
@@ -252,161 +252,170 @@ export default function TenderSummary() {
               </Text>
             </Flex>
           ) : (
-            <Box overflowX="auto">
-              <Grid
-                templateColumns={{
-                  base: "1fr",
-                  md: "repeat(7, 1fr)",
-                }}
-                gap={4}
-                bg="gray.50"
-                p={4}
-                alignContent={"space-between"}
-                justifyContent={"center"}
-                borderRadius="md"
-                mb={2}
-                display={{ base: "none", md: "grid" }}
-                textAlign={"center"}
-                fontSize={"sm"}
-              >
-                <GridItem>
-                  <Text fontWeight="bold" color="gray.600">
-                    Número
-                  </Text>
-                </GridItem>
-                <GridItem>
-                  <Text fontWeight="bold" color="gray.600">
-                    Órgão
-                  </Text>
-                </GridItem>
-                <GridItem>
-                  <Text fontWeight="bold" color="gray.600">
-                    Portal
-                  </Text>
-                </GridItem>
-                <GridItem>
-                  <Text fontWeight="bold" color="gray.600">
-                    Modalidade
-                  </Text>
-                </GridItem>
-                <GridItem>
-                  <Text fontWeight="bold" color="gray.600">
-                    Status
-                  </Text>
-                </GridItem>
-                <GridItem>
-                  <Text fontWeight="bold" color="gray.600">
-                    Data
-                  </Text>
-                </GridItem>
-                <GridItem>
-                  <Text fontWeight="bold" color="gray.600">
-                    Ação
-                  </Text>
-                </GridItem>
-              </Grid>
-
-              {biddings.map((bidding) => (
+            <>
+              <Box overflowX="auto" display={{ base: "none", md: "block" }}>
                 <Grid
-                  key={bidding.id}
                   templateColumns={{
                     base: "1fr",
                     md: "repeat(7, 1fr)",
                   }}
-                  overflow={"auto"}
-                  border="1px solid"
-                  borderColor="gray.200"
+                  gap={4}
+                  bg="gray.50"
+                  p={4}
+                  alignContent={"space-between"}
+                  justifyContent={"center"}
                   borderRadius="md"
-                  bgColor={
-                    checkIfToday(bidding.disputeDate)
-                      ? "yellow.200"
-                      : "gray.200"
-                  }
-                  px={1}
-                  mb={1}
-                  alignItems="center"
-                  _hover={
-                    checkIfToday(bidding.disputeDate)
-                      ? { bg: "yellow.100" }
-                      : { bg: "gray.50" }
-                  }
+                  mb={2}
                   textAlign={"center"}
                   fontSize={"sm"}
                 >
-                  <GridItem
-                    textAlign={"start"}
-                    fontSize={"x-small"}
-                    lineHeight="1"
-                  >
-                    <Text fontWeight="medium">
-                      {bidding.identificationNumber || "N/A"}
-                    </Text>
-                    <Text
-                      color="gray.500"
-                      display={{ base: "block", md: "none" }}
-                    >
-                      {bidding.formattedDate}
+                  <GridItem>
+                    <Text fontWeight="bold" color="gray.600">
+                      Número
                     </Text>
                   </GridItem>
-                  <GridItem fontSize={"x-small"}>
-                    <Text noOfLines={2} textAlign={"start"}>
-                      {bidding.responsibleAgency || "N/A"}
+                  <GridItem>
+                    <Text fontWeight="bold" color="gray.600">
+                      Órgão
                     </Text>
                   </GridItem>
-                  <GridItem fontSize={"x-small"}>
-                    <Text>{bidding.disputePortalName || "N/A"}</Text>
+                  <GridItem>
+                    <Text fontWeight="bold" color="gray.600">
+                      Portal
+                    </Text>
                   </GridItem>
-                  <GridItem fontSize={"x-small"}>
-                    <Text>{bidding.modality || "N/A"}</Text>
+                  <GridItem>
+                    <Text fontWeight="bold" color="gray.600">
+                      Modalidade
+                    </Text>
                   </GridItem>
-                  <GridItem fontSize={"x-small"}>
-                    <Flex
-                      px={3}
-                      py={1}
-                      borderRadius="full"
-                      display="inline-block"
-                      bg={
-                        bidding.status === "scheduled"
-                          ? "green.100"
-                          : bidding.status === "finished"
-                          ? "red.100"
-                          : bidding.status === "suspended"
-                          ? "yellow.100"
-                          : bidding.status === "Aguardando atualização"
-                          ? "orange.100"
-                          : "gray.100"
-                      }
-                      color={
-                        bidding.status === "finished"
-                          ? "green.800"
-                          : bidding.status === "finished"
-                          ? "red.800"
-                          : bidding.status === "suspended"
-                          ? "yellow.800"
-                          : bidding.status === "Aguardando atualização"
-                          ? "orange.800"
-                          : "gray.800"
-                      }
-                    >
-                      <Text fontSize={"x-small"} fontWeight="medium">
-                        {getBiddingDisplayStatus(bidding) || "N/A"}
-                      </Text>
-                    </Flex>
+                  <GridItem>
+                    <Text fontWeight="bold" color="gray.600">
+                      Status
+                    </Text>
                   </GridItem>
-                  <GridItem
-                    fontSize={"x-small"}
-                    fontWeight={
-                      checkIfToday(bidding.disputeDate) ? "bold" : "normal"
-                    }
-                  >
-                    <Text>{bidding.formattedDate}</Text>
+                  <GridItem>
+                    <Text fontWeight="bold" color="gray.600">
+                      Data
+                    </Text>
                   </GridItem>
-                  <GridItem fontSize={"x-small"}>
-                    <BiddingCalendarMenu biddingId={bidding.id} />
+                  <GridItem>
+                    <Text fontWeight="bold" color="gray.600">
+                      Ação
+                    </Text>
                   </GridItem>
                 </Grid>
+
+                {biddings.map((bidding) => (
+                  <Grid
+                    key={bidding.id}
+                    templateColumns={{
+                      base: "1fr",
+                      md: "repeat(7, 1fr)",
+                    }}
+                    overflow={"auto"}
+                    border="1px solid"
+                    borderColor="gray.200"
+                    borderRadius="md"
+                    bgColor={
+                      checkIfToday(bidding.disputeDate)
+                        ? "yellow.200"
+                        : "gray.200"
+                    }
+                    px={1}
+                    mb={1}
+                    alignItems="center"
+                    _hover={
+                      checkIfToday(bidding.disputeDate)
+                        ? { bg: "yellow.100" }
+                        : { bg: "gray.50" }
+                    }
+                    textAlign={"center"}
+                    fontSize={"sm"}
+                  >
+                    <GridItem
+                      textAlign={"start"}
+                      fontSize={"x-small"}
+                      lineHeight="1"
+                    >
+                      <Text fontWeight="medium">
+                        {bidding.identificationNumber || "N/A"}
+                      </Text>
+                      <Text
+                        color="gray.500"
+                        display={{ base: "block", md: "none" }}
+                      >
+                        {bidding.formattedDate}
+                      </Text>
+                    </GridItem>
+                    <GridItem fontSize={"x-small"}>
+                      <Text noOfLines={2} textAlign={"start"}>
+                        {bidding.responsibleAgency || "N/A"}
+                      </Text>
+                    </GridItem>
+                    <GridItem fontSize={"x-small"}>
+                      <Text>{bidding.disputePortalName || "N/A"}</Text>
+                    </GridItem>
+                    <GridItem fontSize={"x-small"}>
+                      <Text>{bidding.modality || "N/A"}</Text>
+                    </GridItem>
+                    <GridItem fontSize={"x-small"}>
+                      <Flex
+                        px={3}
+                        py={1}
+                        borderRadius="full"
+                        display="inline-block"
+                        bg={
+                          bidding.status === "scheduled"
+                            ? "green.100"
+                            : bidding.status === "finished"
+                            ? "red.100"
+                            : bidding.status === "suspended"
+                            ? "yellow.100"
+                            : bidding.status === "Aguardando atualização"
+                            ? "orange.100"
+                            : "gray.100"
+                        }
+                        color={
+                          bidding.status === "finished"
+                            ? "green.800"
+                            : bidding.status === "finished"
+                            ? "red.800"
+                            : bidding.status === "suspended"
+                            ? "yellow.800"
+                            : bidding.status === "Aguardando atualização"
+                            ? "orange.800"
+                            : "gray.800"
+                        }
+                      >
+                        <Text fontSize={"x-small"} fontWeight="medium">
+                          {getBiddingDisplayStatus(bidding) || "N/A"}
+                        </Text>
+                      </Flex>
+                    </GridItem>
+                    <GridItem
+                      fontSize={"x-small"}
+                      fontWeight={
+                        checkIfToday(bidding.disputeDate) ? "bold" : "normal"
+                      }
+                    >
+                      <Text>{bidding.formattedDate}</Text>
+                    </GridItem>
+                    <GridItem fontSize={"x-small"}>
+                      <BiddingCalendarMenu biddingId={bidding.id} />
+                    </GridItem>
+                  </Grid>
+                ))}
+              </Box>
+              {biddings.map((bidding) => (
+                <Box display={{ base: "block", md: "none" }} key={bidding.id}>
+                  <MobileCardTenderSummary
+                    dateFormated={bidding.formattedDate}
+                    orgao={bidding.responsibleAgency}
+                  />
+                </Box>
               ))}
-            </Box>
+            </>
           )}
 
           <Text fontSize="sm" color="gray.500" mt={4}>
