@@ -74,6 +74,7 @@ export default function MobileCardTenderSummary({
   dateFormated,
   fontWeight,
   bgColor,
+  flagToday,
   identificationNumber,
   bgColorStatus,
   colorStatus,
@@ -93,23 +94,36 @@ export default function MobileCardTenderSummary({
       borderColor="gray.100"
       alignItems="flex-start"
       gap="3"
+      // bgColor={bgColor}
     >
-      {/* Indicador de data */}
-      <Box
-        bg="blue.50"
-        color="blue.700"
-        px="2"
-        py="1"
-        borderRadius="md"
-        fontSize="xs"
-        fontWeight="bold"
-        minW="60px"
-        textAlign="center"
-      >
-        {dateFormated}
-      </Box>
+      <Flex flexDir={"column"}>
+        {" "}
+        <Box
+          bg="blue.50"
+          color="blue.700"
+          px="2"
+          py="1"
+          borderRadius="md"
+          fontSize="xs"
+          fontWeight="bold"
+          minW="60px"
+          textAlign="center"
+        >
+          {dateFormated}
+        </Box>
+        <Text
+          color="red.500"
+          display={flagToday}
+          fontSize="xs"
+          mt="1"
+          pl={8}
+          bgColor={"red.100"}
+          fontWeight="bold"
+        >
+          Hoje
+        </Text>
+      </Flex>
 
-      {/* Conteúdo principal */}
       <Flex flexDir="column" flex="1" minW="0">
         <Text
           fontSize="sm"
@@ -131,7 +145,6 @@ export default function MobileCardTenderSummary({
           </Text>
         </Flex>
 
-        {/* Status badge */}
         <Tag.Root
           size="sm"
           variant="subtle"

@@ -420,6 +420,9 @@ export default function TenderSummary() {
                     }
                     dateFormated={bidding.formattedDate}
                     orgao={bidding.responsibleAgency}
+                    flagToday={
+                      checkIfToday(bidding.disputeDate) ? "flex" : "none"
+                    }
                     identificationNumber={bidding.identificationNumber}
                     colorStatus={
                       bidding.status === "finished"
