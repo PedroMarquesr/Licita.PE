@@ -357,7 +357,7 @@ export default function TenderSummary() {
                       <Text>{bidding.disputePortalName || "N/A"}</Text>
                     </GridItem>
                     <GridItem fontSize={"x-small"}>
-                      <Text>{bidding.modality || "N/A"}</Text>
+                      <Text>{bidding.biddingType || "N/A"}</Text>
                     </GridItem>
                     <GridItem fontSize={"x-small"}>
                       <Flex
@@ -410,8 +410,41 @@ export default function TenderSummary() {
               {biddings.map((bidding) => (
                 <Box display={{ base: "block", md: "none" }} key={bidding.id}>
                   <MobileCardTenderSummary
+                    bgColor={
+                      checkIfToday(bidding.disputeDate)
+                        ? "yellow.100"
+                        : "blue.100"
+                    }
+                    fontWeight={
+                      checkIfToday(bidding.disputeDate) ? "bold" : "normal"
+                    }
                     dateFormated={bidding.formattedDate}
                     orgao={bidding.responsibleAgency}
+                    identificationNumber={bidding.identificationNumber}
+                    colorStatus={
+                      bidding.status === "finished"
+                        ? "green.800"
+                        : bidding.status === "finished"
+                        ? "red.800"
+                        : bidding.status === "suspended"
+                        ? "yellow.800"
+                        : bidding.status === "Aguardando atualização"
+                        ? "orange.800"
+                        : "gray.800"
+                    }
+                    bgColorStatus={
+                      bidding.status === "scheduled"
+                        ? "green.100"
+                        : bidding.status === "finished"
+                        ? "red.100"
+                        : bidding.status === "suspended"
+                        ? "yellow.100"
+                        : bidding.status === "Aguardando atualização"
+                        ? "orange.100"
+                        : "gray.100"
+                    }
+                    biddingStatus={getBiddingDisplayStatus(bidding) || "N/A"}
+                    biddingType={bidding.biddingType[0]}
                   />
                 </Box>
               ))}
