@@ -412,8 +412,8 @@ export default function TenderSummary() {
                   <MobileCardTenderSummary
                     bgColor={
                       checkIfToday(bidding.disputeDate)
-                        ? "yellow.100"
-                        : "blue.100"
+                        ? "yellow.200"
+                        : "gray.100"
                     }
                     fontWeight={
                       checkIfToday(bidding.disputeDate) ? "bold" : "normal"
@@ -444,7 +444,7 @@ export default function TenderSummary() {
                         : "gray.100"
                     }
                     biddingStatus={getBiddingDisplayStatus(bidding) || "N/A"}
-                    biddingType={bidding.biddingType[0]}
+                    biddingType={bidding.biddingType}
                   />
                 </Box>
               ))}
