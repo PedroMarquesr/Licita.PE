@@ -197,6 +197,8 @@ export default function AddTenderFormFixed() {
         <BiddingWizard
           biddingData={biddingData}
           setBiddingData={setBiddingData}
+          setEdit={setEdit}
+          edit={edit}
         />
       </Flex>
       <Flex

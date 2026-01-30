@@ -4,7 +4,12 @@ import { Flex, Text, Grid, GridItem } from "@chakra-ui/react";
 import InputDefaultForm from "../components/InputDefaultForm/InputDefaultForm.jsx";
 import CustomSelect from "./components/CustomSelect/CustomSelect";
 
-export default function IdentificationStep({ biddingData, setBiddingData }) {
+export default function IdentificationStep({
+  biddingData,
+  setBiddingData,
+  edit,
+  setEdit,
+}) {
   const modalityOptions = [
     { label: "Aberto", value: "Aberto" },
     { label: "Aberto/Fechado", value: "Aberto/Fechado" },
@@ -45,7 +50,7 @@ export default function IdentificationStep({ biddingData, setBiddingData }) {
     if (numbers.length !== 14) return cnpj;
     return `${numbers.slice(0, 2)}.${numbers.slice(2, 5)}.${numbers.slice(
       5,
-      8
+      8,
     )}/${numbers.slice(8, 12)}-${numbers.slice(12, 14)}`;
   };
 
@@ -69,6 +74,7 @@ export default function IdentificationStep({ biddingData, setBiddingData }) {
           </Text>
           <Flex gap={3} direction="column">
             <InputDefaultForm
+              edit={edit}
               legend={"Nome do Órgão*"}
               placeholder={"Digite o nome do Órgão responsável"}
               inputValue={biddingData.responsibleAgency}

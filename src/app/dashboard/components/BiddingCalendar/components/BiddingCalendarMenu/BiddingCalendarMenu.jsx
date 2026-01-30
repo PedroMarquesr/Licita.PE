@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { HiOutlineDotsVertical } from "react-icons/hi";
 import { MdEdit } from "react-icons/md";
 import { FaTrash } from "react-icons/fa";
+import { CiEdit } from "react-icons/ci";
 
 import { FaMagnifyingGlass } from "react-icons/fa6";
 import { TbPlayerTrackNextFilled } from "react-icons/tb";
