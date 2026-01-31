@@ -36,15 +36,17 @@ export default function BiddingCalendarMenu({ biddingId }) {
             <Text fontSize={"xl"} display={{ base: "none", md: "flex" }}>
               <HiOutlineDotsVertical />
             </Text>
+
             <Text
               textAlign={"center"}
               justifyContent={"center"}
               borderRadius="md"
               bgColor={"gray.800"}
               color={"gray.200"}
-              w={20}
-              px={2}
-              py={1}
+              fontSize={"sm"}
+              w={"65px"}
+              px={1}
+              // py={1}
               display={{ base: "flex", md: "none" }}
             >
               Opções
