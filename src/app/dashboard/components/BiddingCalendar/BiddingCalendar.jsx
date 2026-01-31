@@ -11,9 +11,15 @@ import BiddingCalendarMenu from "./components/BiddingCalendarMenu/BiddingCalenda
 
 import { getBiddingDisplayStatus } from "@/utils/biddingStatus";
 
-export default function BiddingCalendar() {
+export default function BiddingCalendar({}) {
   const [biddings, setBiddings] = useState([]);
   const [loading, setLoading] = useState(true);
+
+  const [viewIsOpen, setViewIsOpen] = useState(true);
+  const [modalOpen, setModalOpen] = useState(false);
+  const [biddingData, setBiddingData] = useState({});
+  const [edit, setEdit] = useState(false);
+  const [showButtonEdit, setShowButtonEdit] = useState(false);
 
   useEffect(() => {
     async function fetchBiddings() {

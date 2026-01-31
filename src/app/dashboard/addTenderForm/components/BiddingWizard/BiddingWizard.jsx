@@ -19,6 +19,7 @@ export default function BiddingWizard({
   setDate,
   edit,
   setEdit,
+  showButtonEdit,
 }) {
   const [activeStep, setActiveStep] = useState(1);
 
@@ -92,9 +93,18 @@ export default function BiddingWizard({
       gap={4}
       align={"center"}
     >
-      <IconButton onClick={() => setEdit(!edit)}>
-        <CiEdit />
-      </IconButton>
+      <Flex justify="flex-end" w="100%">
+        <IconButton
+          display={showButtonEdit ? "flex" : "none"}
+          aria-label="Edit Button"
+          onClick={() => setEdit(!edit)}
+          bgColor={"blue.500"}
+          color={"white"}
+          _hover={{ bgColor: "blue.600" }}
+        >
+          <CiEdit />
+        </IconButton>
+      </Flex>
       <MenuForm activeStep={activeStep} onStepChange={handleStepChange} />
       <Flex flex={1} justify="center" w="100%">
         {renderStepContent()}
