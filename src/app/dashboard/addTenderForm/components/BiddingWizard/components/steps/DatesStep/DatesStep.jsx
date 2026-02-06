@@ -3,7 +3,12 @@
 import { Flex, Text, Grid, GridItem } from "@chakra-ui/react"
 import InputDefaultForm from "../components/InputDefaultForm/InputDefaultForm.jsx"
 
-export default function DatesStep({ biddingData, setBiddingData }) {
+export default function DatesStep({
+  biddingData,
+  setBiddingData,
+  edit,
+  setEdit,
+}) {
   return (
     <Flex direction="column" w="100%" align="center" gap={6}>
       <Text
@@ -24,6 +29,7 @@ export default function DatesStep({ biddingData, setBiddingData }) {
           </Text>
           <Flex gap={3} direction={{ base: "column", md: "row" }}>
             <InputDefaultForm
+              edit={edit}
               typeInput={"date"}
               legend={"Data*"}
               inputValue={biddingData.disputeDate}
@@ -34,6 +40,7 @@ export default function DatesStep({ biddingData, setBiddingData }) {
               layout="vertical"
             />
             <InputDefaultForm
+              edit={edit}
               typeInput={"time"}
               legend={"Horário*"}
               inputValue={biddingData.disputeTime}
@@ -52,6 +59,7 @@ export default function DatesStep({ biddingData, setBiddingData }) {
           </Text>
           <Flex gap={3} direction={{ base: "column", md: "row" }}>
             <InputDefaultForm
+              edit={edit}
               typeInput={"date"}
               legend={"Data"}
               inputValue={biddingData.proposalDeadlineDate}
@@ -66,6 +74,7 @@ export default function DatesStep({ biddingData, setBiddingData }) {
               minWidth="10px"
             />
             <InputDefaultForm
+              edit={edit}
               typeInput={"time"}
               legend={"Hora limite"}
               inputValue={biddingData.proposalDeadlineTime}
@@ -87,6 +96,7 @@ export default function DatesStep({ biddingData, setBiddingData }) {
           </Text>
           <Flex gap={3} direction={{ base: "column", md: "row" }}>
             <InputDefaultForm
+              edit={edit}
               typeInput={"date"}
               legend={"Data*"}
               inputValue={biddingData.proposalOpeningDate}
@@ -99,6 +109,7 @@ export default function DatesStep({ biddingData, setBiddingData }) {
               flex={1}
             />
             <InputDefaultForm
+              edit={edit}
               typeInput={"time"}
               legend={"Horário*"}
               inputValue={biddingData.proposalOpeningTime}
@@ -120,6 +131,7 @@ export default function DatesStep({ biddingData, setBiddingData }) {
           </Text>
           <Flex gap={3} direction={{ base: "column", md: "row" }}>
             <InputDefaultForm
+              edit={edit}
               typeInput={"date"}
               legend={"Data"}
               inputValue={biddingData.closingDate}
@@ -132,6 +144,7 @@ export default function DatesStep({ biddingData, setBiddingData }) {
               flex={1}
             />
             <InputDefaultForm
+              edit={edit}
               typeInput={"time"}
               legend={"Horário"}
               inputValue={biddingData.closingTime}

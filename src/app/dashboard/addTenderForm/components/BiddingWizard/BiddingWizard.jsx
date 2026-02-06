@@ -1,6 +1,6 @@
 "use client"
 
-import { Flex, Text } from "@chakra-ui/react"
+import { Flex, Text, IconButton } from "@chakra-ui/react"
 import MenuForm from "./components/MenuForm/MenuForm"
 
 import IdentificationStep from "./components/steps/IdentificationStep/IdentificationStep"
@@ -8,6 +8,7 @@ import DatesStep from "./components/steps/DatesStep/DatesStep"
 import LocalStep from "./components/steps/LocalStep/LocalStep"
 import DocumentationStep from "./components/steps/DocumentationStep/DocumentationStep"
 import ComplementaryStep from "./components/steps/ComplementaryStep/ComplementaryStep"
+import { CiEdit } from "react-icons/ci"
 
 import { useState } from "react"
 
@@ -16,6 +17,9 @@ export default function BiddingWizard({
   setBiddingData,
   date,
   setDate,
+  edit,
+  setEdit,
+  showButtonEdit,
 }) {
   const [activeStep, setActiveStep] = useState(1)
 
@@ -32,6 +36,8 @@ export default function BiddingWizard({
             <IdentificationStep
               biddingData={biddingData}
               setBiddingData={setBiddingData}
+              edit={edit}
+              setEdit={setEdit}
             />
           </>
         )
@@ -42,11 +48,15 @@ export default function BiddingWizard({
             setBiddingData={setBiddingData}
             date={date}
             setDate={setDate}
+            edit={edit}
+            setEdit={setEdit}
           />
         )
       case 3:
         return (
           <LocalStep
+            edit={edit}
+            setEdit={setEdit}
             biddingData={biddingData}
             setBiddingData={setBiddingData}
           />
@@ -54,6 +64,8 @@ export default function BiddingWizard({
       case 4:
         return (
           <DocumentationStep
+            edit={edit}
+            setEdit={setEdit}
             biddingData={biddingData}
             setBiddingData={setBiddingData}
           />
@@ -61,6 +73,8 @@ export default function BiddingWizard({
       case 5:
         return (
           <ComplementaryStep
+            edit={edit}
+            setEdit={setEdit}
             biddingData={biddingData}
             setBiddingData={setBiddingData}
           />
@@ -87,6 +101,18 @@ export default function BiddingWizard({
       gap={4}
       align={"center"}
     >
+      <Flex justify="flex-end" w="100%">
+        <IconButton
+          display={showButtonEdit ? "flex" : "none"}
+          aria-label="Edit Button"
+          onClick={() => setEdit(!edit)}
+          bgColor={"blue.500"}
+          color={"white"}
+          _hover={{ bgColor: "blue.600" }}
+        >
+          <CiEdit />
+        </IconButton>
+      </Flex>
       <MenuForm activeStep={activeStep} onStepChange={handleStepChange} />
       <Flex flex={1} justify="center" w="100%">
         {renderStepContent()}

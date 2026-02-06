@@ -1,23 +1,28 @@
-"use client";
+"use client"
 
-import { Flex, Text, Grid, GridItem } from "@chakra-ui/react";
-import InputDefaultForm from "../components/InputDefaultForm/InputDefaultForm.jsx";
-import CustomSelect from "./components/CustomSelect/CustomSelect";
+import { Flex, Text, Grid, GridItem } from "@chakra-ui/react"
+import InputDefaultForm from "../components/InputDefaultForm/InputDefaultForm.jsx"
+import CustomSelect from "./components/CustomSelect/CustomSelect"
 
-export default function IdentificationStep({ biddingData, setBiddingData }) {
+export default function IdentificationStep({
+  biddingData,
+  setBiddingData,
+  edit,
+  setEdit,
+}) {
   const modalityOptions = [
     { label: "Aberto", value: "Aberto" },
     { label: "Aberto/Fechado", value: "Aberto/Fechado" },
     { label: "Fechado/Aberto", value: "Fechado/Aberto" },
     { label: "Fechado", value: "Fechado" },
-  ];
+  ]
   const judgmentCriteriaOptions = [
     { label: "Menor preço", value: "Menor preço" },
     { label: "Maior desconto", value: "Maior desconto" },
     { label: "Técnica e preço", value: "Técnica e preço" },
     { label: "Maior lance", value: "Maior lance" },
     { label: "Melhor técnica", value: "Melhor técnica" },
-  ];
+  ]
   const biddingTypeOptions = [
     { label: "Dispensa de Licitação", value: "Dispensa de Licitação" },
     { label: "Pregão eletrônico", value: "Pregão eletrônico" },
@@ -25,29 +30,29 @@ export default function IdentificationStep({ biddingData, setBiddingData }) {
     { label: "Concorrência", value: "Concorrência" },
     { label: "Tomada de Preços", value: "Tomada de Preços" },
     { label: "Inexigibilidade", value: "Inexigibilidade" },
-  ];
+  ]
   const supplyTypeOptions = [
     { label: "Registro de Preços", value: "Registro_de_Preços" },
     { label: "Entrega Parcelada", value: "Entrega_Parcelada" },
     { label: "Entrega Imediata", value: "Entrega Imediata" },
     { label: "Serviço", value: "Serviço" },
     { label: "teste", value: "teste" },
-  ];
+  ]
 
   const unitOptions = [
     { label: "Dias", value: "Dias" },
     { label: "Meses", value: "Meses" },
     { label: "Anos", value: "Anos" },
     { label: "Parcelas", value: "Parcelas" },
-  ];
+  ]
   const formatCNPJ = (cnpj) => {
-    const numbers = cnpj.replace(/\D/g, "");
-    if (numbers.length !== 14) return cnpj;
+    const numbers = cnpj.replace(/\D/g, "")
+    if (numbers.length !== 14) return cnpj
     return `${numbers.slice(0, 2)}.${numbers.slice(2, 5)}.${numbers.slice(
       5,
       8
-    )}/${numbers.slice(8, 12)}-${numbers.slice(12, 14)}`;
-  };
+    )}/${numbers.slice(8, 12)}-${numbers.slice(12, 14)}`
+  }
 
   return (
     <Flex direction="column" w="100%" align="center" gap={6}>
@@ -69,6 +74,7 @@ export default function IdentificationStep({ biddingData, setBiddingData }) {
           </Text>
           <Flex gap={3} direction="column">
             <InputDefaultForm
+              edit={edit}
               legend={"Nome do Órgão*"}
               placeholder={"Digite o nome do Órgão responsável"}
               inputValue={biddingData.responsibleAgency}
@@ -80,6 +86,7 @@ export default function IdentificationStep({ biddingData, setBiddingData }) {
               }
             />
             <InputDefaultForm
+              edit={edit}
               legend={"Cidade do Órgão*"}
               placeholder={"Informe a cidade do Órgão responsável"}
               inputValue={biddingData.agencyCity}
@@ -91,6 +98,7 @@ export default function IdentificationStep({ biddingData, setBiddingData }) {
               }
             />
             <InputDefaultForm
+              edit={edit}
               legend={"CNPJ do Órgão*"}
               placeholder={"Informe o CNPJ do Órgão responsável"}
               maxLength={"14"}
@@ -103,11 +111,11 @@ export default function IdentificationStep({ biddingData, setBiddingData }) {
               }
               onBlur={() => {
                 if (biddingData.agencyCnpj.length === 14) {
-                  const formatted = formatCNPJ(biddingData.agencyCnpj);
+                  const formatted = formatCNPJ(biddingData.agencyCnpj)
                   setBiddingData({
                     ...biddingData,
                     agencyCnpj: formatted,
-                  });
+                  })
                 }
               }}
             />
@@ -131,6 +139,7 @@ export default function IdentificationStep({ biddingData, setBiddingData }) {
           </Text>
           <Flex gap={3} direction="column">
             <InputDefaultForm
+              edit={edit}
               legend={"Número da Licitação*"}
               placeholder={"Ex: PE XXX/2026"}
               inputValue={biddingData.identificationNumber}
@@ -142,6 +151,7 @@ export default function IdentificationStep({ biddingData, setBiddingData }) {
               }
             />
             <InputDefaultForm
+              edit={edit}
               legend={"Número do Processo*"}
               placeholder={"Número do processo administrativo"}
               inputValue={biddingData.processNumber}
@@ -165,6 +175,7 @@ export default function IdentificationStep({ biddingData, setBiddingData }) {
             w={"100%"}
           >
             <CustomSelect
+              edit={edit}
               legend="Critério de Julgamento"
               placeholder="Selecione"
               options={judgmentCriteriaOptions}
@@ -177,6 +188,7 @@ export default function IdentificationStep({ biddingData, setBiddingData }) {
               }
             />
             <CustomSelect
+              edit={edit}
               legend="Modalidade"
               placeholder="Selecione"
               options={modalityOptions}
@@ -189,6 +201,7 @@ export default function IdentificationStep({ biddingData, setBiddingData }) {
               }
             />
             <CustomSelect
+              edit={edit}
               legend="Tipo de Licitação"
               placeholder="Selecione"
               options={biddingTypeOptions}
@@ -210,6 +223,7 @@ export default function IdentificationStep({ biddingData, setBiddingData }) {
             w={"100%"}
           >
             <CustomSelect
+              edit={edit}
               legend="Forma de execução"
               placeholder="Selecione"
               options={supplyTypeOptions}
@@ -284,6 +298,7 @@ export default function IdentificationStep({ biddingData, setBiddingData }) {
             Objeto
           </Text>
           <InputDefaultForm
+            edit={edit}
             legend={"Descrição do Objeto*"}
             placeholder={"Descreva o objeto da licitação"}
             inputValue={biddingData.biddingObject}
@@ -297,5 +312,5 @@ export default function IdentificationStep({ biddingData, setBiddingData }) {
         </GridItem>
       </Grid>
     </Flex>
-  );
+  )
 }

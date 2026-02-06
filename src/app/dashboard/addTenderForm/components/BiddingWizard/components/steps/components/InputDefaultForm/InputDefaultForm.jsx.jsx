@@ -12,6 +12,7 @@ export default function InputDefaultForm({
   onBlur,
   maxW,
   width,
+  edit,
   border,
 }) {
   return (
@@ -26,6 +27,7 @@ export default function InputDefaultForm({
           {legend}
         </Fieldset.Legend>
         <Input
+          disabled={edit}
           type={typeInput}
           border={border}
           maxLength={maxLength}
