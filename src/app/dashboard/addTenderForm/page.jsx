@@ -11,7 +11,7 @@ import { Timestamp } from "firebase/firestore";
 import { db } from "@/components/libs/firebaseinit";
 import { v4 as uuidv4 } from "uuid";
 
-export default function AddTenderFormFixed() {
+export default function AddTenderFormFixed({ setEdit, edit }) {
   const [biddingData, setBiddingData] = useState({
     responsibleAgency: "",
     portalAgencyCode: "",

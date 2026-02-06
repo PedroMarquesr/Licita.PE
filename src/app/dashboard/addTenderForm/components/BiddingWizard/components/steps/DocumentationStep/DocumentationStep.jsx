@@ -5,7 +5,12 @@ import { Text, Grid, Box, Stack, Checkbox } from "@chakra-ui/react"
 import InputDefaultForm from "../components/InputDefaultForm/InputDefaultForm.jsx"
 import { documentationChecklist } from "@/constants/documentationRequirements"
 
-export default function DocumentationStep({ biddingData, setBiddingData }) {
+export default function DocumentationStep({
+  biddingData,
+  setBiddingData,
+  edit,
+  setEdit,
+}) {
   const handleCheckboxChange = (sectionKey, item) => {
     const currentItems = biddingData.documentation?.[sectionKey] || []
 
@@ -65,6 +70,7 @@ export default function DocumentationStep({ biddingData, setBiddingData }) {
             </Text>
 
             <Checkbox.Root
+              disabled={edit}
               checked={isAllChecked}
               onChange={() => handleToggleAll(section.key, section.items)}
               colorPalette="blue"
@@ -82,6 +88,7 @@ export default function DocumentationStep({ biddingData, setBiddingData }) {
             >
               {section.items.map((item) => (
                 <Checkbox.Root
+                  disabled={edit}
                   key={item}
                   checked={selectedItems.includes(item)}
                   onChange={() => handleCheckboxChange(section.key, item)}
@@ -95,6 +102,7 @@ export default function DocumentationStep({ biddingData, setBiddingData }) {
             </Grid>
 
             <InputDefaultForm
+              edit={edit}
               legend="Comentário adicional"
               placeholder="Adicione observações específicas para esta seção"
               inputValue={

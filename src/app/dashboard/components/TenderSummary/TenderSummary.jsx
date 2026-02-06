@@ -43,6 +43,7 @@ export default function TenderSummary() {
   const [modalOpen, setModalOpen] = useState(false);
   const [biddingData, setBiddingData] = useState({});
   const [edit, setEdit] = useState(false);
+  const [showButtonEdit, setShowButtonEdit] = useState(false);
 
   const fetchBiddingsByWeek = async () => {
     try {
@@ -193,11 +194,18 @@ export default function TenderSummary() {
       setBiddingData(biddings.find((bidding) => bidding.id === biddingId));
       setEdit(true);
       setModalOpen(true);
+      setShowButtonEdit(true);
     }
   };
 
   return (
-    <Flex flexDir={"column"} overflowX="hidden">
+    <Flex
+      flexDir={"column"}
+      overflowX="hidden"
+      justifyContent={"center"}
+      alignContent={"center"}
+      w={"100vw"}
+    >
       <Switch.Root
         py={2}
         justifyContent={"left"}
@@ -216,7 +224,7 @@ export default function TenderSummary() {
       </Switch.Root>
 
       {viewIsOpen && (
-        <Flex p={4} flexDir="column" w="100%">
+        <Flex p={4} flexDir="column" w="100%" justifyContent={"center"}>
           <Flex justify="space-between" align="center" mb={6}>
             <Heading size="lg">Processos</Heading>
             <HStack spacing={4}>
@@ -492,32 +500,47 @@ export default function TenderSummary() {
       )}
 
       {modalOpen && (
-        <Dialog.Root open={modalOpen}>
+        <Dialog.Root open={modalOpen} size={"90vw"}>
           <Dialog.Trigger />
           <Portal>
             <Dialog.Backdrop />
             <Dialog.Positioner>
               <Dialog.Content>
                 <Dialog.Header>
-                  <Dialog.Title>Dialog Title</Dialog.Title>
+                  <Dialog.Title>Edição de Processo</Dialog.Title>
                 </Dialog.Header>
 
                 <Dialog.Body>
-                  <BiddingWizard
-                    biddingData={biddingData}
-                    setBiddingData={setBiddingData}
-                    edit={edit}
-                    setEdit={setEdit}
-                  />
+                  <Flex justifyContent={"center"}>
+                    <BiddingWizard
+                      biddingData={biddingData}
+                      setBiddingData={setBiddingData}
+                      edit={edit}
+                      setEdit={setEdit}
+                      showButtonEdit={showButtonEdit}
+                    />
+                  </Flex>
                 </Dialog.Body>
                 <Dialog.Footer>
-                  <Dialog.ActionTrigger asChild>
-                    <Button variant="outline">Cancel</Button>
-                  </Dialog.ActionTrigger>
-                  <Button onClick={setBiddings}>Salvar</Button>
+                  <Button
+                    onClick={setBiddings}
+                    bgColor={"blue.500"}
+                    color={"white"}
+                    _hover={{ bgColor: "blue.600" }}
+                  >
+                    Salvar
+                  </Button>
                 </Dialog.Footer>
                 <Dialog.CloseTrigger asChild>
-                  <CloseButton onClick={() => setModalOpen(false)} size="sm" />
+                  <CloseButton
+                    onClick={() => {
+                      setModalOpen(false);
+                      setShowButtonEdit(false);
+                    }}
+                    size="sm"
+                    bgColor={"red"}
+                    _hover={{ backgroundColor: "red.500", width: "xsm" }}
+                  />
                 </Dialog.CloseTrigger>
               </Dialog.Content>
             </Dialog.Positioner>

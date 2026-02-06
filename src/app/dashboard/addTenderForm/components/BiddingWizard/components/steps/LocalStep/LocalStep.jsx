@@ -1,9 +1,14 @@
-"use client";
+"use client"
 
-import { Flex, Text, Grid, GridItem } from "@chakra-ui/react";
-import InputDefaultForm from "../components/InputDefaultForm/InputDefaultForm.jsx";
+import { Flex, Text, Grid, GridItem } from "@chakra-ui/react"
+import InputDefaultForm from "../components/InputDefaultForm/InputDefaultForm.jsx"
 
-export default function LocalStep({ biddingData, setBiddingData }) {
+export default function LocalStep({
+  biddingData,
+  setBiddingData,
+  edit,
+  setEdit,
+}) {
   return (
     <Flex direction="column" w="100%" align="center" gap={6}>
       <Text
@@ -24,6 +29,7 @@ export default function LocalStep({ biddingData, setBiddingData }) {
           </Text>
           <Flex gap={3} direction="column">
             <InputDefaultForm
+              edit={edit}
               legend={"Nome do Portal"}
               placeholder={"Compras.BR"}
               inputValue={biddingData.disputePortalName}
@@ -35,6 +41,7 @@ export default function LocalStep({ biddingData, setBiddingData }) {
               }
             />
             <InputDefaultForm
+              edit={edit}
               legend={"URL do Portal*"}
               placeholder={"https://portal-de-licitacoes.com.br"}
               inputValue={biddingData.disputePortal}
@@ -54,6 +61,7 @@ export default function LocalStep({ biddingData, setBiddingData }) {
           </Text>
           <Flex gap={3} direction="column">
             <InputDefaultForm
+              edit={edit}
               legend={"Endereço Completo*"}
               placeholder={"Rua, número, bairro, cidade - Estado"}
               inputValue={biddingData.executionLocation}
@@ -68,5 +76,5 @@ export default function LocalStep({ biddingData, setBiddingData }) {
         </GridItem>
       </Grid>
     </Flex>
-  );
+  )
 }

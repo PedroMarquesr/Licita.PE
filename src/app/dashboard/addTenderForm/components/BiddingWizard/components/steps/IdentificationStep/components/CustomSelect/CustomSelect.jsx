@@ -18,6 +18,7 @@ export default function CustomSelect({
   onValueChange,
   options,
   value,
+  edit,
 }) {
   const { contains } = useFilter({ sensitivity: "base" })
 
@@ -28,6 +29,7 @@ export default function CustomSelect({
   return (
     <>
       <Combobox.Root
+        disabled={edit}
         collection={collection}
         onInputValueChange={(e) => filter(e.inputValue)}
         onValueChange={(e) => onValueChange(e.value)}
