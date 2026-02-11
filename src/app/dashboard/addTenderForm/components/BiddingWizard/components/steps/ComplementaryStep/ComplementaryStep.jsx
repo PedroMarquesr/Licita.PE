@@ -17,7 +17,12 @@ import { IoCloseCircle, IoCloseOutline } from "react-icons/io5"
 import { useState } from "react"
 import InputDefaultForm from "../components/InputDefaultForm/InputDefaultForm.jsx"
 
-export default function ComplementaryStep({ biddingData, setBiddingData }) {
+export default function ComplementaryStep({
+  biddingData,
+  setBiddingData,
+  edit,
+  setEdit,
+}) {
   const [newTag, setNewTag] = useState("")
 
   const handleAddTag = () => {
@@ -95,13 +100,19 @@ export default function ComplementaryStep({ biddingData, setBiddingData }) {
 
             <Flex gap={2} align="center">
               <Input
+                disabled={edit}
                 placeholder="Digite uma tag ou selecione abaixo"
                 value={newTag}
                 onChange={(e) => setNewTag(e.target.value)}
                 onKeyUp={handleKeyPress}
                 flex={1}
               />
-              <Button onClick={handleAddTag} colorScheme="blue" size="sm">
+              <Button
+                onClick={handleAddTag}
+                colorScheme="blue"
+                size="sm"
+                disabled={edit}
+              >
                 Adicionar
               </Button>
             </Flex>
@@ -140,6 +151,7 @@ export default function ComplementaryStep({ biddingData, setBiddingData }) {
           </Text>
           <Flex gap={3} direction="column">
             <InputDefaultForm
+              edit={edit}
               legend={"Telefone para Contato"}
               placeholder={"(00) 00000-0000"}
               inputValue={biddingData.contactPhone}
@@ -151,6 +163,7 @@ export default function ComplementaryStep({ biddingData, setBiddingData }) {
               }
             />
             <InputDefaultForm
+              edit={edit}
               legend={"E-mail para Contato"}
               placeholder={"contato@orgao.gov.br"}
               inputValue={biddingData.contactEmail}
@@ -170,6 +183,7 @@ export default function ComplementaryStep({ biddingData, setBiddingData }) {
           </Text>
           <Flex gap={3} direction="column">
             <InputDefaultForm
+              edit={edit}
               legend={"Link do Edital"}
               placeholder={"https://exemplo.com/edital.pdf"}
               inputValue={biddingData.biddingNoticeUrl}
@@ -181,6 +195,7 @@ export default function ComplementaryStep({ biddingData, setBiddingData }) {
               }
             />
             <InputDefaultForm
+              edit={edit}
               legend={"Link dos Anexos"}
               placeholder={"https://exemplo.com/anexos.zip"}
               inputValue={biddingData.attachmentsUrl}
@@ -194,12 +209,12 @@ export default function ComplementaryStep({ biddingData, setBiddingData }) {
           </Flex>
         </GridItem>
 
-        {/* 📝 Observações */}
         <GridItem colSpan={{ base: 1, md: 2 }}>
           <Text fontSize="lg" fontWeight="semibold" color="gray.700" mb={3}>
             Observações
           </Text>
           <InputDefaultForm
+            edit={edit}
             legend={"Observações Gerais"}
             placeholder={"Informações adicionais relevantes..."}
             inputValue={biddingData.observations}
