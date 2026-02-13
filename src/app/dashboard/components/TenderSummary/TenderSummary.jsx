@@ -166,6 +166,7 @@ export default function TenderSummary() {
   if (loading) {
     return (
       <Flex
+        w={"100%"}
         direction="column"
         gap={2}
         p={4}
@@ -179,15 +180,52 @@ export default function TenderSummary() {
     )
   }
 
+  // const checkIfToday = (biddingDate) => {
+  //   if (!biddingDate) return false
+
+  //   const today = new Date()
+
+  //   return (
+  //     biddingDate.getDate() === today.getDate() &&
+  //     biddingDate.getMonth() === today.getMonth() &&
+  //     biddingDate.getFullYear() === today.getFullYear()
+  //   )
+  // }
+
   const checkIfToday = (biddingDate) => {
     if (!biddingDate) return false
+
+    const toDate = (date) => {
+      if (!date) return null
+
+      if (date.toDate) {
+        return date.toDate()
+      }
+
+      if (date.seconds) {
+        return new Date(date.seconds * 1000)
+      }
+
+      if (date instanceof Date) {
+        return date
+      }
+
+      if (typeof date === "string") {
+        return new Date(date)
+      }
+
+      return null
+    }
+
+    const dateObj = toDate(biddingDate)
+    if (!dateObj) return false
 
     const today = new Date()
 
     return (
-      biddingDate.getDate() === today.getDate() &&
-      biddingDate.getMonth() === today.getMonth() &&
-      biddingDate.getFullYear() === today.getFullYear()
+      dateObj.getDate() === today.getDate() &&
+      dateObj.getMonth() === today.getMonth() &&
+      dateObj.getFullYear() === today.getFullYear()
     )
   }
 
@@ -199,7 +237,13 @@ export default function TenderSummary() {
       setShowButtonEdit(true)
     }
   }
-
+  const toTimestamp = (dateString, timeString) => {
+    if (!dateString) return null
+    const dateTimeString = timeString
+      ? `${dateString}T${timeString}:00`
+      : `${dateString}T00:00:00`
+    return Timestamp.fromDate(new Date(dateTimeString))
+  }
   const updateBidding = async (updatedBidding) => {
     try {
       setLoading(true)
@@ -216,10 +260,16 @@ export default function TenderSummary() {
         judgmentCriteria: updatedBidding.judgmentCriteria,
         modality: updatedBidding.modality,
         status: updatedBidding.status,
-        // disputeDate: Timestamp.fromDate(new Date(updatedBidding.disputeDate)),
-        // proposalDeadlineDate: Timestamp.fromDate(
-        //   new Date(updatedBidding.proposalDeadlineDate)
-        // ),
+        disputeDate: toTimestamp(
+          biddingData.disputeDate || new Date(),
+          biddingData.disputeTime || "00:00"
+        ),
+
+        proposalDeadlineDate: toTimestamp(
+          biddingData.proposalDeadlineDate || new Date(),
+          biddingData.proposalDeadlineTime || "00:00"
+        ),
+
         processNumber: updatedBidding.processNumber,
         isFavorite: updatedBidding.isFavorite,
         tags: updatedBidding.tags,
@@ -246,6 +296,7 @@ export default function TenderSummary() {
 
       setModalOpen(false)
       setEdit(false)
+      window.location.reload()
     } catch (error) {
       console.log("Erro ao atualizar", error)
       alert("Erro ao atualizar: " + error.message)
