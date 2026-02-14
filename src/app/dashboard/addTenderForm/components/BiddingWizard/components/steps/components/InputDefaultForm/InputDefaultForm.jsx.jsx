@@ -12,6 +12,7 @@ export default function InputDefaultForm({
   onBlur,
   maxW,
   width,
+  mbInput,
   edit,
   border,
 }) {
@@ -41,12 +42,8 @@ export default function InputDefaultForm({
           flex="1"
           maxW={maxW}
           pl={"3"}
+          mb={mbInput}
           w={width}
-          sx={{
-            "&::-webkit-calendar-picker-indicator": {
-              filter: "invert(0.5)",
-            },
-          }}
         />
       </Flex>
     </Fieldset.Root>

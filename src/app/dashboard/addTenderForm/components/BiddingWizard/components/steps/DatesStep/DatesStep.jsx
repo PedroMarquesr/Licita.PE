@@ -189,155 +189,156 @@ export default function DatesStep({
         Datas e Prazos
       </Text>
 
-      <Grid templateColumns={{ base: "1fr", md: "1fr" }} gap={6} w="100%">
-        {/* Disputa */}
+      <Grid templateColumns={{ base: "1fr", md: "1fr, 0.5" }} gap={6} w="100%">
         <GridItem>
           <Text fontSize="lg" fontWeight="semibold" color="gray.700" mb={3}>
             Disputa
           </Text>
-          <Flex gap={4} direction={{ base: "column", md: "row" }} w="100%">
-            <Box flex={2}>
-              <InputDefaultForm
-                edit={edit}
-                typeInput={"date"}
-                legend={"Data*"}
-                inputValue={biddingData.disputeDate}
-                onChange={(e) =>
-                  setBiddingData({
-                    ...biddingData,
-                    disputeDate: e.target.value,
-                  })
-                }
-                layout="vertical"
-              />
-            </Box>
-            <Box flex={1}>
-              <InputDefaultForm
-                edit={edit}
-                typeInput={"time"}
-                legend={"Horário*"}
-                inputValue={biddingData.disputeTime}
-                onChange={(e) =>
-                  setBiddingData({
-                    ...biddingData,
-                    disputeTime: e.target.value,
-                  })
-                }
-              />
-            </Box>
-          </Flex>
+          <Box flex={"1"} gap={4}>
+            <InputDefaultForm
+              mbInput={"2"}
+              maxW={"150px"}
+              edit={edit}
+              typeInput={"date"}
+              legend={"Data*"}
+              inputValue={biddingData.disputeDate}
+              onChange={(e) =>
+                setBiddingData({
+                  ...biddingData,
+                  disputeDate: e.target.value,
+                })
+              }
+              layout="vertical"
+            />
+          </Box>
+          <Box flex={1}>
+            <InputDefaultForm
+              maxW={"100px"}
+              edit={edit}
+              typeInput={"time"}
+              legend={"Horário*"}
+              inputValue={biddingData.disputeTime}
+              onChange={(e) =>
+                setBiddingData({
+                  ...biddingData,
+                  disputeTime: e.target.value,
+                })
+              }
+            />
+          </Box>
         </GridItem>
 
-        {/* Prazo para Propostas */}
         <GridItem>
           <Text fontSize="lg" fontWeight="semibold" color="gray.700" mb={3}>
             Prazo para Propostas
           </Text>
-          <Flex gap={4} direction={{ base: "column", md: "row" }} w="100%">
-            <Box flex={2}>
-              <InputDefaultForm
-                edit={edit}
-                typeInput={"date"}
-                legend={"Data"}
-                inputValue={biddingData.proposalDeadlineDate}
-                onChange={(e) =>
-                  setBiddingData({
-                    ...biddingData,
-                    proposalDeadlineDate: e.target.value,
-                  })
-                }
-                layout="vertical"
-              />
-            </Box>
-            <Box flex={1}>
-              <InputDefaultForm
-                edit={edit}
-                typeInput={"time"}
-                legend={"Hora limite"}
-                inputValue={biddingData.proposalDeadlineTime}
-                onChange={(e) =>
-                  setBiddingData({
-                    ...biddingData,
-                    proposalDeadlineTime: e.target.value,
-                  })
-                }
-              />
-            </Box>
-          </Flex>
+
+          <Box flex={2}>
+            <InputDefaultForm
+              mbInput={"2"}
+              maxW={"150px"}
+              edit={edit}
+              typeInput={"date"}
+              legend={"Data"}
+              inputValue={biddingData.proposalDeadlineDate}
+              onChange={(e) =>
+                setBiddingData({
+                  ...biddingData,
+                  proposalDeadlineDate: e.target.value,
+                })
+              }
+              layout="vertical"
+            />
+          </Box>
+          <Box flex={1}>
+            <InputDefaultForm
+              maxW={"100px"}
+              edit={edit}
+              typeInput={"time"}
+              legend={"Hora limite"}
+              inputValue={biddingData.proposalDeadlineTime}
+              onChange={(e) =>
+                setBiddingData({
+                  ...biddingData,
+                  proposalDeadlineTime: e.target.value,
+                })
+              }
+            />
+          </Box>
         </GridItem>
 
-        {/* Abertura de Propostas */}
         <GridItem>
           <Text fontSize="lg" fontWeight="semibold" color="gray.700" mb={3}>
             Abertura de Propostas
           </Text>
-          <Flex gap={4} direction={{ base: "column", md: "row" }} w="100%">
-            <Box flex={2}>
-              <InputDefaultForm
-                edit={edit}
-                typeInput={"date"}
-                legend={"Data*"}
-                inputValue={biddingData.proposalOpeningDate}
-                onChange={(e) =>
-                  setBiddingData({
-                    ...biddingData,
-                    proposalOpeningDate: e.target.value,
-                  })
-                }
-              />
-            </Box>
-            <Box flex={1}>
-              <InputDefaultForm
-                edit={edit}
-                typeInput={"time"}
-                legend={"Horário*"}
-                inputValue={biddingData.proposalOpeningTime}
-                onChange={(e) =>
-                  setBiddingData({
-                    ...biddingData,
-                    proposalOpeningTime: e.target.value,
-                  })
-                }
-              />
-            </Box>
-          </Flex>
+          <Box flex={2}>
+            <InputDefaultForm
+              mbInput={"2"}
+              maxW={"150px"}
+              edit={edit}
+              typeInput={"date"}
+              legend={"Data*"}
+              inputValue={biddingData.proposalOpeningDate}
+              onChange={(e) =>
+                setBiddingData({
+                  ...biddingData,
+                  proposalOpeningDate: e.target.value,
+                })
+              }
+            />
+          </Box>
+          <Box flex={1}>
+            <InputDefaultForm
+              maxW={"100px"}
+              edit={edit}
+              typeInput={"time"}
+              legend={"Horário*"}
+              inputValue={biddingData.proposalOpeningTime}
+              onChange={(e) =>
+                setBiddingData({
+                  ...biddingData,
+                  proposalOpeningTime: e.target.value,
+                })
+              }
+            />
+          </Box>
         </GridItem>
 
-        {/* Encerramento */}
         <GridItem>
           <Text fontSize="lg" fontWeight="semibold" color="gray.700" mb={3}>
             Encerramento
           </Text>
-          <Flex gap={4} direction={{ base: "column", md: "row" }} w="100%">
-            <Box flex={2}>
-              <InputDefaultForm
-                edit={edit}
-                typeInput={"date"}
-                legend={"Data"}
-                inputValue={biddingData.closingDate}
-                onChange={(e) =>
-                  setBiddingData({
-                    ...biddingData,
-                    closingDate: e.target.value,
-                  })
-                }
-              />
-            </Box>
-            <Box flex={1}>
-              <InputDefaultForm
-                edit={edit}
-                typeInput={"time"}
-                legend={"Horário"}
-                inputValue={biddingData.closingTime}
-                onChange={(e) =>
-                  setBiddingData({
-                    ...biddingData,
-                    closingTime: e.target.value,
-                  })
-                }
-              />
-            </Box>
-          </Flex>
+          <Box flex={2}>
+            <InputDefaultForm
+              mbInput={"2"}
+              maxW={"150px"}
+              edit={edit}
+              typeInput={"date"}
+              legend={"Data"}
+              inputValue={biddingData.closingDate}
+              onChange={(e) =>
+                setBiddingData({
+                  ...biddingData,
+                  closingDate: e.target.value,
+                })
+              }
+            />
+          </Box>
+          <Box flex={1}>
+            <InputDefaultForm
+              maxW={"100px"}
+              edit={edit}
+              typeInput={"time"}
+              legend={"Horário"}
+              inputValue={biddingData.closingTime}
+              onChange={(e) =>
+                setBiddingData({
+                  ...biddingData,
+                  closingTime: e.target.value,
+                })
+              }
+            />
+          </Box>
         </GridItem>
       </Grid>
     </Flex>
