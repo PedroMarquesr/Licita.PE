@@ -180,18 +180,6 @@ export default function TenderSummary() {
     );
   }
 
-  // const checkIfToday = (biddingDate) => {
-  //   if (!biddingDate) return false
-
-  //   const today = new Date()
-
-  //   return (
-  //     biddingDate.getDate() === today.getDate() &&
-  //     biddingDate.getMonth() === today.getMonth() &&
-  //     biddingDate.getFullYear() === today.getFullYear()
-  //   )
-  // }
-
   const checkIfToday = (biddingDate) => {
     if (!biddingDate) return false;
 
@@ -410,18 +398,6 @@ export default function TenderSummary() {
               </Button>
             </HStack>
           </Flex>
-
-          {error && (
-            <Alert status="error" mb={4} borderRadius="md">
-              <Box flex="1">
-                <Text>{error}</Text>
-                <Text fontSize="sm" mt={2}>
-                  Dica: Verifique se há índice composto no Firestore para as
-                  queries com múltiplas condições.
-                </Text>
-              </Box>
-            </Alert>
-          )}
 
           {biddings.length === 0 ? (
             <Flex
