@@ -12,12 +12,13 @@ export default function InputDefaultForm({
   onBlur,
   maxW,
   width,
+  mbInput,
   edit,
   border,
 }) {
   return (
     <Fieldset.Root>
-      <Flex align={"center"} gap={5}>
+      <Flex align={"center"} gap={5} w={"100%"} flexWrap={"wrap"}>
         <Fieldset.Legend
           fontWeight={"semibold"}
           color="gray.700"
@@ -41,6 +42,7 @@ export default function InputDefaultForm({
           flex="1"
           maxW={maxW}
           pl={"3"}
+          mb={mbInput}
           w={width}
         />
       </Flex>

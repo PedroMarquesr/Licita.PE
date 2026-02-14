@@ -57,3 +57,10 @@
     page-break-before: always;
   }
 }
+
+input[type="date"],
+input[type="time"] {
+  color-scheme: light !important;
+  background-color: white !important;
+  color: black !important;
+}

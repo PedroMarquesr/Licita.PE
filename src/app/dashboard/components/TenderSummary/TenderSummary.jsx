@@ -21,9 +21,11 @@ import {
   collection,
   query,
   orderBy,
+  doc,
   getDocs,
   where,
   Timestamp,
+  updateDoc,
 } from "firebase/firestore";
 import { db } from "@/components/libs/firebaseinit";
 import { useState, useEffect } from "react";
@@ -164,6 +166,7 @@ export default function TenderSummary() {
   if (loading) {
     return (
       <Flex
+        w={"100%"}
         direction="column"
         gap={2}
         p={4}
@@ -180,12 +183,37 @@ export default function TenderSummary() {
   const checkIfToday = (biddingDate) => {
     if (!biddingDate) return false;
 
+    const toDate = (date) => {
+      if (!date) return null;
+
+      if (date.toDate) {
+        return date.toDate();
+      }
+
+      if (date.seconds) {
+        return new Date(date.seconds * 1000);
+      }
+
+      if (date instanceof Date) {
+        return date;
+      }
+
+      if (typeof date === "string") {
+        return new Date(date);
+      }
+
+      return null;
+    };
+
+    const dateObj = toDate(biddingDate);
+    if (!dateObj) return false;
+
     const today = new Date();
 
     return (
-      biddingDate.getDate() === today.getDate() &&
-      biddingDate.getMonth() === today.getMonth() &&
-      biddingDate.getFullYear() === today.getFullYear()
+      dateObj.getDate() === today.getDate() &&
+      dateObj.getMonth() === today.getMonth() &&
+      dateObj.getFullYear() === today.getFullYear()
     );
   };
 
@@ -195,6 +223,132 @@ export default function TenderSummary() {
       setEdit(true);
       setModalOpen(true);
       setShowButtonEdit(true);
+    }
+  };
+
+  const toTimestamp = (dateString, timeString) => {
+    if (!dateString) return null;
+
+    try {
+      if (dateString?.toDate) {
+        return dateString;
+      }
+
+      if (dateString instanceof Date) {
+        return Timestamp.fromDate(dateString);
+      }
+
+      if (dateString?.seconds) {
+        return dateString;
+      }
+
+      const dateTimeString =
+        timeString && timeString !== "00:00"
+          ? `${dateString}T${timeString}:00`
+          : `${dateString}T00:00:00`;
+
+      const date = new Date(dateTimeString);
+
+      if (isNaN(date.getTime())) {
+        console.error("Data inválida:", dateString, timeString);
+        return null;
+      }
+
+      return Timestamp.fromDate(date);
+    } catch (error) {
+      console.error("Erro ao criar timestamp:", error);
+      return null;
+    }
+  };
+
+  const updateBidding = async (updatedBidding) => {
+    try {
+      setLoading(true);
+
+      const biddingRef = doc(db, "biddings", updatedBidding.id);
+
+      const updateData = {
+        identificationNumber: updatedBidding.identificationNumber,
+        responsibleAgency: updatedBidding.responsibleAgency,
+        agencyCity: updatedBidding.agencyCity,
+        agencyCnpj: updatedBidding.agencyCnpj,
+        disputePortalName: updatedBidding.disputePortalName,
+        portalAgencyCode: updatedBidding.portalAgencyCode,
+        biddingType: updatedBidding.biddingType,
+        judgmentCriteria: updatedBidding.judgmentCriteria,
+        modality: updatedBidding.modality,
+        status: updatedBidding.status,
+        processNumber: updatedBidding.processNumber,
+        isFavorite: updatedBidding.isFavorite,
+        tags: updatedBidding.tags || [],
+        attachmentsUrl: updatedBidding.attachmentsUrl || [],
+        biddingNoticeUrl: updatedBidding.biddingNoticeUrl || "",
+        biddingObject: updatedBidding.biddingObject || "",
+        contactEmail: updatedBidding.contactEmail || "",
+        contactPhone: updatedBidding.contactPhone || "",
+        disputePortal: updatedBidding.disputePortal || "",
+        estimatedValue: updatedBidding.estimatedValue || 0,
+        executionLocation: updatedBidding.executionLocation || "",
+        maximumValue: updatedBidding.maximumValue || 0,
+        observations: updatedBidding.observations || "",
+        proposalOpeningDate: updatedBidding.proposalOpeningDate || null,
+        result: updatedBidding.result || "",
+        technicalResponsible: updatedBidding.technicalResponsible || "",
+      };
+
+      if (biddingData) {
+        const disputeDateValue =
+          biddingData.disputeDate || updatedBidding.disputeDate;
+        const disputeTimeValue = biddingData.disputeTime || "00:00";
+        const disputeTimestamp = toTimestamp(
+          disputeDateValue,
+          disputeTimeValue,
+        );
+        if (disputeTimestamp) {
+          updateData.disputeDate = disputeTimestamp;
+        }
+
+        const proposalDateValue =
+          biddingData.proposalDeadlineDate ||
+          updatedBidding.proposalDeadlineDate;
+        const proposalTimeValue = biddingData.proposalDeadlineTime || "00:00";
+        const proposalTimestamp = toTimestamp(
+          proposalDateValue,
+          proposalTimeValue,
+        );
+        if (proposalTimestamp) {
+          updateData.proposalDeadlineDate = proposalTimestamp;
+        }
+      }
+
+      await updateDoc(biddingRef, updateData);
+
+      setBiddings((prevBiddings) =>
+        prevBiddings.map((bidding) =>
+          bidding.id === updatedBidding.id
+            ? {
+                ...updatedBidding,
+                disputeDate:
+                  updateData.disputeDate?.toDate?.() ||
+                  updatedBidding.disputeDate,
+                formattedDate:
+                  updateData.disputeDate
+                    ?.toDate?.()
+                    ?.toLocaleDateString("pt-BR") || "",
+              }
+            : bidding,
+        ),
+      );
+
+      console.log("Documento atualizado com sucesso!");
+
+      setModalOpen(false);
+      setEdit(false);
+    } catch (error) {
+      console.log("Erro ao atualizar", error);
+      alert("Erro ao atualizar: " + error.message);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -244,18 +398,6 @@ export default function TenderSummary() {
               </Button>
             </HStack>
           </Flex>
-
-          {error && (
-            <Alert status="error" mb={4} borderRadius="md">
-              <Box flex="1">
-                <Text>{error}</Text>
-                <Text fontSize="sm" mt={2}>
-                  Dica: Verifique se há índice composto no Firestore para as
-                  queries com múltiplas condições.
-                </Text>
-              </Box>
-            </Alert>
-          )}
 
           {biddings.length === 0 ? (
             <Flex
@@ -523,7 +665,9 @@ export default function TenderSummary() {
                 </Dialog.Body>
                 <Dialog.Footer>
                   <Button
-                    onClick={setBiddings}
+                    onClick={() => {
+                      updateBidding(biddingData);
+                    }}
                     bgColor={"blue.500"}
                     color={"white"}
                     _hover={{ bgColor: "blue.600" }}
