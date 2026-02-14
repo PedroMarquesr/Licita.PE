@@ -17,7 +17,7 @@ export default function InputDefaultForm({
 }) {
   return (
     <Fieldset.Root>
-      <Flex align={"center"} gap={5}>
+      <Flex align={"center"} gap={5} w={"100%"} flexWrap={"wrap"}>
         <Fieldset.Legend
           fontWeight={"semibold"}
           color="gray.700"
@@ -42,6 +42,11 @@ export default function InputDefaultForm({
           maxW={maxW}
           pl={"3"}
           w={width}
+          sx={{
+            "&::-webkit-calendar-picker-indicator": {
+              filter: "invert(0.5)",
+            },
+          }}
         />
       </Flex>
     </Fieldset.Root>

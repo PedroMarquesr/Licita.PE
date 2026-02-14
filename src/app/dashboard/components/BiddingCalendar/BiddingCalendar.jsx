@@ -724,15 +724,18 @@ export default function BiddingCalendar({}) {
                   />
 
                   <Box>
-                    <IconButton
-                      aria-label="Editar processo"
-                      onClick={() => handleEdit(bidding.id)}
-                      size="sm"
-                      colorScheme="blue"
-                      variant="ghost"
-                    >
-                      <CiEdit />
-                    </IconButton>
+                    <Text>
+                      <IconButton
+                        aria-label="Editar processo"
+                        onClick={() => handleEdit(bidding.id)}
+                        size="sm"
+                        color={"black"}
+                        colorScheme="blue"
+                        variant="ghost"
+                      >
+                        <CiEdit />
+                      </IconButton>
+                    </Text>
                   </Box>
 
                   <Box>
