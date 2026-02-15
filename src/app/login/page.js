@@ -1,20 +1,27 @@
-"use client"
+"use client";
 
 import {
   Flex,
   Text,
+  Link,
   Image,
+  Input,
   Button,
   Box,
   Separator,
+  Stack,
   Icon,
   Field,
-  Input,
-} from "@chakra-ui/react"
-import BtnGoogle from "./components/BtnGoogle/BtnGoogle"
-import { CiMail } from "react-icons/ci"
-import { PiPassword } from "react-icons/pi"
-import useStore from "../../components/globalStates/store"
+} from "@chakra-ui/react";
+
+import {
+  PasswordInput,
+  PasswordStrengthMeter,
+} from "@/components/ui/password-input";
+import BtnGoogle from "./components/BtnGoogle/BtnGoogle";
+import { CiMail } from "react-icons/ci";
+import { PiPassword } from "react-icons/pi";
+import useStore from "../../components/globalStates/store";
 
 export default function Login() {
   return (
@@ -133,7 +140,7 @@ export default function Login() {
               h={{ md: "8" }}
               bgColor="gray.900"
               _hover={{
-                backgroundColor: "primary.500",
+                backgroundColor: "blue.500",
                 transform: "translateY(-1px)",
               }}
               _active={{
@@ -166,11 +173,72 @@ export default function Login() {
               cursor="pointer"
               _hover={{ textDecoration: "underline" }}
             >
-              Cadastre-se
+              <Link
+                color="gray.600"
+                _hover={{ color: "blue.500" }}
+                as={"button"}
+                //onClick={}
+              >
+                Cadastre-se
+              </Link>
             </Text>
           </Text>
         </Flex>
+        <Flex
+          flexDirection={{ md: "row", base: "column" }}
+          border={"1px solid red"}
+        >
+          <Field.Root mb={3} mr={2}>
+            <Field.Label>E-mail</Field.Label>
+            <Input size={"sm"} placeholder="E-mail" w={"10/12"} />
+          </Field.Root>
+          <Field.Root mb={3}>
+            <Field.Label>Confirme seu E-mail</Field.Label>
+            <Input size={"sm"} placeholder="Confirme seu E-mail" />
+          </Field.Root>
+        </Flex>
+
+        <Flex
+          flexDirection={{ md: "row", base: "column" }}
+          border={"1px solid red"}
+        >
+          <Field.Root mb={3} mr={2}>
+            <Field.Label>Senha</Field.Label>
+            <PasswordInput size={"sm"} placeholder="Senha" w={"10/12"} />
+          </Field.Root>
+
+          <Field.Root>
+            <Field.Label>Confirme sua senha</Field.Label>
+            <PasswordInput size={"sm"} placeholder="Confirme sua senha" />
+          </Field.Root>
+        </Flex>
+
+        <Button
+          w={{ base: "100%", md: "300px" }}
+          h={{ md: "8" }}
+          bgColor="gray.900"
+          _hover={{
+            backgroundColor: "blue.500",
+            transform: "translateY(-1px)",
+          }}
+          _active={{
+            transform: "translateY(0)",
+          }}
+          p={{ base: "5", md: "7" }}
+          border={"1px solid"}
+          borderColor="gray.700"
+          mt={{ base: 2, md: 3 }}
+          size={{ base: "md", md: "lg" }}
+        >
+          <Text
+            color="gray.50"
+            fontSize={{ base: "md", md: "lg" }}
+            fontWeight="medium"
+          >
+            Cadastrar
+          </Text>
+        </Button>
       </Flex>
     </>
-  )
+  );
 }
