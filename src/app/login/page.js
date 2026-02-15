@@ -184,33 +184,40 @@ export default function Login() {
             </Text>
           </Text>
         </Flex>
-        <Flex
-          flexDirection={{ md: "row", base: "column" }}
-          border={"1px solid red"}
-        >
-          <Field.Root mb={3} mr={2}>
-            <Field.Label>E-mail</Field.Label>
-            <Input size={"sm"} placeholder="E-mail" w={"10/12"} />
-          </Field.Root>
-          <Field.Root mb={3}>
-            <Field.Label>Confirme seu E-mail</Field.Label>
-            <Input size={"sm"} placeholder="Confirme seu E-mail" />
-          </Field.Root>
-        </Flex>
 
-        <Flex
-          flexDirection={{ md: "row", base: "column" }}
-          border={"1px solid red"}
-        >
-          <Field.Root mb={3} mr={2}>
-            <Field.Label>Senha</Field.Label>
-            <PasswordInput size={"sm"} placeholder="Senha" w={"10/12"} />
-          </Field.Root>
+        <Flex flexDir={"column"}>
+          <Flex flexDirection={{ md: "row", base: "column" }} gap={2}>
+            <Field.Root mb={3}>
+              <Field.Label>E-mail</Field.Label>
+              <Input size={"sm"} placeholder="E-mail" />
+            </Field.Root>
+            <Field.Root mb={3}>
+              <Field.Label>Confirme seu E-mail</Field.Label>
+              <Input size={"sm"} placeholder="Confirme seu E-mail" />
+            </Field.Root>
+          </Flex>
 
-          <Field.Root>
-            <Field.Label>Confirme sua senha</Field.Label>
-            <PasswordInput size={"sm"} placeholder="Confirme sua senha" />
-          </Field.Root>
+          <Flex
+            flexDirection={{ md: "row", base: "column" }}
+            w={"100%"}
+            gap={2}
+          >
+            <Field.Root mb={3}>
+              <Field.Label>Senha</Field.Label>
+              <PasswordInput size={"sm"} placeholder="Senha" />
+            </Field.Root>
+
+            <Field.Root>
+              <Field.Label>Confirme sua senha</Field.Label>
+              <PasswordInput
+                _hover={{ borderColor: "gray.500" }}
+                _focus={{ borderColor: "primary.500", boxShadow: "outline" }}
+                size={"sm"}
+                color={"gray.600"}
+                placeholder="Confirme sua senha"
+              />
+            </Field.Root>
+          </Flex>
         </Flex>
 
         <Button
