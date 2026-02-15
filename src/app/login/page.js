@@ -23,7 +23,10 @@ import { CiMail } from "react-icons/ci";
 import { PiPassword } from "react-icons/pi";
 import useStore from "../../components/globalStates/store";
 
+import { useState } from "react";
+
 export default function Login() {
+  const [showRegister, setShowRegister] = useState(false);
   return (
     <>
       <Flex
@@ -177,7 +180,7 @@ export default function Login() {
                 color="gray.600"
                 _hover={{ color: "blue.500" }}
                 as={"button"}
-                //onClick={}
+                onClick={() => setShowRegister(true)}
               >
                 Cadastre-se
               </Link>
@@ -185,66 +188,74 @@ export default function Login() {
           </Text>
         </Flex>
 
-        <Flex flexDir={"column"}>
-          <Flex flexDirection={{ md: "row", base: "column" }} gap={2}>
-            <Field.Root mb={3}>
-              <Field.Label>E-mail</Field.Label>
-              <Input size={"sm"} placeholder="E-mail" />
-            </Field.Root>
-            <Field.Root mb={3}>
-              <Field.Label>Confirme seu E-mail</Field.Label>
-              <Input size={"sm"} placeholder="Confirme seu E-mail" />
-            </Field.Root>
+        {showRegister && (
+          <Flex flexDir={"column"}>
+            <Flex flexDir={"column"}>
+              <Flex flexDirection={{ md: "row", base: "column" }} gap={2}>
+                <Field.Root mb={3}>
+                  <Field.Label>E-mail</Field.Label>
+                  <Input size={"sm"} placeholder="E-mail" />
+                </Field.Root>
+                <Field.Root mb={3}>
+                  <Field.Label>Confirme seu E-mail</Field.Label>
+                  <Input size={"sm"} placeholder="Confirme seu E-mail" />
+                </Field.Root>
+              </Flex>
+
+              <Flex
+                flexDirection={{ md: "row", base: "column" }}
+                w={"100%"}
+                gap={2}
+              >
+                <Field.Root mb={3}>
+                  <Field.Label>Senha</Field.Label>
+                  <PasswordInput size={"sm"} placeholder="Senha" />
+                </Field.Root>
+
+                <Field.Root>
+                  <Field.Label>Confirme sua senha</Field.Label>
+                  <PasswordInput
+                    _hover={{ borderColor: "gray.500" }}
+                    _focus={{
+                      borderColor: "primary.500",
+                      boxShadow: "outline",
+                    }}
+                    size={"sm"}
+                    color={"gray.600"}
+                    placeholder="Confirme sua senha"
+                  />
+                </Field.Root>
+              </Flex>
+            </Flex>
+            <Flex justify={"center"}>
+              <Button
+                w={{ base: "100%", md: "300px" }}
+                h={{ md: "8" }}
+                bgColor="gray.900"
+                _hover={{
+                  backgroundColor: "blue.500",
+                  transform: "translateY(-1px)",
+                }}
+                _active={{
+                  transform: "translateY(0)",
+                }}
+                p={{ base: "5", md: "7" }}
+                border={"1px solid"}
+                borderColor="gray.700"
+                mt={{ base: 2, md: 3 }}
+                size={{ base: "md", md: "lg" }}
+              >
+                <Text
+                  color="gray.50"
+                  fontSize={{ base: "md", md: "lg" }}
+                  fontWeight="medium"
+                >
+                  Cadastrar
+                </Text>
+              </Button>
+            </Flex>
           </Flex>
-
-          <Flex
-            flexDirection={{ md: "row", base: "column" }}
-            w={"100%"}
-            gap={2}
-          >
-            <Field.Root mb={3}>
-              <Field.Label>Senha</Field.Label>
-              <PasswordInput size={"sm"} placeholder="Senha" />
-            </Field.Root>
-
-            <Field.Root>
-              <Field.Label>Confirme sua senha</Field.Label>
-              <PasswordInput
-                _hover={{ borderColor: "gray.500" }}
-                _focus={{ borderColor: "primary.500", boxShadow: "outline" }}
-                size={"sm"}
-                color={"gray.600"}
-                placeholder="Confirme sua senha"
-              />
-            </Field.Root>
-          </Flex>
-        </Flex>
-
-        <Button
-          w={{ base: "100%", md: "300px" }}
-          h={{ md: "8" }}
-          bgColor="gray.900"
-          _hover={{
-            backgroundColor: "blue.500",
-            transform: "translateY(-1px)",
-          }}
-          _active={{
-            transform: "translateY(0)",
-          }}
-          p={{ base: "5", md: "7" }}
-          border={"1px solid"}
-          borderColor="gray.700"
-          mt={{ base: 2, md: 3 }}
-          size={{ base: "md", md: "lg" }}
-        >
-          <Text
-            color="gray.50"
-            fontSize={{ base: "md", md: "lg" }}
-            fontWeight="medium"
-          >
-            Cadastrar
-          </Text>
-        </Button>
+        )}
       </Flex>
     </>
   );
