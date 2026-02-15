@@ -22,7 +22,11 @@ import BtnGoogle from "./components/BtnGoogle/BtnGoogle";
 import { CiMail } from "react-icons/ci";
 import { PiPassword } from "react-icons/pi";
 
-import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
+import {
+  getAuth,
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+} from "firebase/auth";
 
 import useStore from "../../components/globalStates/store";
 import { useRouter } from "next/navigation";
@@ -35,6 +39,9 @@ export default function Login() {
   const [password, setPassword] = useState("");
   const [confirmEmail, setConfirmEmail] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+
+  const [emailLogin, setEmailLogin] = useState("")
+  const [passwordLogin, setPasswordLogin] = useState("")
 
   const getUser = useStore((state) => state.getUser);
   const router = useRouter();
@@ -64,6 +71,19 @@ export default function Login() {
         console.log("Erro ao criar usuário:", Error);
       });
   };
+
+  const handleLogin = () => {
+    const auth = getAuth();
+    signInWithEmailAndPassword(auth, email, password)
+    .then((userCredential) => {
+      const user = userCredential.user;
+    })
+    .catch((error) => {
+       const errorCode = error.code;
+    const errorMessage = error.message;
+    })
+
+  }
 
   return (
     <>
