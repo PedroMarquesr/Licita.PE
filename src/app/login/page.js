@@ -21,12 +21,50 @@ import {
 import BtnGoogle from "./components/BtnGoogle/BtnGoogle";
 import { CiMail } from "react-icons/ci";
 import { PiPassword } from "react-icons/pi";
+
+import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
+
 import useStore from "../../components/globalStates/store";
+import { useRouter } from "next/navigation";
 
 import { useState } from "react";
 
 export default function Login() {
   const [showRegister, setShowRegister] = useState(false);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmEmail, setConfirmEmail] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+
+  const getUser = useStore((state) => state.getUser);
+  const router = useRouter();
+
+  const handleRegister = () => {
+    if (email !== confirmEmail) {
+      alert("Os e-mails informados não coincidem");
+      return;
+    }
+
+    if (password !== confirmPassword) {
+      alert("As senhas informadas não coincidem");
+      return;
+    }
+    const auth = getAuth();
+    createUserWithEmailAndPassword(auth, email, password)
+      .then((userCredential) => {
+        const user = userCredential.user;
+        console.log("Usuário criado com sucesso:", user);
+        getUser();
+
+        router.push("/dashboard");
+      })
+      .catch((Error) => {
+        const errorCode = error.code;
+        const errorMessage = error.message;
+        console.log("Erro ao criar usuário:", Error);
+      });
+  };
+
   return (
     <>
       <Flex
@@ -194,11 +232,24 @@ export default function Login() {
               <Flex flexDirection={{ md: "row", base: "column" }} gap={2}>
                 <Field.Root mb={3}>
                   <Field.Label>E-mail</Field.Label>
-                  <Input size={"sm"} placeholder="E-mail" />
+                  <Input
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    size={"sm"}
+                    placeholder="E-mail"
+                    type="email"
+                  />
                 </Field.Root>
+
                 <Field.Root mb={3}>
                   <Field.Label>Confirme seu E-mail</Field.Label>
-                  <Input size={"sm"} placeholder="Confirme seu E-mail" />
+                  <Input
+                    value={confirmEmail}
+                    onChange={(e) => setConfirmEmail(e.target.value)}
+                    size={"sm"}
+                    placeholder="Confirme seu E-mail"
+                    type="email"
+                  />
                 </Field.Root>
               </Flex>
 
@@ -209,12 +260,19 @@ export default function Login() {
               >
                 <Field.Root mb={3}>
                   <Field.Label>Senha</Field.Label>
-                  <PasswordInput size={"sm"} placeholder="Senha" />
+                  <PasswordInput
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    size={"sm"}
+                    placeholder="Senha"
+                  />
                 </Field.Root>
 
                 <Field.Root>
                   <Field.Label>Confirme sua senha</Field.Label>
                   <PasswordInput
+                    value={confirmPassword}
+                    onChange={(e) => setConfirmPassword(e.target.value)}
                     _hover={{ borderColor: "gray.500" }}
                     _focus={{
                       borderColor: "primary.500",
@@ -244,6 +302,7 @@ export default function Login() {
                 borderColor="gray.700"
                 mt={{ base: 2, md: 3 }}
                 size={{ base: "md", md: "lg" }}
+                onClick={handleRegister}
               >
                 <Text
                   color="gray.50"
