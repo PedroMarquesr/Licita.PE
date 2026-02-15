@@ -576,8 +576,8 @@ export default function TenderSummary() {
                     <GridItem fontSize={"x-small"}>
                       <IconButton
                         aria-label="Search database"
-                        f
                         onClick={() => handleEdit(bidding.id)}
+                        size={"2xs"}
                       >
                         <CiEdit />
                       </IconButton>
