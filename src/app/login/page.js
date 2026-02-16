@@ -40,8 +40,8 @@ export default function Login() {
   const [confirmEmail, setConfirmEmail] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
 
-  const [emailLogin, setEmailLogin] = useState("")
-  const [passwordLogin, setPasswordLogin] = useState("")
+  const [emailLogin, setEmailLogin] = useState("");
+  const [passwordLogin, setPasswordLogin] = useState("");
 
   const getUser = useStore((state) => state.getUser);
   const router = useRouter();
@@ -74,16 +74,15 @@ export default function Login() {
 
   const handleLogin = () => {
     const auth = getAuth();
-    signInWithEmailAndPassword(auth, email, password)
-    .then((userCredential) => {
-      const user = userCredential.user;
-    })
-    .catch((error) => {
-       const errorCode = error.code;
-    const errorMessage = error.message;
-    })
-
-  }
+    signInWithEmailAndPassword(auth, emailLogin, passwordLogin)
+      .then((userCredential) => {
+        const user = userCredential.user;
+      })
+      .catch((error) => {
+        const errorCode = error.code;
+        const errorMessage = error.message;
+      });
+  };
 
   return (
     <>
@@ -157,8 +156,10 @@ export default function Login() {
                 <CiMail />
               </Icon>
               <Input
+                value={emailLogin}
+                onChange={(e) => setEmailLogin(e.target.value)}
+                placeholder="Digite seu email"
                 type="email"
-                w={"70%"}
                 size={{ base: "md", md: "lg" }}
                 border={"1px solid"}
                 borderColor="gray.300"
@@ -183,9 +184,10 @@ export default function Login() {
               <Icon color="gray.500" size={{ base: "xl", md: "2xl" }} mr={"3"}>
                 <PiPassword />
               </Icon>
-              <Input
+              <PasswordInput
+                value={passwordLogin}
+                onChange={(e) => setPasswordLogin(e.target.value)}
                 type="password"
-                w={"70%"}
                 size={{ base: "md", md: "lg" }}
                 border={"1px solid"}
                 borderColor="gray.300"
@@ -195,10 +197,12 @@ export default function Login() {
               />
             </Flex>
           </Field.Root>
-          <Flex justifyContent={"center"}>
+          <Flex justify={"center"}>
             <Button
+              onClick={handleLogin}
               w={{ base: "100%", md: "300px" }}
               h={{ md: "8" }}
+              maxW={"250px"}
               bgColor="gray.900"
               _hover={{
                 backgroundColor: "blue.500",
@@ -249,7 +253,7 @@ export default function Login() {
         {showRegister && (
           <Flex flexDir={"column"}>
             <Flex flexDir={"column"}>
-              <Flex flexDirection={{ md: "row", base: "column" }} gap={2}>
+              <Flex flexDirection={{ md: "column", base: "column" }} gap={2}>
                 <Field.Root mb={3}>
                   <Field.Label>E-mail</Field.Label>
                   <Input
@@ -309,6 +313,7 @@ export default function Login() {
               <Button
                 w={{ base: "100%", md: "300px" }}
                 h={{ md: "8" }}
+                maxW={"250px"}
                 bgColor="gray.900"
                 _hover={{
                   backgroundColor: "blue.500",
