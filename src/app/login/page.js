@@ -77,6 +77,9 @@ export default function Login() {
     signInWithEmailAndPassword(auth, emailLogin, passwordLogin)
       .then((userCredential) => {
         const user = userCredential.user;
+        getUser();
+
+        router.push("/dashboard");
       })
       .catch((error) => {
         const errorCode = error.code;
