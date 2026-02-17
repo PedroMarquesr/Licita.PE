@@ -7,7 +7,9 @@ import {
   Dialog,
   Portal,
   Separator,
+  Fade,
   Input,
+  Alert,
   Flex,
   Text,
 } from "@chakra-ui/react";
@@ -31,6 +33,8 @@ import { db } from "@/components/libs/firebaseinit";
 import CustomSelect from "../../addTenderForm/components/BiddingWizard/components/steps/IdentificationStep/components/CustomSelect/CustomSelect";
 import biddingResult from "@/constants/biddingResult";
 
+import AlertCustom from "../AlertCustom/AlertCustom";
+
 import { getBiddingDisplayStatus } from "@/utils/biddingStatus";
 
 import { useState } from "react";
@@ -46,9 +50,16 @@ export default function BiddingStatusModalEdit({
   const [note, setNote] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
+  const [showAlertErrorStatus, setShowAlertErrorStatus] = useState(false);
+  const [showAlertErrorDate, setShowAlertErrorDate] = useState(false);
+  const [showAlertSucess, setShowAlertSucess] = useState(false);
+
   const handleStatusUpdate = async () => {
     if (!selectedStatus) {
-      alert("Selecione um status");
+      setShowAlertErrorStatus(true);
+      setTimeout(() => {
+        setShowAlertErrorStatus(false);
+      }, 5000);
       return;
     }
 
@@ -63,7 +74,10 @@ export default function BiddingStatusModalEdit({
 
       if (selectedStatus === "reopened") {
         if (!reopeningDate) {
-          alert("Informe a data de reabertura!");
+          setShowAlertErrorDate(true);
+          setTimeout(() => {
+            setShowAlertErrorDate(false);
+          }, 5000);
           return;
         }
 
@@ -81,8 +95,11 @@ export default function BiddingStatusModalEdit({
         });
       }
       await updateDoc(biddingRef, updatePayload);
-      alert("Status atualizado com sucesso!");
-      onClose();
+
+      setShowAlertSucess(true);
+      setTimeout(() => {
+        onClose();
+      }, 2000);
     } catch (error) {
       console.error(error);
       alert("Erro ao atualizar");
@@ -179,7 +196,6 @@ export default function BiddingStatusModalEdit({
                         justifyContent={"left"}
                         alignItems={"start"}
                         gap={2}
-                        // mt={2}
                         ml={0}
                       >
                         <Text ml={"2"}>Insira a data de Reabertura</Text>
@@ -227,11 +243,41 @@ export default function BiddingStatusModalEdit({
               </Flex>
             </Dialog.Body>
             <Dialog.Footer>
+              {showAlertErrorStatus && (
+                <AlertCustom
+                  description={"Insira o Status do processo"}
+                  status={"error"}
+                  CollapsibleOpen={showAlertErrorStatus}
+                />
+              )}
+
+              {showAlertErrorDate && (
+                <AlertCustom
+                  description={"Insira o data de reabertura"}
+                  status={"error"}
+                  CollapsibleOpen={showAlertErrorDate}
+                />
+              )}
+
+              {showAlertSucess && (
+                <AlertCustom
+                  description={"Status atualizado com sucesso"}
+                  status={"success"}
+                  CollapsibleOpen={showAlertSucess}
+                />
+              )}
+
               <Dialog.ActionTrigger asChild>
-                <Button variant="outline">Cancel</Button>
+                <Button _hover={{ color: "black", backgroundColor: "red.500" }}>
+                  Cancelar
+                </Button>
               </Dialog.ActionTrigger>
-              <Button onClick={handleStatusUpdate} isLoading={isLoading}>
-                Save
+              <Button
+                onClick={handleStatusUpdate}
+                isLoading={isLoading}
+                _hover={{ backgroundColor: "blue.500" }}
+              >
+                Salvar
               </Button>
             </Dialog.Footer>
             <Dialog.CloseTrigger asChild>
