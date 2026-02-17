@@ -18,19 +18,22 @@ import { RiInfoCardFill } from "react-icons/ri";
 import CustomSelect from "../../addTenderForm/components/BiddingWizard/components/steps/IdentificationStep/components/CustomSelect/CustomSelect";
 import biddingResult from "@/constants/biddingResult";
 
-import InputDefaultForm from "../../addTenderForm/components/BiddingWizard/components/steps/components/InputDefaultForm/InputDefaultForm.jsx";
+import { getBiddingDisplayStatus } from "@/utils/biddingStatus";
 
 import { useState } from "react";
 
-export default function BiddingStatusModalEdit() {
+export default function BiddingStatusModalEdit({
+  isOpen,
+  onClose,
+  biddingData,
+}) {
   const [selectedStatus, setSelectedStatus] = useState("");
+  const [reopeningDate, setReopeningDate] = useState("");
+  const [reopeningTime, setReopeningTime] = useState("");
+  const [note, setNote] = useState("");
+
   return (
-    <Dialog.Root>
-      <Dialog.Trigger asChild>
-        <Button variant="outline" size="sm">
-          Open Dialog
-        </Button>
-      </Dialog.Trigger>
+    <Dialog.Root open={isOpen} onOpenChange={onClose}>
       <Portal>
         <Dialog.Backdrop />
         <Dialog.Positioner>
@@ -65,7 +68,7 @@ export default function BiddingStatusModalEdit() {
                   <Flex flexDir={"column"}>
                     <Text color={"GrayText"}>Órgão Responsável</Text>
                     <Text fontWeight={"bold"} color={"blue.900"}>
-                      PREFEITURA DE TESTE
+                      {biddingData.responsibleAgency}
                     </Text>
                   </Flex>
                 </Flex>
@@ -90,7 +93,7 @@ export default function BiddingStatusModalEdit() {
                   <Flex flexDir={"column"}>
                     <Text color={"GrayText"}>Identificador do Processo</Text>
                     <Text fontWeight={"bold"} color={"blue.900"}>
-                      PE 123/2026{" "}
+                      {biddingData.identificationNumber}
                     </Text>
                   </Flex>
                 </Flex>
@@ -98,7 +101,7 @@ export default function BiddingStatusModalEdit() {
                 <Flex flexDir={"column"}>
                   <Text ml={"2"}>Status Atual</Text>
                   <Text ml={"2"} fontWeight={"bold"} color={"green.900"}>
-                    PE 123/2026{" "}
+                    {getBiddingDisplayStatus(biddingData)}
                   </Text>
                 </Flex>
                 <Flex flexDir={"column"}>

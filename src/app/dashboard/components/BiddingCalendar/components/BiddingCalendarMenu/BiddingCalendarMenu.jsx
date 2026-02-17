@@ -8,7 +8,7 @@ import { FaTrash } from "react-icons/fa";
 import { FaMagnifyingGlass } from "react-icons/fa6";
 import { TbPlayerTrackNextFilled } from "react-icons/tb";
 
-export default function BiddingCalendarMenu({ biddingId }) {
+export default function BiddingCalendarMenu({ biddingId, onClickAt }) {
   const router = useRouter();
 
   return (
@@ -114,6 +114,7 @@ export default function BiddingCalendarMenu({ biddingId }) {
                     color: "orange.600",
                   }}
                   _focus={{ backgroundColor: "orange.50" }}
+                  onClick={onClickAt}
                 >
                   <Flex align="center" gap={2}>
                     <TbPlayerTrackNextFilled />

@@ -354,6 +354,12 @@ export default function TenderSummary() {
     }
   };
 
+  const handleOpenStatusModal = (biddingId) => {
+    const selectedBidding = biddings.find((b) => b.id === biddingId);
+    setBiddingData(selectedBidding);
+    setStatusModalEditOpen(true);
+  };
+
   return (
     <Flex
       flexDir={"column"}
@@ -586,9 +592,10 @@ export default function TenderSummary() {
                     </GridItem>
                     <GridItem fontSize={"x-small"}>
                       {/* ↓ Ação para abrir o menu de calendário, passando o ID da licitação */}
-                      <BiddingCalendarMenu biddingId={bidding.id} />
-
-                      <BiddingStatusModalEdit />
+                      <BiddingCalendarMenu
+                        biddingId={bidding.id}
+                        onClickAt={() => handleOpenStatusModal(bidding.id)}
+                      />
                     </GridItem>
                   </Grid>
                 ))}
@@ -695,6 +702,13 @@ export default function TenderSummary() {
             </Dialog.Positioner>
           </Portal>
         </Dialog.Root>
+      )}
+      {statusModalEditOpen && (
+        <BiddingStatusModalEdit
+          isOpen={statusModalEditOpen}
+          onClose={() => setStatusModalEditOpen(false)}
+          biddingData={biddingData}
+        />
       )}
     </Flex>
   );

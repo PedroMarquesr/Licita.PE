@@ -3,7 +3,6 @@
 import { Flex } from "@chakra-ui/react";
 
 import HeaderPage from "./components/HeaderPage/HeaderPage";
-import BiddingCalendar from "./components/BiddingCalendar/BiddingCalendar";
 import CardOverview from "./components/CardOverview/CardOverview";
 
 import { collection, query, where, getDocs } from "firebase/firestore";
