@@ -6,6 +6,8 @@ import {
   CloseButton,
   Dialog,
   Portal,
+  Separator,
+  Input,
   Flex,
   Text,
 } from "@chakra-ui/react";
@@ -14,10 +16,14 @@ import { IoDocumentText } from "react-icons/io5";
 import { RiInfoCardFill } from "react-icons/ri";
 
 import CustomSelect from "../../addTenderForm/components/BiddingWizard/components/steps/IdentificationStep/components/CustomSelect/CustomSelect";
-
 import biddingResult from "@/constants/biddingResult";
 
+import InputDefaultForm from "../../addTenderForm/components/BiddingWizard/components/steps/components/InputDefaultForm/InputDefaultForm.jsx";
+
+import { useState } from "react";
+
 export default function BiddingStatusModalEdit() {
+  const [selectedStatus, setSelectedStatus] = useState("");
   return (
     <Dialog.Root>
       <Dialog.Trigger asChild>
@@ -100,7 +106,47 @@ export default function BiddingStatusModalEdit() {
                   <CustomSelect
                     placeholder={"Selecione o novo status"}
                     options={biddingResult}
+                    onValueChange={(value) => setSelectedStatus(value[0])}
                   />
+
+                  {selectedStatus === "reopened" && (
+                    <Flex flexDir={"column"}>
+                      <Separator mt={4} mb={4} borderColor={"gray.300"} />
+                      <Flex
+                        flexDir={"column"}
+                        justifyContent={"left"}
+                        alignItems={"start"}
+                        gap={2}
+                        // mt={2}
+                        ml={0}
+                      >
+                        <Text ml={"2"}>Insira a data de Reabertura</Text>
+                        <Flex flexDir={{ base: "column" }} gap={{ base: 2 }}>
+                          <Input ml={"2"} width="298px" type="date" />
+                          <Input ml={"2"} width="100px" type="time" />
+                        </Flex>
+                      </Flex>
+
+                      <Flex
+                        flexDir={"column"}
+                        justifyContent={"left"}
+                        alignItems={"start"}
+                        gap={2}
+                        mt={2}
+                        ml={0}
+                      >
+                        <Text ml={"2"}>Insira uma nota informativa</Text>
+                        <Flex flexDir={{ base: "column" }} gap={{ base: 2 }}>
+                          <Input
+                            ml={"2"}
+                            width="298px"
+                            type="text"
+                            placeholder="Ex: Suspensão para análise de amostras"
+                          />
+                        </Flex>
+                      </Flex>
+                    </Flex>
+                  )}
                 </Flex>
               </Flex>
             </Dialog.Body>
