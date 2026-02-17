@@ -15,6 +15,19 @@ import {
 import { IoDocumentText } from "react-icons/io5";
 import { RiInfoCardFill } from "react-icons/ri";
 
+import { v4 as uuidv4 } from "uuid";
+
+import {
+  collection,
+  getDocs,
+  doc,
+  updateDoc,
+  arrayUnion,
+  Timestamp,
+} from "firebase/firestore";
+
+import { db } from "@/components/libs/firebaseinit";
+
 import CustomSelect from "../../addTenderForm/components/BiddingWizard/components/steps/IdentificationStep/components/CustomSelect/CustomSelect";
 import biddingResult from "@/constants/biddingResult";
 
@@ -31,6 +44,52 @@ export default function BiddingStatusModalEdit({
   const [reopeningDate, setReopeningDate] = useState("");
   const [reopeningTime, setReopeningTime] = useState("");
   const [note, setNote] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+
+  const handleStatusUpdate = async () => {
+    if (!selectedStatus) {
+      alert("Selecione um status");
+      return;
+    }
+
+    try {
+      setIsLoading(true);
+
+      const biddingRef = doc(db, "biddings", biddingData.id);
+
+      const updatePayload = {
+        result: selectedStatus,
+      };
+
+      if (selectedStatus === "reopened") {
+        if (!reopeningDate) {
+          alert("Informe a data de reabertura!");
+          return;
+        }
+
+        const reopeningDateTime = new Date(
+          `${reopeningDate}T${reopeningTime || "00:00"}`,
+        );
+
+        updatePayload.status = "reopened";
+
+        updatePayload.reopenHistory = arrayUnion({
+          id: uuidv4(),
+          createdAt: Timestamp.now(),
+          reopenedAt: Timestamp.fromDate(reopeningDateTime),
+          notes: note || "",
+        });
+      }
+      await updateDoc(biddingRef, updatePayload);
+      alert("Status atualizado com sucesso!");
+      onClose();
+    } catch (error) {
+      console.error(error);
+      alert("Erro ao atualizar");
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   return (
     <Dialog.Root open={isOpen} onOpenChange={onClose}>
@@ -125,8 +184,20 @@ export default function BiddingStatusModalEdit({
                       >
                         <Text ml={"2"}>Insira a data de Reabertura</Text>
                         <Flex flexDir={{ base: "column" }} gap={{ base: 2 }}>
-                          <Input ml={"2"} width="298px" type="date" />
-                          <Input ml={"2"} width="100px" type="time" />
+                          <Input
+                            ml={"2"}
+                            width="298px"
+                            type="date"
+                            value={reopeningDate}
+                            onChange={(e) => setReopeningDate(e.target.value)}
+                          />
+                          <Input
+                            ml={"2"}
+                            width="100px"
+                            type="time"
+                            value={reopeningTime}
+                            onChange={(e) => setReopeningTime(e.target.value)}
+                          />
                         </Flex>
                       </Flex>
 
@@ -145,6 +216,8 @@ export default function BiddingStatusModalEdit({
                             width="298px"
                             type="text"
                             placeholder="Ex: Suspensão para análise de amostras"
+                            value={note}
+                            onChange={(e) => setNote(e.target.value)}
                           />
                         </Flex>
                       </Flex>
@@ -157,7 +230,9 @@ export default function BiddingStatusModalEdit({
               <Dialog.ActionTrigger asChild>
                 <Button variant="outline">Cancel</Button>
               </Dialog.ActionTrigger>
-              <Button>Save</Button>
+              <Button onClick={handleStatusUpdate} isLoading={isLoading}>
+                Save
+              </Button>
             </Dialog.Footer>
             <Dialog.CloseTrigger asChild>
               <CloseButton size="sm" />
