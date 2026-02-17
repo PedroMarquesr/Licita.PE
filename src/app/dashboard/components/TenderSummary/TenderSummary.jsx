@@ -30,6 +30,7 @@ import {
 import { db } from "@/components/libs/firebaseinit";
 import { useState, useEffect } from "react";
 
+import BiddingStatusModalEdit from "../BiddingStatusModalEdit/BiddingStatusModalEdit";
 import BiddingWizard from "../../addTenderForm/components/BiddingWizard/BiddingWizard";
 import BiddingCalendarMenu from "../BiddingCalendar/components/BiddingCalendarMenu/BiddingCalendarMenu";
 import MobileCardTenderSummary from "./components/MobileCardTenderSummary/MobileCardTenderSummary";
@@ -46,6 +47,7 @@ export default function TenderSummary() {
   const [biddingData, setBiddingData] = useState({});
   const [edit, setEdit] = useState(false);
   const [showButtonEdit, setShowButtonEdit] = useState(false);
+  const [statusModalEditOpen, setStatusModalEditOpen] = useState(false);
 
   const fetchBiddingsByWeek = async () => {
     try {
@@ -583,7 +585,10 @@ export default function TenderSummary() {
                       </IconButton>
                     </GridItem>
                     <GridItem fontSize={"x-small"}>
+                      {/* ↓ Ação para abrir o menu de calendário, passando o ID da licitação */}
                       <BiddingCalendarMenu biddingId={bidding.id} />
+
+                      <BiddingStatusModalEdit />
                     </GridItem>
                   </Grid>
                 ))}

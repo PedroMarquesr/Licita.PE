@@ -51,6 +51,7 @@ export default function AddTenderFormFixed({ setEdit, edit }) {
 
     result: "",
     status: BIDDING_STATUS.SCHEDULED,
+
     isFavorite: false,
   });
   const [dialogOpen, setDialogOpen] = useState(false);
