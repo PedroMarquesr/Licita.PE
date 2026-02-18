@@ -9,7 +9,7 @@ export default function AlertCustom({
   display,
 }) {
   return (
-    <Collapsible.Root open={CollapsibleOpen} close w={"full"} display={display}>
+    <Collapsible.Root open={CollapsibleOpen} w={"full"} display={display}>
       <Collapsible.Content>
         <Alert.Root status={status}>
           <Alert.Indicator />
