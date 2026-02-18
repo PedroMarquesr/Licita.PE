@@ -11,6 +11,7 @@ import Footer from "@/components/Footer/Footer"
 
 export default function Home() {
   const user = useStore((state) => state.user)
+  
 
   return (
     <>
