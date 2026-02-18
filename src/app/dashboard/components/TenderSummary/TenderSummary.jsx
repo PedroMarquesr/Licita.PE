@@ -50,6 +50,9 @@ export default function TenderSummary() {
   const [showButtonEdit, setShowButtonEdit] = useState(false)
   const [statusModalEditOpen, setStatusModalEditOpen] = useState(false)
   const [showAlertSucessEdit, setShowAlertSucessEdit] = useState(false)
+  const [showAlertFail, setShowAlertFail] = useState(false)
+  const [errorMessage, setErrorMessage] = useState("")
+  const [errorCod, setErrorCod] = useState("")
 
   const fetchBiddingsByWeek = async () => {
     try {
@@ -350,6 +353,13 @@ export default function TenderSummary() {
       setModalOpen(false)
       setEdit(false)
     } catch (error) {
+      setErrorMessage(error.message)
+      setErrorCod(error)
+      const errorCod = error
+      setShowAlertFail(true)
+      setTimeout(() => {
+        setShowAlertFail(false)
+      }, 3000)
       console.log("Erro ao atualizar", error)
       alert("Erro ao atualizar: " + error.message)
     } finally {
@@ -387,13 +397,19 @@ export default function TenderSummary() {
           </Switch.Label>
         </Flex>
       </Switch.Root>
-      <Flex>
-        <AlertCustom
-          status={"success"}
-          description={"Alteração realizada com sucesso !"}
-          CollapsibleOpen={showAlertSucessEdit}
-        />
-      </Flex>
+      <AlertCustom
+        display={showAlertSucessEdit}
+        status={"success"}
+        description={"Alteração realizada com sucesso !"}
+        CollapsibleOpen={showAlertSucessEdit}
+      />
+
+      <AlertCustom
+        display={showAlertFail}
+        status={"error"}
+        description={`Erro ao atualizar processo, tente novamente mais tarde ! Erro: ${errorMessage}`}
+        CollapsibleOpen={showAlertFail}
+      />
       {viewIsOpen && (
         <Flex p={4} flexDir="column" w="100%" justifyContent={"center"}>
           <Flex justify="space-between" align="center" mb={6}>
