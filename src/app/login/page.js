@@ -80,7 +80,7 @@ export default function Login() {
       .catch((Error) => {
         const errorCode = error.code
         const errorMessage = error.message
-        console.log("Erro ao criar usuário:", Error)
+        console.log("Erro ao criar usuário:", error.message)
       })
   }
   const requirementPassword = [
@@ -154,6 +154,7 @@ export default function Login() {
       .catch((error) => {
         const errorCode = error.code
         const errorMessage = error.message
+        alert("Email ou senha inválidos")
       })
   }
 
@@ -300,7 +301,13 @@ export default function Login() {
             </Button>
           </Flex>
         </Flex>
-
+        <Flex>
+          <Text fontSize={{ base: "sm", md: "xs" }} color="gray.600">
+            <Link color="gray.600" _hover={{ color: "blue.500" }} as={"button"}>
+              Esqueceu sua senha?{" "}
+            </Link>
+          </Text>
+        </Flex>
         <Flex mt={{ base: 4, md: 5 }} mb={{ base: 2, md: 3 }}>
           <Text fontSize={{ base: "sm", md: "md" }} color="gray.600">
             Não tem uma conta?{" "}
@@ -403,8 +410,8 @@ export default function Login() {
                       key={index}
                       mb={1.5}
                       display={
-                        (item.ref === "password") & item.valid ||
-                        (item.ref === "email") & item.valid
+                        (item.ref === "password" && item.valid) ||
+                        (item.ref === "email" && item.valid)
                           ? "none"
                           : "flex"
                       }
