@@ -748,13 +748,17 @@ export default function BiddingCalendar({}) {
         ))
       )}
 
-      {/* Modal de Edição */}
-      <Dialog.Root open={modalOpen} size="90vw">
+      <Dialog.Root open={modalOpen} size="auto" motionPreset={"scale"}>
         <Dialog.Trigger />
         <Portal>
           <Dialog.Backdrop />
           <Dialog.Positioner>
-            <Dialog.Content>
+            <Dialog.Content
+              bg="white"
+              color="gray.800"
+              borderRadius="xl"
+              boxShadow="lg"
+            >
               <Dialog.Header>
                 <Dialog.Title>Edição de Processo</Dialog.Title>
               </Dialog.Header>
@@ -789,12 +793,15 @@ export default function BiddingCalendar({}) {
                     setEdit(false);
                   }}
                   ml={3}
+                  color={"white"}
+                  bgColor={"red.500"}
+                  _hover={{ backgroundColor: "red.700", color: "white" }}
                 >
                   Cancelar
                 </Button>
               </Dialog.Footer>
 
-              <Dialog.CloseTrigger asChild>
+              <Dialog.CloseTrigger asChild color={"black"}>
                 <CloseButton
                   onClick={() => {
                     setModalOpen(false);
@@ -802,6 +809,10 @@ export default function BiddingCalendar({}) {
                     setEdit(false);
                   }}
                   size="sm"
+                  _hover={{
+                    color: "white",
+                    backgroundColor: "red",
+                  }}
                 />
               </Dialog.CloseTrigger>
             </Dialog.Content>

@@ -654,14 +654,47 @@ export default function TenderSummary() {
       )}
 
       {modalOpen && (
-        <Dialog.Root open={modalOpen} size={"90vw"}>
+        <Dialog.Root open={modalOpen} size={"90vw"} motionPreset={"scale"}>
           <Dialog.Trigger />
           <Portal>
             <Dialog.Backdrop />
             <Dialog.Positioner>
-              <Dialog.Content>
-                <Dialog.Header>
+              <Dialog.Content
+                bg="white"
+                color="gray.800"
+                borderRadius="xl"
+                boxShadow="lg"
+              >
+                <Dialog.Header
+                  display="flex"
+                  justifyContent="space-between"
+                  alignItems="center"
+                >
                   <Dialog.Title>Edição de Processo</Dialog.Title>
+
+                  <Flex gap={3}>
+                    <Button
+                      onClick={() => {
+                        updateBidding(biddingData);
+                      }}
+                      bgColor={"blue.500"}
+                      color={"white"}
+                      _hover={{ bgColor: "blue.600" }}
+                    >
+                      Salvar
+                    </Button>
+                    <Button
+                      onClick={() => {
+                        setModalOpen(false);
+                        setShowButtonEdit(false);
+                      }}
+                      bgColor={"red.500"}
+                      _hover={{ backgroundColor: "red.800", width: "xsm" }}
+                      color={"white"}
+                    >
+                      Cancelar
+                    </Button>
+                  </Flex>
                 </Dialog.Header>
 
                 <Dialog.Body>
@@ -675,34 +708,14 @@ export default function TenderSummary() {
                     />
                   </Flex>
                 </Dialog.Body>
-                <Dialog.Footer>
-                  <Button
-                    onClick={() => {
-                      updateBidding(biddingData);
-                    }}
-                    bgColor={"blue.500"}
-                    color={"white"}
-                    _hover={{ bgColor: "blue.600" }}
-                  >
-                    Salvar
-                  </Button>
-                </Dialog.Footer>
-                <Dialog.CloseTrigger asChild>
-                  <CloseButton
-                    onClick={() => {
-                      setModalOpen(false);
-                      setShowButtonEdit(false);
-                    }}
-                    size="sm"
-                    bgColor={"red"}
-                    _hover={{ backgroundColor: "red.500", width: "xsm" }}
-                  />
-                </Dialog.CloseTrigger>
+
+                <Dialog.Footer></Dialog.Footer>
               </Dialog.Content>
             </Dialog.Positioner>
           </Portal>
         </Dialog.Root>
       )}
+
       {statusModalEditOpen && (
         <BiddingStatusModalEdit
           isOpen={statusModalEditOpen}
