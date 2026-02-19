@@ -24,6 +24,7 @@ import { FaCheckCircle } from "react-icons/fa"
 
 import {
   getAuth,
+  sendEmailVerification,
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
 } from "firebase/auth"
@@ -49,6 +50,7 @@ export default function Login() {
   const [hasNumber, setHasNumber] = useState(false)
 
   const getUser = useStore((state) => state.getUser)
+
   const router = useRouter()
 
   const isPasswordValid =
@@ -390,7 +392,6 @@ export default function Login() {
                     size={"sm"}
                     color={"gray.600"}
                     placeholder="Confirme sua senha"
-                    // border={}
                   />
                 </Field.Root>
               </Flex>
@@ -402,7 +403,7 @@ export default function Login() {
                   color="gray.700"
                   fontSize="sm"
                 >
-                  Requisitos para preenchimento de senha:
+                  Requisitos de preenchimento:
                 </Text>{" "}
                 <List.Root fontSize={"xs"} ml={2} unstyled>
                   {requirementPassword.map((item, index) => (
