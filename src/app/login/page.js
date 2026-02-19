@@ -3,20 +3,183 @@
 import {
   Flex,
   Text,
+  Link,
   Image,
+  Input,
   Button,
   Box,
+  List,
   Separator,
+  Stack,
   Icon,
   Field,
-  Input,
 } from "@chakra-ui/react"
+
+import { PasswordInput } from "@/components/ui/password-input"
 import BtnGoogle from "./components/BtnGoogle/BtnGoogle"
+import DialogDefault from "@/components/DialogDefault/DialogDefault"
 import { CiMail } from "react-icons/ci"
 import { PiPassword } from "react-icons/pi"
+import { MdSmsFailed } from "react-icons/md"
+import { FaCheckCircle } from "react-icons/fa"
+
+import {
+  getAuth,
+  sendEmailVerification,
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+} from "firebase/auth"
+
 import useStore from "../../components/globalStates/store"
+import { useRouter } from "next/navigation"
+
+import { useState } from "react"
 
 export default function Login() {
+  const [showRegister, setShowRegister] = useState(false)
+  const [email, setEmail] = useState("")
+  const [password, setPassword] = useState("")
+  const [confirmEmail, setConfirmEmail] = useState("")
+  const [confirmPassword, setConfirmPassword] = useState("")
+  const [emailLogin, setEmailLogin] = useState("")
+
+  const [isLengthValid, setIsLengthValid] = useState(false)
+  const [passwordLogin, setPasswordLogin] = useState("")
+  const [hasUppercase, setHasUppercase] = useState(false)
+  const [hasLowercase, setHasLowercase] = useState(false)
+  const [hasSpecialChar, setHasSpecialChar] = useState(false)
+  const [hasNumber, setHasNumber] = useState(false)
+  const [showDialogEmailNotVerified, setShowDialogEmailNotVerified] =
+    useState(false)
+
+  const [showDialogSucessRegister, setShowDialogSucessRegister] =
+    useState(false)
+  const [showLoginError, setShowLoginError] = useState(false)
+
+  const getUser = useStore((state) => state.getUser)
+
+  const router = useRouter()
+
+  const isPasswordValid =
+    hasUppercase &&
+    hasLowercase &&
+    hasNumber &&
+    hasSpecialChar &&
+    isLengthValid &&
+    password === confirmPassword &&
+    email === confirmEmail
+
+  const handleRegister = async () => {
+    if (!isPasswordValid) {
+      alert("Algum requisito de senha não foi cumprido")
+      return
+    }
+
+    try {
+      const auth = getAuth()
+
+      const userCredential = await createUserWithEmailAndPassword(
+        auth,
+        email,
+        password
+      )
+
+      const user = userCredential.user
+
+      auth.languageCode = "pt-BR"
+
+      await sendEmailVerification(user)
+
+      setShowDialogSucessRegister(true)
+      await auth.signOut()
+
+      setShowRegister(false)
+    } catch (error) {
+      console.log("Erro real:", error)
+    }
+  }
+  const requirementPassword = [
+    { requirement: "De 6 a 15 caracteres", valid: isLengthValid },
+    {
+      requirement: "Caractere maiúsculo",
+      valid: hasUppercase,
+    },
+    {
+      requirement: "Caractere minúsculo",
+      valid: hasLowercase,
+    },
+    {
+      requirement: "Caractere especial",
+      valid: hasSpecialChar,
+    },
+    {
+      requirement: "Caractere numérico",
+      valid: hasNumber,
+    },
+    {
+      requirement: "Campos do Email não coincidem",
+      valid: email !== "" && email === confirmEmail,
+      ref: "email",
+    },
+    {
+      requirement: "Campos se senha não coincidem",
+      valid: password !== "" && password === confirmPassword,
+      ref: "password",
+    },
+  ]
+  const checkRequirementPassword = (pass) => {
+    if (/[A-Z]/.test(pass)) {
+      setHasUppercase(true)
+    } else {
+      setHasUppercase(false)
+    }
+
+    if (/[a-z]/.test(pass)) {
+      setHasLowercase(true)
+    } else {
+      setHasLowercase(false)
+    }
+
+    if (/\d/.test(pass)) {
+      setHasNumber(true)
+    } else {
+      setHasNumber(false)
+    }
+    if (/[@#$%&*!?\-_=.,;:]/.test(pass)) {
+      setHasSpecialChar(true)
+    } else {
+      setHasSpecialChar(false)
+    }
+    if (pass.length >= 6 && pass.length <= 15) {
+      setIsLengthValid(true)
+    } else {
+      setIsLengthValid(false)
+    }
+  }
+
+  const handleLogin = () => {
+    const auth = getAuth()
+
+    signInWithEmailAndPassword(auth, emailLogin, passwordLogin)
+      .then((userCredential) => {
+        const user = userCredential.user
+
+        if (!user.emailVerified) {
+          setShowDialogEmailNotVerified(true)
+          auth.signOut()
+          return
+        }
+
+        getUser()
+        router.push("/dashboard")
+      })
+      .catch((error) => {
+        const errorCode = error.code
+        const errorMessage = error.message
+        setShowLoginError(true)
+      })
+  }
+
   return (
     <>
       <Flex
@@ -33,6 +196,22 @@ export default function Login() {
         boxShadow={"2xl"}
         p={{ base: 4, md: 6 }}
       >
+        <DialogDefault
+          open={showDialogSucessRegister}
+          message="Email de verificação enviado! Após confirmar, faça login com seu email e senha."
+          onClose={() => setShowDialogSucessRegister(false)}
+        />
+        <DialogDefault
+          open={showDialogEmailNotVerified}
+          message="Email não verificado! Verifique sua caixa de entrada e clique no link de confirmação antes de fazer login."
+          onClose={() => setShowDialogEmailNotVerified(false)}
+        />
+        <DialogDefault
+          open={showLoginError}
+          message="Email ou senha inválidos"
+          onClose={() => setShowLoginError(false)}
+        />
+
         <Flex justify={"center"}>
           <Image
             my={{ base: "3", md: "5" }}
@@ -89,8 +268,10 @@ export default function Login() {
                 <CiMail />
               </Icon>
               <Input
+                value={emailLogin}
+                onChange={(e) => setEmailLogin(e.target.value)}
+                placeholder="Digite seu email"
                 type="email"
-                w={"70%"}
                 size={{ base: "md", md: "lg" }}
                 border={"1px solid"}
                 borderColor="gray.300"
@@ -115,9 +296,10 @@ export default function Login() {
               <Icon color="gray.500" size={{ base: "xl", md: "2xl" }} mr={"3"}>
                 <PiPassword />
               </Icon>
-              <Input
+              <PasswordInput
+                value={passwordLogin}
+                onChange={(e) => setPasswordLogin(e.target.value)}
                 type="password"
-                w={"70%"}
                 size={{ base: "md", md: "lg" }}
                 border={"1px solid"}
                 borderColor="gray.300"
@@ -127,13 +309,15 @@ export default function Login() {
               />
             </Flex>
           </Field.Root>
-          <Flex justifyContent={"center"}>
+          <Flex justify={"center"}>
             <Button
+              onClick={handleLogin}
               w={{ base: "100%", md: "300px" }}
               h={{ md: "8" }}
+              maxW={"250px"}
               bgColor="gray.900"
               _hover={{
-                backgroundColor: "primary.500",
+                backgroundColor: "blue.500",
                 transform: "translateY(-1px)",
               }}
               _active={{
@@ -155,7 +339,13 @@ export default function Login() {
             </Button>
           </Flex>
         </Flex>
-
+        <Flex>
+          <Text fontSize={{ base: "sm", md: "xs" }} color="gray.600">
+            <Link color="gray.600" _hover={{ color: "blue.500" }} as={"button"}>
+              Esqueceu sua senha?{" "}
+            </Link>
+          </Text>
+        </Flex>
         <Flex mt={{ base: 4, md: 5 }} mb={{ base: 2, md: 3 }}>
           <Text fontSize={{ base: "sm", md: "md" }} color="gray.600">
             Não tem uma conta?{" "}
@@ -166,10 +356,164 @@ export default function Login() {
               cursor="pointer"
               _hover={{ textDecoration: "underline" }}
             >
-              Cadastre-se
+              <Link
+                color="gray.600"
+                _hover={{ color: "blue.500" }}
+                as={"button"}
+                onClick={() => setShowRegister(true)}
+              >
+                Cadastre-se
+              </Link>
             </Text>
           </Text>
         </Flex>
+
+        {showRegister && (
+          <Flex flexDir={"column"}>
+            <Flex flexDir={"column"}>
+              <Flex flexDirection={{ md: "column", base: "column" }} gap={2}>
+                <Field.Root mb={3}>
+                  <Field.Label>E-mail</Field.Label>
+                  <Input
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    size={"sm"}
+                    placeholder="E-mail"
+                    type="email"
+                  />
+                </Field.Root>
+
+                <Field.Root mb={3}>
+                  <Field.Label>Confirme seu E-mail</Field.Label>
+                  <Input
+                    value={confirmEmail}
+                    onChange={(e) => setConfirmEmail(e.target.value)}
+                    size={"sm"}
+                    placeholder="Confirme seu E-mail"
+                    type="email"
+                  />
+                </Field.Root>
+              </Flex>
+
+              <Flex
+                flexDirection={{ md: "row", base: "column" }}
+                w={"100%"}
+                gap={2}
+              >
+                <Field.Root mb={3}>
+                  <Field.Label>Senha</Field.Label>
+                  <PasswordInput
+                    value={password}
+                    onChange={(e) => {
+                      setPassword(e.target.value)
+                      checkRequirementPassword(e.target.value)
+                    }}
+                    size={"sm"}
+                    placeholder="Senha"
+                  />
+                </Field.Root>
+
+                <Field.Root>
+                  <Field.Label>Confirme sua senha</Field.Label>
+                  <PasswordInput
+                    value={confirmPassword}
+                    onChange={(e) => {
+                      setConfirmPassword(e.target.value)
+                    }}
+                    _hover={{ borderColor: "gray.500" }}
+                    _focus={{
+                      borderColor: "primary.500",
+                      boxShadow: "outline",
+                    }}
+                    size={"sm"}
+                    color={"gray.600"}
+                    placeholder="Confirme sua senha"
+                  />
+                </Field.Root>
+              </Flex>
+
+              <Box fontSize={"xs"}>
+                <Text
+                  fontWeight="semibold"
+                  mb={2}
+                  color="gray.700"
+                  fontSize="sm"
+                >
+                  Requisitos de preenchimento:
+                </Text>{" "}
+                <List.Root fontSize={"xs"} ml={2} unstyled>
+                  {requirementPassword.map((item, index) => (
+                    <List.Item
+                      key={index}
+                      mb={1.5}
+                      display={
+                        (item.ref === "password" && item.valid) ||
+                        (item.ref === "email" && item.valid)
+                          ? "none"
+                          : "flex"
+                      }
+                    >
+                      <Flex alignItems="center" gap={2}>
+                        <Flex
+                          w="18px"
+                          h="18px"
+                          borderRadius="full"
+                          bg={item.valid ? "green.100" : "red.100"}
+                          align="center"
+                          justify="center"
+                          transition="all 0.2s"
+                        >
+                          <Icon
+                            as={item.valid ? FaCheckCircle : MdSmsFailed}
+                            color={item.valid ? "green.600" : "red.500"}
+                            fontSize="12px"
+                          />
+                        </Flex>
+                        <Text
+                          color={item.valid ? "green.700" : "gray.600"}
+                          fontWeight={item.valid ? "medium" : "normal"}
+                          textDecoration={item.valid ? "none" : "none"}
+                          transition="all 0.2s"
+                        >
+                          {item.requirement}
+                        </Text>
+                      </Flex>
+                    </List.Item>
+                  ))}
+                </List.Root>
+              </Box>
+            </Flex>
+            <Flex justify={"center"}>
+              <Button
+                w={{ base: "100%", md: "300px" }}
+                h={{ md: "8" }}
+                maxW={"250px"}
+                bgColor="gray.900"
+                _hover={{
+                  backgroundColor: "blue.500",
+                  transform: "translateY(-1px)",
+                }}
+                _active={{
+                  transform: "translateY(0)",
+                }}
+                p={{ base: "5", md: "7" }}
+                border={"1px solid"}
+                borderColor="gray.700"
+                mt={{ base: 2, md: 3 }}
+                size={{ base: "md", md: "lg" }}
+                onClick={handleRegister}
+              >
+                <Text
+                  color="gray.50"
+                  fontSize={{ base: "md", md: "lg" }}
+                  fontWeight="medium"
+                >
+                  Cadastrar
+                </Text>
+              </Button>
+            </Flex>
+          </Flex>
+        )}
       </Flex>
     </>
   )

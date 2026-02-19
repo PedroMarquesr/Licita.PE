@@ -1,8 +1,8 @@
-"use client"
+"use client";
 
-import { Flex, Text, Grid, GridItem } from "@chakra-ui/react"
-import InputDefaultForm from "../components/InputDefaultForm/InputDefaultForm.jsx"
-import CustomSelect from "./components/CustomSelect/CustomSelect"
+import { Flex, Text, Grid, GridItem } from "@chakra-ui/react";
+import InputDefaultForm from "../components/InputDefaultForm/InputDefaultForm.jsx";
+import CustomSelect from "./components/CustomSelect/CustomSelect";
 
 export default function IdentificationStep({
   biddingData,
@@ -15,14 +15,14 @@ export default function IdentificationStep({
     { label: "Aberto/Fechado", value: "Aberto/Fechado" },
     { label: "Fechado/Aberto", value: "Fechado/Aberto" },
     { label: "Fechado", value: "Fechado" },
-  ]
+  ];
   const judgmentCriteriaOptions = [
     { label: "Menor preço", value: "Menor preço" },
     { label: "Maior desconto", value: "Maior desconto" },
     { label: "Técnica e preço", value: "Técnica e preço" },
     { label: "Maior lance", value: "Maior lance" },
     { label: "Melhor técnica", value: "Melhor técnica" },
-  ]
+  ];
   const biddingTypeOptions = [
     { label: "Dispensa de Licitação", value: "Dispensa de Licitação" },
     { label: "Pregão eletrônico", value: "Pregão eletrônico" },
@@ -30,29 +30,29 @@ export default function IdentificationStep({
     { label: "Concorrência", value: "Concorrência" },
     { label: "Tomada de Preços", value: "Tomada de Preços" },
     { label: "Inexigibilidade", value: "Inexigibilidade" },
-  ]
+  ];
   const supplyTypeOptions = [
     { label: "Registro de Preços", value: "Registro_de_Preços" },
     { label: "Entrega Parcelada", value: "Entrega_Parcelada" },
     { label: "Entrega Imediata", value: "Entrega Imediata" },
     { label: "Serviço", value: "Serviço" },
     { label: "teste", value: "teste" },
-  ]
+  ];
 
   const unitOptions = [
     { label: "Dias", value: "Dias" },
     { label: "Meses", value: "Meses" },
     { label: "Anos", value: "Anos" },
     { label: "Parcelas", value: "Parcelas" },
-  ]
+  ];
   const formatCNPJ = (cnpj) => {
-    const numbers = cnpj.replace(/\D/g, "")
-    if (numbers.length !== 14) return cnpj
+    const numbers = cnpj.replace(/\D/g, "");
+    if (numbers.length !== 14) return cnpj;
     return `${numbers.slice(0, 2)}.${numbers.slice(2, 5)}.${numbers.slice(
       5,
-      8
-    )}/${numbers.slice(8, 12)}-${numbers.slice(12, 14)}`
-  }
+      8,
+    )}/${numbers.slice(8, 12)}-${numbers.slice(12, 14)}`;
+  };
 
   return (
     <Flex direction="column" w="100%" align="center" gap={6}>
@@ -111,15 +111,16 @@ export default function IdentificationStep({
               }
               onBlur={() => {
                 if (biddingData.agencyCnpj.length === 14) {
-                  const formatted = formatCNPJ(biddingData.agencyCnpj)
+                  const formatted = formatCNPJ(biddingData.agencyCnpj);
                   setBiddingData({
                     ...biddingData,
                     agencyCnpj: formatted,
-                  })
+                  });
                 }
               }}
             />
             <InputDefaultForm
+              edit={edit}
               legend={"Código do Órgão"}
               placeholder={"Código do Órgão no portal"}
               inputValue={biddingData.portalAgencyCode}
@@ -312,5 +313,5 @@ export default function IdentificationStep({
         </GridItem>
       </Grid>
     </Flex>
-  )
+  );
 }
