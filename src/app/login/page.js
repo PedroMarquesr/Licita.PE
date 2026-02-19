@@ -17,6 +17,7 @@ import {
 
 import { PasswordInput } from "@/components/ui/password-input"
 import BtnGoogle from "./components/BtnGoogle/BtnGoogle"
+import DialogDefault from "@/components/DialogDefault/DialogDefault"
 import { CiMail } from "react-icons/ci"
 import { PiPassword } from "react-icons/pi"
 import { MdSmsFailed } from "react-icons/md"
@@ -48,6 +49,12 @@ export default function Login() {
   const [hasLowercase, setHasLowercase] = useState(false)
   const [hasSpecialChar, setHasSpecialChar] = useState(false)
   const [hasNumber, setHasNumber] = useState(false)
+  const [showDialogEmailNotVerified, setShowDialogEmailNotVerified] =
+    useState(false)
+
+  const [showDialogSucessRegister, setShowDialogSucessRegister] =
+    useState(false)
+  const [showLoginError, setShowLoginError] = useState(false)
 
   const getUser = useStore((state) => state.getUser)
 
@@ -83,8 +90,7 @@ export default function Login() {
 
       await sendEmailVerification(user)
 
-      alert("Email de verificação enviado! Verifique sua caixa de entrada.")
-
+      setShowDialogSucessRegister(true)
       await auth.signOut()
 
       setShowRegister(false)
@@ -153,17 +159,24 @@ export default function Login() {
 
   const handleLogin = () => {
     const auth = getAuth()
+
     signInWithEmailAndPassword(auth, emailLogin, passwordLogin)
       .then((userCredential) => {
         const user = userCredential.user
-        getUser()
 
+        if (!user.emailVerified) {
+          setShowDialogEmailNotVerified(true)
+          auth.signOut()
+          return
+        }
+
+        getUser()
         router.push("/dashboard")
       })
       .catch((error) => {
         const errorCode = error.code
         const errorMessage = error.message
-        alert("Email ou senha inválidos")
+        setShowLoginError(true)
       })
   }
 
@@ -183,6 +196,22 @@ export default function Login() {
         boxShadow={"2xl"}
         p={{ base: 4, md: 6 }}
       >
+        <DialogDefault
+          open={showDialogSucessRegister}
+          message="Email de verificação enviado! Após confirmar, faça login com seu email e senha."
+          onClose={() => setShowDialogSucessRegister(false)}
+        />
+        <DialogDefault
+          open={showDialogEmailNotVerified}
+          message="Email não verificado! Verifique sua caixa de entrada e clique no link de confirmação antes de fazer login."
+          onClose={() => setShowDialogEmailNotVerified(false)}
+        />
+        <DialogDefault
+          open={showLoginError}
+          message="Email ou senha inválidos"
+          onClose={() => setShowLoginError(false)}
+        />
+
         <Flex justify={"center"}>
           <Image
             my={{ base: "3", md: "5" }}

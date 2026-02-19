@@ -5,7 +5,6 @@ import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 
 export default function () {
-  const [mounted, setMounted] = useState(false)
   const router = useRouter()
 
   const handleBack = () => {
