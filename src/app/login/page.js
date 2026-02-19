@@ -62,28 +62,35 @@ export default function Login() {
     password === confirmPassword &&
     email === confirmEmail
 
-  const handleRegister = () => {
+  const handleRegister = async () => {
     if (!isPasswordValid) {
-      alert(
-        "Algum requisito de senha não foi cumprido, verifique e tente novamente"
-      )
-
+      alert("Algum requisito de senha não foi cumprido")
       return
     }
-    const auth = getAuth()
-    createUserWithEmailAndPassword(auth, email, password)
-      .then((userCredential) => {
-        const user = userCredential.user
-        console.log("Usuário criado com sucesso:", user)
-        getUser()
 
-        router.push("/dashboard")
-      })
-      .catch((Error) => {
-        const errorCode = error.code
-        const errorMessage = error.message
-        console.log("Erro ao criar usuário:", error.message)
-      })
+    try {
+      const auth = getAuth()
+
+      const userCredential = await createUserWithEmailAndPassword(
+        auth,
+        email,
+        password
+      )
+
+      const user = userCredential.user
+
+      auth.languageCode = "pt-BR"
+
+      await sendEmailVerification(user)
+
+      alert("Email de verificação enviado! Verifique sua caixa de entrada.")
+
+      await auth.signOut()
+
+      setShowRegister(false)
+    } catch (error) {
+      console.log("Erro real:", error)
+    }
   }
   const requirementPassword = [
     { requirement: "De 6 a 15 caracteres", valid: isLengthValid },
