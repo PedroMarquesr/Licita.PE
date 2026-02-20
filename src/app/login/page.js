@@ -18,6 +18,7 @@ import {
 import { PasswordInput } from "@/components/ui/password-input"
 import BtnGoogle from "./components/BtnGoogle/BtnGoogle"
 import DialogDefault from "@/components/DialogDefault/DialogDefault"
+import VerificationResendCountdown from "./components/VerificationResendCountdown/VerificationResendCountdown"
 import { CiMail } from "react-icons/ci"
 import { PiPassword } from "react-icons/pi"
 import { MdSmsFailed } from "react-icons/md"
@@ -55,6 +56,8 @@ export default function Login() {
   const [showDialogSucessRegister, setShowDialogSucessRegister] =
     useState(false)
   const [showLoginError, setShowLoginError] = useState(false)
+  const [showCounter, setShowCounter] = useState(false)
+  const [intervalSeconds, setIntervalSeconds] = useState(120)
 
   const getUser = useStore((state) => state.getUser)
 
@@ -91,11 +94,34 @@ export default function Login() {
       await sendEmailVerification(user)
 
       setShowDialogSucessRegister(true)
-      await auth.signOut()
+      // await auth.signOut() // ← virificar o que fazer com isso
 
       setShowRegister(false)
+      // ↓ Provisão temprorária, preciso tranformar tudo em apenas um useState
+      setEmail("")
+      setPassword("")
+      setConfirmEmail("")
+      setConfirmPassword("")
+      setEmailLogin("")
+      // ↑ Provisão temprorária, preciso tranformar tudo em apenas um useState
+      setShowCounter(true)
     } catch (error) {
       console.log("Erro real:", error)
+    }
+  }
+
+  const handleResendEmail = async () => {
+    try {
+      const auth = getAuth()
+      const user = auth.currentUser
+      if (user) {
+        await sendEmailVerification(user)
+        console.log("Email reenviado")
+        setIntervalSeconds(120)
+        setShowSeconds(true)
+      }
+    } catch (error) {
+      console.log(error)
     }
   }
   const requirementPassword = [
@@ -292,7 +318,7 @@ export default function Login() {
                 Senha
               </Field.Label>
             </Flex>
-            <Flex w={"100%"} align={"center"} justify={"center"}>
+            <Flex w={"100%"} align={"center"} justify={"center"} mb={5}>
               <Icon color="gray.500" size={{ base: "xl", md: "2xl" }} mr={"3"}>
                 <PiPassword />
               </Icon>
@@ -309,6 +335,14 @@ export default function Login() {
               />
             </Flex>
           </Field.Root>
+
+          {showCounter && (
+            <VerificationResendCountdown
+              resendEmail={handleResendEmail()}
+              interval={intervalSeconds}
+            />
+          )}
+
           <Flex justify={"center"}>
             <Button
               onClick={handleLogin}
