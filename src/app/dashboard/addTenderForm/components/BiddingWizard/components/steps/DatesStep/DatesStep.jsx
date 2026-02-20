@@ -1,7 +1,7 @@
-"use client"
+"use client";
 
-import { Flex, Text, Grid, GridItem } from "@chakra-ui/react"
-import InputDefaultForm from "../components/InputDefaultForm/InputDefaultForm.jsx"
+import { Flex, Text, Grid, GridItem, Box } from "@chakra-ui/react";
+import InputDefaultForm from "../components/InputDefaultForm/InputDefaultForm.jsx";
 
 export default function DatesStep({
   biddingData,
@@ -22,43 +22,54 @@ export default function DatesStep({
         Datas e Prazos
       </Text>
 
-      <Grid templateColumns={{ base: "1fr", md: "1fr " }} gap={6} w="100%">
+      <Grid templateColumns={{ base: "1fr", md: "1fr, 0.5" }} gap={6} w="100%">
         <GridItem>
           <Text fontSize="lg" fontWeight="semibold" color="gray.700" mb={3}>
             Disputa
           </Text>
-          <Flex gap={3} direction={{ base: "column", md: "row" }}>
+          <Box flex={"1"} gap={4}>
             <InputDefaultForm
+              mbInput={"2"}
+              maxW={"150px"}
               edit={edit}
               typeInput={"date"}
               legend={"Data*"}
               inputValue={biddingData.disputeDate}
               onChange={(e) =>
-                setBiddingData({ ...biddingData, disputeDate: e.target.value })
+                setBiddingData({
+                  ...biddingData,
+                  disputeDate: e.target.value,
+                })
               }
-              flex={1}
               layout="vertical"
             />
+          </Box>
+          <Box flex={1}>
             <InputDefaultForm
+              maxW={"100px"}
               edit={edit}
               typeInput={"time"}
               legend={"Horário*"}
               inputValue={biddingData.disputeTime}
               onChange={(e) =>
-                setBiddingData({ ...biddingData, disputeTime: e.target.value })
+                setBiddingData({
+                  ...biddingData,
+                  disputeTime: e.target.value,
+                })
               }
-              flex={1}
-              maxW={"20"}
             />
-          </Flex>
+          </Box>
         </GridItem>
 
         <GridItem>
           <Text fontSize="lg" fontWeight="semibold" color="gray.700" mb={3}>
             Prazo para Propostas
           </Text>
-          <Flex gap={3} direction={{ base: "column", md: "row" }}>
+
+          <Box flex={2}>
             <InputDefaultForm
+              mbInput={"2"}
+              maxW={"150px"}
               edit={edit}
               typeInput={"date"}
               legend={"Data"}
@@ -69,11 +80,12 @@ export default function DatesStep({
                   proposalDeadlineDate: e.target.value,
                 })
               }
-              flex={1}
               layout="vertical"
-              minWidth="10px"
             />
+          </Box>
+          <Box flex={1}>
             <InputDefaultForm
+              maxW={"100px"}
               edit={edit}
               typeInput={"time"}
               legend={"Hora limite"}
@@ -84,18 +96,18 @@ export default function DatesStep({
                   proposalDeadlineTime: e.target.value,
                 })
               }
-              maxW={"20"}
-              flex={1}
             />
-          </Flex>
+          </Box>
         </GridItem>
 
         <GridItem>
           <Text fontSize="lg" fontWeight="semibold" color="gray.700" mb={3}>
             Abertura de Propostas
           </Text>
-          <Flex gap={3} direction={{ base: "column", md: "row" }}>
+          <Box flex={2}>
             <InputDefaultForm
+              mbInput={"2"}
+              maxW={"150px"}
               edit={edit}
               typeInput={"date"}
               legend={"Data*"}
@@ -106,9 +118,11 @@ export default function DatesStep({
                   proposalOpeningDate: e.target.value,
                 })
               }
-              flex={1}
             />
+          </Box>
+          <Box flex={1}>
             <InputDefaultForm
+              maxW={"100px"}
               edit={edit}
               typeInput={"time"}
               legend={"Horário*"}
@@ -119,18 +133,18 @@ export default function DatesStep({
                   proposalOpeningTime: e.target.value,
                 })
               }
-              maxW={"20"}
-              flex={1}
             />
-          </Flex>
+          </Box>
         </GridItem>
 
         <GridItem>
           <Text fontSize="lg" fontWeight="semibold" color="gray.700" mb={3}>
             Encerramento
           </Text>
-          <Flex gap={3} direction={{ base: "column", md: "row" }}>
+          <Box flex={2}>
             <InputDefaultForm
+              mbInput={"2"}
+              maxW={"150px"}
               edit={edit}
               typeInput={"date"}
               legend={"Data"}
@@ -141,9 +155,11 @@ export default function DatesStep({
                   closingDate: e.target.value,
                 })
               }
-              flex={1}
             />
+          </Box>
+          <Box flex={1}>
             <InputDefaultForm
+              maxW={"100px"}
               edit={edit}
               typeInput={"time"}
               legend={"Horário"}
@@ -154,12 +170,10 @@ export default function DatesStep({
                   closingTime: e.target.value,
                 })
               }
-              maxW={"20"}
-              flex={1}
             />
-          </Flex>
+          </Box>
         </GridItem>
       </Grid>
     </Flex>
-  )
+  );
 }

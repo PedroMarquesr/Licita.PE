@@ -14,17 +14,6 @@ export default function Home() {
 
   return (
     <>
-      {/* {" "} Questionar Talita sobre a persistencia do usuario */}
-      {/* {user?.uid && (
-        <Box bg="green.50" p={3} textAlign="center">
-          <Text fontWeight="bold" color="green.800">
-            ✅ Usuário logado: {user.displayName || user.email}
-          </Text>
-          <Text fontSize="sm" color="gray.600">
-            ID: {user.uid}
-          </Text>
-        </Box>
-      )} */}
       <HeroHeader />
       <FeatureSection />
       <Footer />

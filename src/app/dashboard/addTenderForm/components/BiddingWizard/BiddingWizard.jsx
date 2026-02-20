@@ -1,16 +1,16 @@
-"use client"
+"use client";
 
-import { Flex, Text, IconButton } from "@chakra-ui/react"
-import MenuForm from "./components/MenuForm/MenuForm"
+import { Flex, Text, IconButton } from "@chakra-ui/react";
+import MenuForm from "./components/MenuForm/MenuForm";
 
-import IdentificationStep from "./components/steps/IdentificationStep/IdentificationStep"
-import DatesStep from "./components/steps/DatesStep/DatesStep"
-import LocalStep from "./components/steps/LocalStep/LocalStep"
-import DocumentationStep from "./components/steps/DocumentationStep/DocumentationStep"
-import ComplementaryStep from "./components/steps/ComplementaryStep/ComplementaryStep"
-import { CiEdit } from "react-icons/ci"
+import IdentificationStep from "./components/steps/IdentificationStep/IdentificationStep";
+import DatesStep from "./components/steps/DatesStep/DatesStep";
+import LocalStep from "./components/steps/LocalStep/LocalStep";
+import DocumentationStep from "./components/steps/DocumentationStep/DocumentationStep";
+import ComplementaryStep from "./components/steps/ComplementaryStep/ComplementaryStep";
+import { CiEdit } from "react-icons/ci";
 
-import { useState } from "react"
+import { useState } from "react";
 
 export default function BiddingWizard({
   biddingData,
@@ -21,12 +21,12 @@ export default function BiddingWizard({
   setEdit,
   showButtonEdit,
 }) {
-  const [activeStep, setActiveStep] = useState(1)
+  const [activeStep, setActiveStep] = useState(1);
 
   const handleStepChange = (stepId) => {
-    console.log("Mudando para step:", stepId)
-    setActiveStep(stepId)
-  }
+    console.log("Mudando para step:", stepId);
+    setActiveStep(stepId);
+  };
 
   const renderStepContent = () => {
     switch (activeStep) {
@@ -40,7 +40,7 @@ export default function BiddingWizard({
               setEdit={setEdit}
             />
           </>
-        )
+        );
       case 2:
         return (
           <DatesStep
@@ -51,7 +51,7 @@ export default function BiddingWizard({
             edit={edit}
             setEdit={setEdit}
           />
-        )
+        );
       case 3:
         return (
           <LocalStep
@@ -60,7 +60,7 @@ export default function BiddingWizard({
             biddingData={biddingData}
             setBiddingData={setBiddingData}
           />
-        )
+        );
       case 4:
         return (
           <DocumentationStep
@@ -69,7 +69,7 @@ export default function BiddingWizard({
             biddingData={biddingData}
             setBiddingData={setBiddingData}
           />
-        )
+        );
       case 5:
         return (
           <ComplementaryStep
@@ -78,11 +78,11 @@ export default function BiddingWizard({
             biddingData={biddingData}
             setBiddingData={setBiddingData}
           />
-        )
+        );
       default:
-        return <IdentificationStep />
+        return <IdentificationStep />;
     }
-  }
+  };
 
   return (
     <Flex
@@ -100,8 +100,16 @@ export default function BiddingWizard({
       flexDirection="column"
       gap={4}
       align={"center"}
+      bgColor={"white"}
+      color={"gray.800"}
     >
-      <Flex justify="flex-end" w="100%">
+      <Flex
+        justify="flex-end"
+        w="100%"
+        alignItems={"center"}
+        display={showButtonEdit ? "flex" : "none"}
+      >
+        <Text mr={"2"}>Editar</Text>
         <IconButton
           display={showButtonEdit ? "flex" : "none"}
           aria-label="Edit Button"
@@ -118,5 +126,5 @@ export default function BiddingWizard({
         {renderStepContent()}
       </Flex>
     </Flex>
-  )
+  );
 }

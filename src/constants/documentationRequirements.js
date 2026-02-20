@@ -61,4 +61,4 @@ export const documentationChecklist = [
       "Carta de Solidariedade",
     ],
   },
-]
+];

@@ -7,8 +7,6 @@ import { db, app } from "@/components/libs/firebaseinit";
 import useStore from "../../../../components/globalStates/store";
 import { useRouter } from "next/navigation";
 
-import { doc, setDoc, getDoc, serverTimestamp } from "firebase/firestore";
-
 import { FcGoogle } from "react-icons/fc";
 
 export default function BtnGoogle() {
