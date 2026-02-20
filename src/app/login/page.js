@@ -18,6 +18,7 @@ import {
 import { PasswordInput } from "@/components/ui/password-input"
 import BtnGoogle from "./components/BtnGoogle/BtnGoogle"
 import DialogDefault from "@/components/DialogDefault/DialogDefault"
+import VerificationResendCountdown from "./components/VerificationResendCountdown/VerificationResendCountdown"
 import { CiMail } from "react-icons/ci"
 import { PiPassword } from "react-icons/pi"
 import { MdSmsFailed } from "react-icons/md"
@@ -55,6 +56,7 @@ export default function Login() {
   const [showDialogSucessRegister, setShowDialogSucessRegister] =
     useState(false)
   const [showLoginError, setShowLoginError] = useState(false)
+  const [showCounter, setShowCounter] = useState(false)
 
   const getUser = useStore((state) => state.getUser)
 
@@ -292,7 +294,7 @@ export default function Login() {
                 Senha
               </Field.Label>
             </Flex>
-            <Flex w={"100%"} align={"center"} justify={"center"}>
+            <Flex w={"100%"} align={"center"} justify={"center"} mb={5}>
               <Icon color="gray.500" size={{ base: "xl", md: "2xl" }} mr={"3"}>
                 <PiPassword />
               </Icon>
@@ -309,6 +311,19 @@ export default function Login() {
               />
             </Flex>
           </Field.Root>
+          <Button
+            bgColor="black"
+            _hover={{
+              backgroundColor: "blue.500",
+              transform: "translateY(-1px)",
+            }}
+            color={"white"}
+            onClick={() => setShowCounter(!showCounter)}
+          >
+            Abrir contador
+          </Button>
+          {showCounter && <VerificationResendCountdown />}
+
           <Flex justify={"center"}>
             <Button
               onClick={handleLogin}
