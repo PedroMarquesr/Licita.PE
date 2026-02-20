@@ -57,6 +57,7 @@ export default function Login() {
     useState(false)
   const [showLoginError, setShowLoginError] = useState(false)
   const [showCounter, setShowCounter] = useState(false)
+  const [intervalSeconds, setIntervalSeconds] = useState(120)
 
   const getUser = useStore((state) => state.getUser)
 
@@ -93,11 +94,34 @@ export default function Login() {
       await sendEmailVerification(user)
 
       setShowDialogSucessRegister(true)
-      await auth.signOut()
+      // await auth.signOut() // ← virificar o que fazer com isso
 
       setShowRegister(false)
+      // ↓ Provisão temprorária, preciso tranformar tudo em apenas um useState
+      setEmail("")
+      setPassword("")
+      setConfirmEmail("")
+      setConfirmPassword("")
+      setEmailLogin("")
+      // ↑ Provisão temprorária, preciso tranformar tudo em apenas um useState
+      setShowCounter(true)
     } catch (error) {
       console.log("Erro real:", error)
+    }
+  }
+
+  const handleResendEmail = async () => {
+    try {
+      const auth = getAuth()
+      const user = auth.currentUser
+      if (user) {
+        await sendEmailVerification(user)
+        console.log("Email reenviado")
+        setIntervalSeconds(120)
+        setShowSeconds(true)
+      }
+    } catch (error) {
+      console.log(error)
     }
   }
   const requirementPassword = [
@@ -311,18 +335,13 @@ export default function Login() {
               />
             </Flex>
           </Field.Root>
-          <Button
-            bgColor="black"
-            _hover={{
-              backgroundColor: "blue.500",
-              transform: "translateY(-1px)",
-            }}
-            color={"white"}
-            onClick={() => setShowCounter(!showCounter)}
-          >
-            Abrir contador
-          </Button>
-          {showCounter && <VerificationResendCountdown />}
+
+          {showCounter && (
+            <VerificationResendCountdown
+              resendEmail={handleResendEmail()}
+              interval={intervalSeconds}
+            />
+          )}
 
           <Flex justify={"center"}>
             <Button

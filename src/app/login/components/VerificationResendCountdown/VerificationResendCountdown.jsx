@@ -1,11 +1,11 @@
 "use client"
-import { Flex, Text, Link, Box } from "@chakra-ui/react"
+import { Flex, Box, Text, Link } from "@chakra-ui/react"
 import { useState, useEffect } from "react"
 import { HiOutlineMail } from "react-icons/hi"
 import { MdAccessTime } from "react-icons/md"
 
-export default function VerificationResendCountdown({ show }) {
-  const [intervalSeconds, setIntervalSeconds] = useState(10)
+export default function VerificationResendCountdown({ resendEmail, interval }) {
+  const [intervalSeconds, setIntervalSeconds] = useState(interval)
   const [showSeconds, setShowSeconds] = useState(true)
 
   useEffect(() => {
@@ -48,10 +48,10 @@ export default function VerificationResendCountdown({ show }) {
       <Flex
         direction={{ base: "column", sm: "row" }}
         alignItems={{ base: "flex-start", sm: "center" }}
-        gap={2}
+        gap={10}
       >
-        <Text color="gray.600" fontSize={12}>
-          Não recebeu o email de verificação?
+        <Text color="gray.600" fontSize={11}>
+          Nova solicitação de reenvio em 2 minutos
         </Text>
 
         <Flex
@@ -59,12 +59,12 @@ export default function VerificationResendCountdown({ show }) {
           bg={showSeconds ? "blue.50" : "transparent"}
           p={showSeconds ? 2 : 0}
           borderRadius="md"
-          ml={{ base: 0, sm: 2 }}
+          ml={{ base: 0, sm: 0 }}
         >
           {showSeconds ? (
             <>
-              <Box as={MdAccessTime} mr={1} color="blue.600" fontSize="14px" />
-              <Text fontWeight="semibold" color="blue.700">
+              <Box as={MdAccessTime} mr={1} color="blue.600" />
+              <Text fontWeight="semibold" color="blue.700" fontSize={13}>
                 {formattedTime}
               </Text>
             </>
@@ -83,14 +83,16 @@ export default function VerificationResendCountdown({ show }) {
               transition="all 0.2s"
               display="inline-flex"
               alignItems="center"
-              fontSize={10}
+              fontSize={12}
+              as={"button"}
+              onClick={() => resendEmail}
             >
-              Reenviar e-mail de verificação
+              Reenviar
             </Link>
           )}
         </Flex>
       </Flex>
-      <Text fontSize="xs" color="gray.500" mt={2} ml={1}>
+      <Text fontSize="xs" color="red.500" mt={2} ml={1}>
         Verifique sua caixa de entrada e spam
       </Text>
     </Flex>
