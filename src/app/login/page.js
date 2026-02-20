@@ -18,6 +18,7 @@ import {
 import { PasswordInput } from "@/components/ui/password-input"
 import BtnGoogle from "./components/BtnGoogle/BtnGoogle"
 import DialogDefault from "@/components/DialogDefault/DialogDefault"
+import PasswordReset from "./components/PasswordReset/PasswordReset"
 import VerificationResendCountdown from "./components/VerificationResendCountdown/VerificationResendCountdown"
 import { CiMail } from "react-icons/ci"
 import { PiPassword } from "react-icons/pi"
@@ -57,6 +58,7 @@ export default function Login() {
     useState(false)
   const [showLoginError, setShowLoginError] = useState(false)
   const [showCounter, setShowCounter] = useState(false)
+  const [showPasswordReset, setShowPasswordReset] = useState(false)
   const [intervalSeconds, setIntervalSeconds] = useState(120)
 
   const getUser = useStore((state) => state.getUser)
@@ -237,7 +239,10 @@ export default function Login() {
           message="Email ou senha inválidos"
           onClose={() => setShowLoginError(false)}
         />
-
+        <Button>Abrir Redefinição de senha</Button>
+        <PasswordReset
+          open={showPasswordReset}
+        />
         <Flex justify={"center"}>
           <Image
             my={{ base: "3", md: "5" }}
@@ -375,7 +380,12 @@ export default function Login() {
         </Flex>
         <Flex>
           <Text fontSize={{ base: "sm", md: "xs" }} color="gray.600">
-            <Link color="gray.600" _hover={{ color: "blue.500" }} as={"button"}>
+            <Link
+              color="gray.600"
+              _hover={{ color: "blue.500" }}
+              as={"button"}
+              onClick={() => setShowPasswordReset(!showPasswordReset)}
+            >
               Esqueceu sua senha?{" "}
             </Link>
           </Text>
