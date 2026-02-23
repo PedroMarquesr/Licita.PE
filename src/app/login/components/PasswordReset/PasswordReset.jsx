@@ -68,7 +68,6 @@ export default function PasswordReset({ open, onClose }) {
           overflow="hidden"
           animation="fadeIn 0.3s ease-out"
         >
-          {/* Header com gradiente */}
           <Dialog.Header
             bg="gray.900"
             borderBottom="1px solid"
@@ -197,7 +196,6 @@ export default function PasswordReset({ open, onClose }) {
                     Enviar instruções
                   </Button>
 
-                  {/* Botão de cancelar/corrigido */}
                   <Button
                     onClick={handleClose}
                     variant="ghost"
