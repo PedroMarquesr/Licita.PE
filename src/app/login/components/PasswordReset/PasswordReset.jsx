@@ -1,99 +1,4 @@
-// "use client"
-
-// import { Flex, Dialog, Text, Button, Input } from "@chakra-ui/react"
-// import { getAuth, sendPasswordResetEmail } from "firebase/auth"
-// import { useState } from "react"
-
-// export default function PasswordReset({ open, onClose, message }) {
-//   const [email, setEmail] = useState("")
-
-//   const triggerPasswordReset = async () => {
-//     try {
-//       const auth = getAuth()
-//       sendPasswordResetEmail(auth, email)
-//       console.log("Email de definição enviado")
-//     } catch (error) {
-//       console.log("Erro:", error)
-//     }
-//   }
-//   return (
-//     <Flex>
-//       <Dialog.Root open={open} onClose={onClose} size={"md"}>
-//         <Dialog.Backdrop bg="rgba(0, 0, 0, 0.6)" backdropFilter="blur(4px)" />
-//         <Dialog.Positioner>
-//           <Dialog.Content
-//             bg="gray.800"
-//             borderRadius="xl"
-//             boxShadow="2xl"
-//             border="1px solid"
-//             borderColor="gray.700"
-//             p={2}
-//           >
-//             <Dialog.Header>
-//               <Text>Recuperação de senha</Text>
-//             </Dialog.Header>
-//             <Dialog.Body>
-//               <Flex
-//                 direction="column"
-//                 align="center"
-//                 justify="center"
-//                 minH="120px"
-//                 px={6}
-//                 py={4}
-//               >
-//                 <Text
-//                   fontSize="lg"
-//                   color="gray.100"
-//                   fontWeight="medium"
-//                   lineHeight="tall"
-//                   justifyContent={"left"}
-//                   border={"1px solid red"}
-//                   w={"100%"}
-//                 >
-//                   Informe seu email
-//                 </Text>
-//                 <Input
-//                   value={email}
-//                   onChange={(e) => setEmail(e.target.value)}
-//                   placeholder="Digite seu email"
-//                   type="email"
-//                   size={{ base: "md", md: "lg" }}
-//                   border={"1px solid"}
-//                   borderColor="gray.300"
-//                   _hover={{ borderColor: "gray.500" }}
-//                   _focus={{ borderColor: "primary.500", boxShadow: "outline" }}
-//                   mt={1}
-//                   color={"white"}
-//                 />
-//               </Flex>
-//             </Dialog.Body>
-
-//             <Dialog.Footer justifyContent="center" pt={2} pb={4}>
-//               <Button
-//                 onClick={triggerPasswordReset}
-//                 bg="blue.500"
-//                 color="white"
-//                 px={8}
-//                 py={6}
-//                 fontSize="md"
-//                 fontWeight="medium"
-//                 borderRadius="lg"
-//                 _hover={{
-//                   bg: "blue.600",
-//                 }}
-//                 w="50px"
-//               >
-//                 Enviar
-//               </Button>
-//             </Dialog.Footer>
-//           </Dialog.Content>
-//         </Dialog.Positioner>
-//       </Dialog.Root>
-//     </Flex>
-//   )
-// }
-
-"use client"
+"use client";
 
 import {
   Flex,
@@ -104,45 +9,49 @@ import {
   VStack,
   HStack,
   Icon,
-} from "@chakra-ui/react"
-import { getAuth, sendPasswordResetEmail } from "firebase/auth"
-import { useState } from "react"
-import { FiMail, FiArrowLeft } from "react-icons/fi"
+} from "@chakra-ui/react";
+import { getAuth, sendPasswordResetEmail } from "firebase/auth";
+import { useState } from "react";
+import { FiMail, FiArrowLeft } from "react-icons/fi";
 
-export default function PasswordReset({ open, onClose, message }) {
-  const [email, setEmail] = useState("")
-  const [isLoading, setIsLoading] = useState(false)
-  const [resetSent, setResetSent] = useState(false)
-
-  const triggerPasswordReset = async () => {
-    if (!email) return
-
-    setIsLoading(true)
-    try {
-      const auth = getAuth()
-      await sendPasswordResetEmail(auth, email)
-      setResetSent(true)
-      console.log("Email de definição enviado")
-
-      // Fechar após 3 segundos se sucesso
-      setTimeout(() => {
-        handleClose()
-      }, 3000)
-    } catch (error) {
-      console.log("Erro:", error)
-    } finally {
-      setIsLoading(false)
-    }
-  }
+export default function PasswordReset({ open, onClose }) {
+  const [email, setEmail] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const [resetSent, setResetSent] = useState(false);
 
   const handleClose = () => {
-    setEmail("")
-    setResetSent(false)
-    onClose()
-  }
+    setEmail("");
+    setResetSent(false);
+    setIsLoading(false);
+    onClose();
+  };
+
+  const triggerPasswordReset = async () => {
+    if (!email) return;
+
+    setIsLoading(true);
+    try {
+      const auth = getAuth();
+      await sendPasswordResetEmail(auth, email);
+      setResetSent(true);
+      console.log("Email de definição enviado");
+
+      setTimeout(() => {
+        handleClose();
+      }, 3000);
+    } catch (error) {
+      console.log("Erro:", error);
+      setIsLoading(false);
+    }
+  };
 
   return (
-    <Dialog.Root open={open} onClose={handleClose} size="md">
+    <Dialog.Root
+      open={open}
+      onClose={handleClose}
+      size="md"
+      closeOnInteractOutside={true}
+    >
       <Dialog.Backdrop
         bg="rgba(0, 0, 0, 0.7)"
         backdropFilter="blur(8px)"
@@ -182,10 +91,10 @@ export default function PasswordReset({ open, onClose, message }) {
             </VStack>
           </Dialog.Header>
 
-          <Dialog.Body py={8} px={8}>
+          <Dialog.Body py={8} px={5}>
             {!resetSent ? (
               <VStack spacing={6}>
-                <Flex w="full">
+                <Flex w="full" direction="column">
                   <Text
                     fontSize="sm"
                     fontWeight="medium"
@@ -288,6 +197,7 @@ export default function PasswordReset({ open, onClose, message }) {
                     Enviar instruções
                   </Button>
 
+                  {/* Botão de cancelar/corrigido */}
                   <Button
                     onClick={handleClose}
                     variant="ghost"
@@ -326,5 +236,5 @@ export default function PasswordReset({ open, onClose, message }) {
         </Dialog.Content>
       </Dialog.Positioner>
     </Dialog.Root>
-  )
+  );
 }
