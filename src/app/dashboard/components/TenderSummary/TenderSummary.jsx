@@ -1,4 +1,4 @@
-"use client";
+"use client"
 
 import {
   Flex,
@@ -16,7 +16,7 @@ import {
   CloseButton,
   Dialog,
   Portal,
-} from "@chakra-ui/react";
+} from "@chakra-ui/react"
 import {
   collection,
   query,
@@ -26,149 +26,152 @@ import {
   where,
   Timestamp,
   updateDoc,
-} from "firebase/firestore";
-import { db } from "@/components/libs/firebaseinit";
-import { useState, useEffect } from "react";
+} from "firebase/firestore"
+import { db } from "@/components/libs/firebaseinit"
+import { useState, useEffect } from "react"
 
-import BiddingStatusModalEdit from "../BiddingStatusModalEdit/BiddingStatusModalEdit";
-import BiddingWizard from "../../addTenderForm/components/BiddingWizard/BiddingWizard";
-import BiddingCalendarMenu from "../BiddingCalendar/components/BiddingCalendarMenu/BiddingCalendarMenu";
-import MobileCardTenderSummary from "./components/MobileCardTenderSummary/MobileCardTenderSummary";
-import AlertCustom from "../AlertCustom/AlertCustom";
-import { getBiddingDisplayStatus } from "@/utils/biddingStatus";
-import { CiEdit } from "react-icons/ci";
+import BiddingStatusModalEdit from "../BiddingStatusModalEdit/BiddingStatusModalEdit"
+import BiddingWizard from "../../addTenderForm/components/BiddingWizard/BiddingWizard"
+import BiddingCalendarMenu from "../BiddingCalendar/components/BiddingCalendarMenu/BiddingCalendarMenu"
+import MobileCardTenderSummary from "./components/MobileCardTenderSummary/MobileCardTenderSummary"
+import AlertCustom from "../AlertCustom/AlertCustom"
+import { useRouter } from "next/navigation"
+import { getBiddingDisplayStatus } from "@/utils/biddingStatus"
+import { CiEdit } from "react-icons/ci"
 
 export default function TenderSummary() {
-  const [biddings, setBiddings] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const [timeRange, setTimeRange] = useState("week");
-  const [viewIsOpen, setViewIsOpen] = useState(true);
-  const [modalOpen, setModalOpen] = useState(false);
-  const [biddingData, setBiddingData] = useState({});
-  const [edit, setEdit] = useState(false);
-  const [showButtonEdit, setShowButtonEdit] = useState(false);
-  const [statusModalEditOpen, setStatusModalEditOpen] = useState(false);
-  const [showAlertSucessEdit, setShowAlertSucessEdit] = useState(false);
-  const [showAlertFail, setShowAlertFail] = useState(false);
-  const [errorMessage, setErrorMessage] = useState("");
-  const [errorCod, setErrorCod] = useState("");
+  const [biddings, setBiddings] = useState([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(null)
+  const [timeRange, setTimeRange] = useState("week")
+  const [viewIsOpen, setViewIsOpen] = useState(true)
+  const [modalOpen, setModalOpen] = useState(false)
+  const [biddingData, setBiddingData] = useState({})
+  const [edit, setEdit] = useState(false)
+  const [showButtonEdit, setShowButtonEdit] = useState(false)
+  const [statusModalEditOpen, setStatusModalEditOpen] = useState(false)
+  const [showAlertSucessEdit, setShowAlertSucessEdit] = useState(false)
+  const [showAlertFail, setShowAlertFail] = useState(false)
+  const [errorMessage, setErrorMessage] = useState("")
+  const [errorCod, setErrorCod] = useState("")
+
+  const router = useRouter()
 
   const fetchBiddingsByWeek = async () => {
     try {
-      setLoading(true);
-      setError(null);
-      setTimeRange("week");
+      setLoading(true)
+      setError(null)
+      setTimeRange("week")
 
-      const today = new Date();
+      const today = new Date()
 
-      const firstDayOfWeek = new Date(today);
-      const dayOfWeek = today.getDay();
-      firstDayOfWeek.setDate(today.getDate() - dayOfWeek);
-      firstDayOfWeek.setHours(0, 0, 0, 0);
+      const firstDayOfWeek = new Date(today)
+      const dayOfWeek = today.getDay()
+      firstDayOfWeek.setDate(today.getDate() - dayOfWeek)
+      firstDayOfWeek.setHours(0, 0, 0, 0)
 
-      const lastDayOfWeek = new Date(firstDayOfWeek);
-      lastDayOfWeek.setDate(firstDayOfWeek.getDate() + 6);
-      lastDayOfWeek.setHours(23, 59, 59, 999);
+      const lastDayOfWeek = new Date(firstDayOfWeek)
+      lastDayOfWeek.setDate(firstDayOfWeek.getDate() + 6)
+      lastDayOfWeek.setHours(23, 59, 59, 999)
 
       console.log(
         "Primeiro dia da semana:",
-        firstDayOfWeek.toLocaleDateString(),
-      );
-      console.log("Último dia da semana:", lastDayOfWeek.toLocaleDateString());
+        firstDayOfWeek.toLocaleDateString()
+      )
+      console.log("Último dia da semana:", lastDayOfWeek.toLocaleDateString())
 
-      const biddingsRef = collection(db, "biddings");
-      const startTimestamp = Timestamp.fromDate(firstDayOfWeek);
-      const endTimestamp = Timestamp.fromDate(lastDayOfWeek);
+      const biddingsRef = collection(db, "biddings")
+      const startTimestamp = Timestamp.fromDate(firstDayOfWeek)
+      const endTimestamp = Timestamp.fromDate(lastDayOfWeek)
 
       const q = query(
         biddingsRef,
         where("disputeDate", ">=", startTimestamp),
         where("disputeDate", "<=", endTimestamp),
-        orderBy("disputeDate", "asc"),
-      );
+        orderBy("disputeDate", "asc")
+      )
 
-      const querySnapshot = await getDocs(q);
-      const listaTemporaria = [];
+      const querySnapshot = await getDocs(q)
+      const listaTemporaria = []
 
       querySnapshot.forEach((doc) => {
-        const data = doc.data();
+        const data = doc.data()
         listaTemporaria.push({
           id: doc.id,
           ...data,
           disputeDate: data.disputeDate?.toDate?.() || data.disputeDate,
           formattedDate:
             data.disputeDate?.toDate?.()?.toLocaleDateString("pt-BR") || "",
-        });
-      });
+        })
+      })
 
-      console.log("Documentos encontrados:", listaTemporaria);
-      setBiddings(listaTemporaria);
+      console.log("Documentos encontrados:", listaTemporaria)
+      setBiddings(listaTemporaria)
     } catch (error) {
-      console.error("Erro ao buscar dados: ", error);
+      console.error("Erro ao buscar dados: ", error)
       if (error.code === "failed-precondition") {
         setError(
-          `Erro: É necessário criar um índice composto no Firestore para a query. Clique no link no console para criar.`,
-        );
+          `Erro: É necessário criar um índice composto no Firestore para a query. Clique no link no console para criar.`
+        )
       } else {
-        setError(`Erro ao carregar: ${error.message}`);
+        setError(`Erro ao carregar: ${error.message}`)
       }
     } finally {
-      setLoading(false);
+      setLoading(false)
     }
-  };
+  }
 
   const fetchLast7Days = async () => {
     try {
-      setLoading(true);
-      setError(null);
-      setTimeRange("7days");
+      setLoading(true)
+      setError(null)
+      setTimeRange("7days")
 
-      const today = new Date();
-      const sevenDaysAgo = new Date(today);
-      sevenDaysAgo.setDate(today.getDate() - 7);
-      sevenDaysAgo.setHours(0, 0, 0, 0);
+      const today = new Date()
+      const sevenDaysAgo = new Date(today)
+      sevenDaysAgo.setDate(today.getDate() - 7)
+      sevenDaysAgo.setHours(0, 0, 0, 0)
 
-      const endDate = new Date(today);
-      endDate.setHours(23, 59, 59, 999);
+      const endDate = new Date(today)
+      endDate.setHours(23, 59, 59, 999)
 
-      const startTimestamp = Timestamp.fromDate(sevenDaysAgo);
-      const endTimestamp = Timestamp.fromDate(endDate);
+      const startTimestamp = Timestamp.fromDate(sevenDaysAgo)
+      const endTimestamp = Timestamp.fromDate(endDate)
 
-      const biddingsRef = collection(db, "biddings");
+      const biddingsRef = collection(db, "biddings")
       const q = query(
         biddingsRef,
         where("disputeDate", ">=", startTimestamp),
         where("disputeDate", "<=", endTimestamp),
-        orderBy("disputeDate", "desc"),
-      );
+        orderBy("disputeDate", "desc")
+      )
 
-      const querySnapshot = await getDocs(q);
-      const listaTemporaria = [];
+      const querySnapshot = await getDocs(q)
+      const listaTemporaria = []
 
       querySnapshot.forEach((doc) => {
-        const data = doc.data();
+        const data = doc.data()
         listaTemporaria.push({
           id: doc.id,
           ...data,
           disputeDate: data.disputeDate?.toDate?.() || data.disputeDate,
           formattedDate:
             data.disputeDate?.toDate?.()?.toLocaleDateString("pt-BR") || "",
-        });
-      });
+        })
+      })
 
-      setBiddings(listaTemporaria);
+      setBiddings(listaTemporaria)
     } catch (error) {
-      console.error("Erro na busca alternativa: ", error);
-      setError(error.message);
+      console.error("Erro na busca alternativa: ", error)
+      setError(error.message)
     } finally {
-      setLoading(false);
+      setLoading(false)
     }
-  };
+  }
 
   useEffect(() => {
-    fetchBiddingsByWeek();
-  }, []);
+    fetchBiddingsByWeek()
+  }, [])
 
   if (loading) {
     return (
@@ -184,95 +187,95 @@ export default function TenderSummary() {
         <Spinner size="xl" color="blue.500" />
         <Text mt={4}>Carregando licitações...</Text>
       </Flex>
-    );
+    )
   }
 
   const checkIfToday = (biddingDate) => {
-    if (!biddingDate) return false;
+    if (!biddingDate) return false
 
     const toDate = (date) => {
-      if (!date) return null;
+      if (!date) return null
 
       if (date.toDate) {
-        return date.toDate();
+        return date.toDate()
       }
 
       if (date.seconds) {
-        return new Date(date.seconds * 1000);
+        return new Date(date.seconds * 1000)
       }
 
       if (date instanceof Date) {
-        return date;
+        return date
       }
 
       if (typeof date === "string") {
-        return new Date(date);
+        return new Date(date)
       }
 
-      return null;
-    };
+      return null
+    }
 
-    const dateObj = toDate(biddingDate);
-    if (!dateObj) return false;
+    const dateObj = toDate(biddingDate)
+    if (!dateObj) return false
 
-    const today = new Date();
+    const today = new Date()
 
     return (
       dateObj.getDate() === today.getDate() &&
       dateObj.getMonth() === today.getMonth() &&
       dateObj.getFullYear() === today.getFullYear()
-    );
-  };
+    )
+  }
 
   const handleEdit = (biddingId) => {
     if (biddingId) {
-      setBiddingData(biddings.find((bidding) => bidding.id === biddingId));
-      setEdit(true);
-      setModalOpen(true);
-      setShowButtonEdit(true);
+      setBiddingData(biddings.find((bidding) => bidding.id === biddingId))
+      setEdit(true)
+      setModalOpen(true)
+      setShowButtonEdit(true)
     }
-  };
+  }
 
   const toTimestamp = (dateString, timeString) => {
-    if (!dateString) return null;
+    if (!dateString) return null
 
     try {
       if (dateString?.toDate) {
-        return dateString;
+        return dateString
       }
 
       if (dateString instanceof Date) {
-        return Timestamp.fromDate(dateString);
+        return Timestamp.fromDate(dateString)
       }
 
       if (dateString?.seconds) {
-        return dateString;
+        return dateString
       }
 
       const dateTimeString =
         timeString && timeString !== "00:00"
           ? `${dateString}T${timeString}:00`
-          : `${dateString}T00:00:00`;
+          : `${dateString}T00:00:00`
 
-      const date = new Date(dateTimeString);
+      const date = new Date(dateTimeString)
 
       if (isNaN(date.getTime())) {
-        console.error("Data inválida:", dateString, timeString);
-        return null;
+        console.error("Data inválida:", dateString, timeString)
+        return null
       }
 
-      return Timestamp.fromDate(date);
+      return Timestamp.fromDate(date)
     } catch (error) {
-      console.error("Erro ao criar timestamp:", error);
-      return null;
+      console.error("Erro ao criar timestamp:", error)
+      return null
     }
-  };
+  }
 
   const updateBidding = async (updatedBidding) => {
     try {
-      setLoading(true);
+      setLoading(true)
 
-      const biddingRef = doc(db, "biddings", updatedBidding.id);
+      const biddingRef = doc(db, "biddings", updatedBidding.id)
 
       const updateData = {
         identificationNumber: updatedBidding.identificationNumber,
@@ -301,34 +304,31 @@ export default function TenderSummary() {
         proposalOpeningDate: updatedBidding.proposalOpeningDate || null,
         result: updatedBidding.result || "",
         technicalResponsible: updatedBidding.technicalResponsible || "",
-      };
+      }
 
       if (biddingData) {
         const disputeDateValue =
-          biddingData.disputeDate || updatedBidding.disputeDate;
-        const disputeTimeValue = biddingData.disputeTime || "00:00";
-        const disputeTimestamp = toTimestamp(
-          disputeDateValue,
-          disputeTimeValue,
-        );
+          biddingData.disputeDate || updatedBidding.disputeDate
+        const disputeTimeValue = biddingData.disputeTime || "00:00"
+        const disputeTimestamp = toTimestamp(disputeDateValue, disputeTimeValue)
         if (disputeTimestamp) {
-          updateData.disputeDate = disputeTimestamp;
+          updateData.disputeDate = disputeTimestamp
         }
 
         const proposalDateValue =
           biddingData.proposalDeadlineDate ||
-          updatedBidding.proposalDeadlineDate;
-        const proposalTimeValue = biddingData.proposalDeadlineTime || "00:00";
+          updatedBidding.proposalDeadlineDate
+        const proposalTimeValue = biddingData.proposalDeadlineTime || "00:00"
         const proposalTimestamp = toTimestamp(
           proposalDateValue,
-          proposalTimeValue,
-        );
+          proposalTimeValue
+        )
         if (proposalTimestamp) {
-          updateData.proposalDeadlineDate = proposalTimestamp;
+          updateData.proposalDeadlineDate = proposalTimestamp
         }
       }
 
-      await updateDoc(biddingRef, updateData);
+      await updateDoc(biddingRef, updateData)
 
       setBiddings((prevBiddings) =>
         prevBiddings.map((bidding) =>
@@ -343,39 +343,42 @@ export default function TenderSummary() {
                     ?.toDate?.()
                     ?.toLocaleDateString("pt-BR") || "",
               }
-            : bidding,
-        ),
-      );
+            : bidding
+        )
+      )
 
-      setShowAlertSucessEdit(true);
+      setShowAlertSucessEdit(true)
       setTimeout(() => {
-        setShowAlertSucessEdit(false);
-      }, 3000);
-      console.log("Documento atualizado com sucesso!");
+        setShowAlertSucessEdit(false)
+      }, 3000)
+      console.log("Documento atualizado com sucesso!")
 
-      setModalOpen(false);
-      setEdit(false);
+      setModalOpen(false)
+      setEdit(false)
     } catch (error) {
-      setErrorMessage(error.message);
-      setErrorCod(error);
-      const errorCod = error;
-      setShowAlertFail(true);
+      setErrorMessage(error.message)
+      setErrorCod(error)
+      const errorCod = error
+      setShowAlertFail(true)
       setTimeout(() => {
-        setShowAlertFail(false);
-      }, 3000);
-      console.log("Erro ao atualizar", error);
-      alert("Erro ao atualizar: " + error.message);
+        setShowAlertFail(false)
+      }, 3000)
+      console.log("Erro ao atualizar", error)
+      alert("Erro ao atualizar: " + error.message)
     } finally {
-      setLoading(false);
+      setLoading(false)
     }
-  };
+  }
 
   const handleOpenStatusModal = (biddingId) => {
-    const selectedBidding = biddings.find((b) => b.id === biddingId);
-    setBiddingData(selectedBidding);
-    setStatusModalEditOpen(true);
-  };
+    const selectedBidding = biddings.find((b) => b.id === biddingId)
+    setBiddingData(selectedBidding)
+    setStatusModalEditOpen(true)
+  }
 
+  const refreshPage = () => {
+    window.location.reload()
+  }
   return (
     <Flex
       flexDir={"column"}
@@ -574,26 +577,30 @@ export default function TenderSummary() {
                         borderRadius="full"
                         display="inline-block"
                         bg={
-                          bidding.status === "scheduled"
+                          bidding.status === "awaiting_approval"
+                            ? "yellow.500"
+                            : bidding.status === "scheduled"
                             ? "green.100"
                             : bidding.status === "finished"
-                              ? "red.100"
-                              : bidding.status === "suspended"
-                                ? "yellow.100"
-                                : bidding.status === "Aguardando atualização"
-                                  ? "orange.100"
-                                  : "gray.100"
+                            ? "red.100"
+                            : bidding.status === "suspended"
+                            ? "yellow.100"
+                            : bidding.status === "Aguardando atualização"
+                            ? "orange.100"
+                            : "gray.100"
                         }
                         color={
-                          bidding.status === "finished"
+                          bidding.status === "awaiting_approval"
+                            ? "gray.800"
+                            : bidding.status === "finished"
                             ? "green.800"
                             : bidding.status === "finished"
-                              ? "red.800"
-                              : bidding.status === "suspended"
-                                ? "yellow.800"
-                                : bidding.status === "Aguardando atualização"
-                                  ? "orange.800"
-                                  : "gray.800"
+                            ? "red.800"
+                            : bidding.status === "suspended"
+                            ? "yellow.800"
+                            : bidding.status === "Aguardando atualização"
+                            ? "orange.800"
+                            : "gray.800"
                         }
                       >
                         <Text fontSize={"x-small"} fontWeight="medium">
@@ -649,23 +656,23 @@ export default function TenderSummary() {
                       bidding.status === "finished"
                         ? "green.800"
                         : bidding.status === "finished"
-                          ? "red.800"
-                          : bidding.status === "suspended"
-                            ? "yellow.800"
-                            : bidding.status === "Aguardando atualização"
-                              ? "orange.800"
-                              : "gray.800"
+                        ? "red.800"
+                        : bidding.status === "suspended"
+                        ? "yellow.800"
+                        : bidding.status === "Aguardando atualização"
+                        ? "orange.800"
+                        : "gray.800"
                     }
                     bgColorStatus={
                       bidding.status === "scheduled"
                         ? "green.100"
                         : bidding.status === "finished"
-                          ? "red.100"
-                          : bidding.status === "suspended"
-                            ? "yellow.100"
-                            : bidding.status === "Aguardando atualização"
-                              ? "orange.100"
-                              : "gray.100"
+                        ? "red.100"
+                        : bidding.status === "suspended"
+                        ? "yellow.100"
+                        : bidding.status === "Aguardando atualização"
+                        ? "orange.100"
+                        : "gray.100"
                     }
                     biddingStatus={getBiddingDisplayStatus(bidding) || "N/A"}
                     biddingType={bidding.biddingType}
@@ -703,7 +710,7 @@ export default function TenderSummary() {
                   <Flex gap={3}>
                     <Button
                       onClick={() => {
-                        updateBidding(biddingData);
+                        updateBidding(biddingData)
                       }}
                       bgColor={"blue.500"}
                       color={"white"}
@@ -713,8 +720,8 @@ export default function TenderSummary() {
                     </Button>
                     <Button
                       onClick={() => {
-                        setModalOpen(false);
-                        setShowButtonEdit(false);
+                        setModalOpen(false)
+                        setShowButtonEdit(false)
                       }}
                       bgColor={"red.500"}
                       _hover={{ backgroundColor: "red.800", width: "xsm" }}
@@ -749,8 +756,9 @@ export default function TenderSummary() {
           isOpen={statusModalEditOpen}
           onClose={() => setStatusModalEditOpen(false)}
           biddingData={biddingData}
+          refresh={fetchBiddingsByWeek}
         />
       )}
     </Flex>
-  );
+  )
 }

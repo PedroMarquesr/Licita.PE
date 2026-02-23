@@ -1,4 +1,4 @@
-"use Client";
+"use Client"
 
 import {
   Button,
@@ -10,15 +10,17 @@ import {
   Fade,
   Input,
   Alert,
+  Switch,
+  Box,
   Flex,
   Text,
-} from "@chakra-ui/react";
-
-import { IoDocumentText } from "react-icons/io5";
-import { RiInfoCardFill } from "react-icons/ri";
-
-import { v4 as uuidv4 } from "uuid";
-
+} from "@chakra-ui/react"
+// ICONS
+import { IoDocumentText } from "react-icons/io5"
+import { motion } from "framer-motion"
+import { SlideFromTop } from "@/components/animations/ScrollAnimations"
+import { RiInfoCardFill } from "react-icons/ri"
+import { v4 as uuidv4 } from "uuid"
 import {
   collection,
   getDocs,
@@ -26,88 +28,81 @@ import {
   updateDoc,
   arrayUnion,
   Timestamp,
-} from "firebase/firestore";
+} from "firebase/firestore"
+import { db } from "@/components/libs/firebaseinit"
+import AlertCustom from "../AlertCustom/AlertCustom"
+import CustomSelect from "../../addTenderForm/components/BiddingWizard/components/steps/IdentificationStep/components/CustomSelect/CustomSelect"
+import biddingResultOptions from "@/constants/biddingResultOptions"
 
-import { db } from "@/components/libs/firebaseinit";
-
-import CustomSelect from "../../addTenderForm/components/BiddingWizard/components/steps/IdentificationStep/components/CustomSelect/CustomSelect";
-import biddingResult from "@/constants/biddingResult";
-
-import AlertCustom from "../AlertCustom/AlertCustom";
-
-import { getBiddingDisplayStatus } from "@/utils/biddingStatus";
-
-import { useState } from "react";
+import {
+  initialBiddingStatusOptions,
+  biddingStatusOptions,
+  biddingStatusAfterApproval,
+} from "@/constants/biddingStatusOptions"
+import { getBiddingDisplayStatus } from "@/utils/biddingStatus"
+import { useState } from "react"
 
 export default function BiddingStatusModalEdit({
   isOpen,
   onClose,
   biddingData,
+  refresh,
 }) {
-  const [selectedStatus, setSelectedStatus] = useState("");
-  const [reopeningDate, setReopeningDate] = useState("");
-  const [reopeningTime, setReopeningTime] = useState("");
-  const [note, setNote] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
-
-  const [showAlertErrorStatus, setShowAlertErrorStatus] = useState(false);
-  const [showAlertErrorDate, setShowAlertErrorDate] = useState(false);
-  const [showAlertSucess, setShowAlertSucess] = useState(false);
+  const [selectedStatus, setSelectedStatus] = useState("")
+  const [reopeningDate, setReopeningDate] = useState("")
+  const [reopeningTime, setReopeningTime] = useState("")
+  const [note, setNote] = useState("")
+  const [isLoading, setIsLoading] = useState(false)
+  const [showAlertErrorStatus, setShowAlertErrorStatus] = useState(false)
+  const [showAlertErrorDate, setShowAlertErrorDate] = useState(false)
+  const [showAlertSucess, setShowAlertSucess] = useState(false)
+  const [undefinedDate, setUndefinedDate] = useState(false)
 
   const handleStatusUpdate = async () => {
-    if (!selectedStatus) {
-      setShowAlertErrorStatus(true);
-      setTimeout(() => {
-        setShowAlertErrorStatus(false);
-      }, 5000);
-      return;
+    if (!selectedStatus) return
+
+    const biddingRef = doc(db, "biddings", biddingData.id)
+
+    const updatePayload = {
+      updatedAt: Timestamp.now(),
     }
 
-    try {
-      setIsLoading(true);
+    const resultValues = ["win", "loss", "pending"]
 
-      const biddingRef = doc(db, "biddings", biddingData.id);
-
-      const updatePayload = {
-        result: selectedStatus,
-      };
-
-      if (selectedStatus === "reopened") {
-        if (!reopeningDate) {
-          setShowAlertErrorDate(true);
-          setTimeout(() => {
-            setShowAlertErrorDate(false);
-          }, 5000);
-          return;
-        }
-
-        const reopeningDateTime = new Date(
-          `${reopeningDate}T${reopeningTime || "00:00"}`,
-        );
-
-        updatePayload.status = "reopened";
-
-        updatePayload.reopenHistory = arrayUnion({
-          id: uuidv4(),
-          createdAt: Timestamp.now(),
-          reopenedAt: Timestamp.fromDate(reopeningDateTime),
-          notes: note || "",
-        });
-      }
-      await updateDoc(biddingRef, updatePayload);
-
-      setShowAlertSucess(true);
-      setTimeout(() => {
-        onClose();
-      }, 2000);
-    } catch (error) {
-      console.error(error);
-      alert("Erro ao atualizar");
-    } finally {
-      setIsLoading(false);
+    if (resultValues.includes(selectedStatus)) {
+      updatePayload.result = selectedStatus
+      updatePayload.status = "finished"
+    } else {
+      updatePayload.status = selectedStatus
     }
-  };
 
+    updatePayload.statusHistory = arrayUnion({
+      id: uuidv4(),
+      previousStatus: biddingData.status,
+      newStatus: updatePayload.status,
+      result: updatePayload.result || null,
+      note: note || "",
+      createdAt: Timestamp.now(),
+    })
+
+    await updateDoc(biddingRef, updatePayload)
+
+    refresh()
+    onClose()
+  }
+
+  const SlideFromTop = ({ children, delay = 0 }) => {
+    return (
+      <motion.div
+        initial={{ opacity: 0, y: -20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.2, delay }}
+        viewport={{ once: true, margin: "-50px" }}
+      >
+        {children}
+      </motion.div>
+    )
+  }
   return (
     <Dialog.Root open={isOpen} onOpenChange={onClose}>
       <Portal>
@@ -184,60 +179,145 @@ export default function BiddingStatusModalEdit({
                   <Text ml={"2"}>Novo Status</Text>
                   <CustomSelect
                     placeholder={"Selecione o novo status"}
-                    options={biddingResult}
+                    options={
+                      biddingData.status === "awaiting_approval"
+                        ? initialBiddingStatusOptions
+                        : biddingStatusAfterApproval
+                    }
                     onValueChange={(value) => setSelectedStatus(value[0])}
                   />
 
-                  {selectedStatus === "reopened" && (
-                    <Flex flexDir={"column"}>
-                      <Separator mt={4} mb={4} borderColor={"gray.300"} />
-                      <Flex
-                        flexDir={"column"}
-                        justifyContent={"left"}
-                        alignItems={"start"}
-                        gap={2}
-                        ml={0}
-                      >
+                  {selectedStatus === "awaiting_approval" && (
+                    <Box ml={"2"} colorPalette={"blue"} mt={5}>
+                      <SlideFromTop>
+                        <Text>Inserir comentário:</Text>
+                        <Input
+                          width="298px"
+                          type="text"
+                          value={note}
+                          onChange={(e) => setNote(e.target.value)}
+                        />{" "}
+                      </SlideFromTop>
+                    </Box>
+                  )}
+                  {selectedStatus === "finished" && (
+                    <Box ml={"2"} colorPalette={"blue"} mt={5}>
+                      <SlideFromTop>
+                        <Button>Inserir Resultado</Button>
+                      </SlideFromTop>
+                    </Box>
+                  )}
+                  {selectedStatus === "suspended" && (
+                    <Box mt={5}>
+                      <SlideFromTop>
                         <Text ml={"2"}>Insira a data de Reabertura</Text>
-                        <Flex flexDir={{ base: "column" }} gap={{ base: 2 }}>
-                          <Input
-                            ml={"2"}
-                            width="298px"
-                            type="date"
-                            value={reopeningDate}
-                            onChange={(e) => setReopeningDate(e.target.value)}
-                          />
-                          <Input
-                            ml={"2"}
-                            width="100px"
-                            type="time"
-                            value={reopeningTime}
-                            onChange={(e) => setReopeningTime(e.target.value)}
-                          />
-                        </Flex>
-                      </Flex>
+                        <Input
+                          disabled={undefinedDate}
+                          ml={"2"}
+                          width="298px"
+                          type="date"
+                          value={reopeningDate}
+                          onChange={(e) => setReopeningDate(e.target.value)}
+                        />
+                        <Input
+                          disabled={undefinedDate}
+                          ml={"2"}
+                          width="100px"
+                          type="time"
+                          value={reopeningTime}
+                          onChange={(e) => setReopeningTime(e.target.value)}
+                        />
 
-                      <Flex
-                        flexDir={"column"}
-                        justifyContent={"left"}
-                        alignItems={"start"}
-                        gap={2}
+                        <Switch.Root
+                          ml={"2"}
+                          mt={2}
+                          colorPalette={"blue"}
+                          onCheckedChange={() => {
+                            setUndefinedDate(!undefinedDate)
+                            setReopeningDate("")
+                            setReopeningTime("")
+                          }}
+                        >
+                          <Switch.HiddenInput />
+                          <Switch.Control />
+                          <Switch.Label>Data indefinida</Switch.Label>
+                        </Switch.Root>
+
+                        <Text mt={3} ml={"2"}>
+                          Inserir comentário:
+                        </Text>
+                        <Input
+                          ml={"2"}
+                          width="298px"
+                          type="text"
+                          value={note}
+                          onChange={(e) => setNote(e.target.value)}
+                        />
+                      </SlideFromTop>
+                    </Box>
+                  )}
+                  {selectedStatus === "reopened" && (
+                    <Box mt={5}>
+                      <Text ml={"2"}>Insira a data de Reabertura</Text>
+                      <Input
+                        disabled={undefinedDate}
+                        ml={"2"}
+                        width="298px"
+                        type="date"
+                        value={reopeningDate}
+                        onChange={(e) => setReopeningDate(e.target.value)}
+                      />
+                      <Input
+                        disabled={undefinedDate}
+                        ml={"2"}
+                        width="100px"
+                        type="time"
+                        value={reopeningTime}
+                        onChange={(e) => setReopeningTime(e.target.value)}
+                      />
+
+                      <Switch.Root
+                        ml={"2"}
                         mt={2}
-                        ml={0}
+                        colorPalette={"blue"}
+                        onCheckedChange={() => {
+                          setUndefinedDate(!undefinedDate)
+                          setReopeningDate("")
+                          setReopeningTime("")
+                        }}
                       >
-                        <Text ml={"2"}>Insira uma nota informativa</Text>
-                        <Flex flexDir={{ base: "column" }} gap={{ base: 2 }}>
-                          <Input
-                            ml={"2"}
-                            width="298px"
-                            type="text"
-                            placeholder="Ex: Suspensão para análise de amostras"
-                            value={note}
-                            onChange={(e) => setNote(e.target.value)}
-                          />
-                        </Flex>
-                      </Flex>
-                    </Flex>
+                        <Switch.HiddenInput />
+                        <Switch.Control />
+                        <Switch.Label>Data indefinida</Switch.Label>
+                      </Switch.Root>
+
+                      <Text mt={3} ml={"2"}>
+                        Inserir comentário:
+                      </Text>
+                      <Input
+                        ml={"2"}
+                        width="298px"
+                        type="text"
+                        value={note}
+                        onChange={(e) => setNote(e.target.value)}
+                      />
+                    </Box>
+                  )}
+                  {selectedStatus == "cancelled" && (
+                    <Box mt={5}>
+                      <SlideFromTop>
+                        <Text mt={3} ml={"2"}>
+                          Inserir comentário:
+                        </Text>
+                        <Input
+                          ml={"2"}
+                          width="298px"
+                          type="text"
+                          value={note}
+                          onChange={(e) => setNote(e.target.value)}
+                        />
+                      </SlideFromTop>
+                    </Box>
                   )}
                 </Flex>
               </Flex>
@@ -273,7 +353,9 @@ export default function BiddingStatusModalEdit({
                 </Button>
               </Dialog.ActionTrigger>
               <Button
-                onClick={handleStatusUpdate}
+                onClick={async () => {
+                  await handleStatusUpdate()
+                }}
                 isLoading={isLoading}
                 _hover={{ backgroundColor: "blue.500" }}
               >
@@ -287,5 +369,5 @@ export default function BiddingStatusModalEdit({
         </Dialog.Positioner>
       </Portal>
     </Dialog.Root>
-  );
+  )
 }
