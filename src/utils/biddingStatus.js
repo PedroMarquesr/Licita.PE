@@ -24,6 +24,8 @@ export function getBiddingDisplayStatus(bidding) {
       return "Cancelada"
     case "finished":
       return "Finalizada"
+    case "rejected":
+      return "Rejeitado"
     default:
       return "Status desconhecido"
   }

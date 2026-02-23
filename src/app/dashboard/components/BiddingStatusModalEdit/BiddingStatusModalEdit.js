@@ -10,11 +10,15 @@ import {
   Fade,
   Input,
   Alert,
+  Switch,
+  Box,
   Flex,
   Text,
 } from "@chakra-ui/react"
 // ICONS
 import { IoDocumentText } from "react-icons/io5"
+import { motion } from "framer-motion"
+import { SlideFromTop } from "@/components/animations/ScrollAnimations"
 import { RiInfoCardFill } from "react-icons/ri"
 import { v4 as uuidv4 } from "uuid"
 import {
@@ -29,9 +33,11 @@ import { db } from "@/components/libs/firebaseinit"
 import AlertCustom from "../AlertCustom/AlertCustom"
 import CustomSelect from "../../addTenderForm/components/BiddingWizard/components/steps/IdentificationStep/components/CustomSelect/CustomSelect"
 import biddingResultOptions from "@/constants/biddingResultOptions"
+
 import {
   initialBiddingStatusOptions,
   biddingStatusOptions,
+  biddingStatusAfterApproval,
 } from "@/constants/biddingStatusOptions"
 import { getBiddingDisplayStatus } from "@/utils/biddingStatus"
 import { useState } from "react"
@@ -50,6 +56,7 @@ export default function BiddingStatusModalEdit({
   const [showAlertErrorStatus, setShowAlertErrorStatus] = useState(false)
   const [showAlertErrorDate, setShowAlertErrorDate] = useState(false)
   const [showAlertSucess, setShowAlertSucess] = useState(false)
+  const [undefinedDate, setUndefinedDate] = useState(false)
 
   const handleStatusUpdate = async () => {
     if (!selectedStatus) return
@@ -82,6 +89,19 @@ export default function BiddingStatusModalEdit({
 
     refresh()
     onClose()
+  }
+
+  const SlideFromTop = ({ children, delay = 0 }) => {
+    return (
+      <motion.div
+        initial={{ opacity: 0, y: -20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.2, delay }}
+        viewport={{ once: true, margin: "-50px" }}
+      >
+        {children}
+      </motion.div>
+    )
   }
   return (
     <Dialog.Root open={isOpen} onOpenChange={onClose}>
@@ -162,124 +182,142 @@ export default function BiddingStatusModalEdit({
                     options={
                       biddingData.status === "awaiting_approval"
                         ? initialBiddingStatusOptions
-                        : biddingStatusOptions
+                        : biddingStatusAfterApproval
                     }
                     onValueChange={(value) => setSelectedStatus(value[0])}
                   />
 
-                  <Text mt={3} ml={"2"}>
-                    Nota
-                  </Text>
-                  <Input
-                    ml={"2"}
-                    width="298px"
-                    type="text"
-                    value={note}
-                    onChange={(e) => setNote(e.target.value)}
-                  />
-
-                  {selectedStatus === "reopened" && (
-                    <Flex flexDir={"column"}>
-                      <Separator mt={4} mb={4} borderColor={"gray.300"} />
-                      <Flex
-                        flexDir={"column"}
-                        justifyContent={"left"}
-                        alignItems={"start"}
-                        gap={2}
-                        ml={0}
-                      >
-                        <Text ml={"2"}>Insira a data de Reabertura</Text>
-                        <Flex flexDir={{ base: "column" }} gap={{ base: 2 }}>
-                          <Input
-                            ml={"2"}
-                            width="298px"
-                            type="date"
-                            value={reopeningDate}
-                            onChange={(e) => setReopeningDate(e.target.value)}
-                          />
-                          <Input
-                            ml={"2"}
-                            width="100px"
-                            type="time"
-                            value={reopeningTime}
-                            onChange={(e) => setReopeningTime(e.target.value)}
-                          />
-                        </Flex>
-                      </Flex>
-
-                      <Flex
-                        flexDir={"column"}
-                        justifyContent={"left"}
-                        alignItems={"start"}
-                        gap={2}
-                        mt={2}
-                        ml={0}
-                      >
-                        <Text ml={"2"}>Insira uma nota informativa</Text>
-                        <Flex flexDir={{ base: "column" }} gap={{ base: 2 }}>
-                          <Input
-                            ml={"2"}
-                            width="298px"
-                            type="text"
-                            placeholder="Ex: Suspensão para análise de amostras"
-                            value={note}
-                            onChange={(e) => setNote(e.target.value)}
-                          />
-                        </Flex>
-                      </Flex>
-                    </Flex>
+                  {selectedStatus === "awaiting_approval" && (
+                    <Box ml={"2"} colorPalette={"blue"} mt={5}>
+                      <SlideFromTop>
+                        <Text>Inserir comentário:</Text>
+                        <Input
+                          width="298px"
+                          type="text"
+                          value={note}
+                          onChange={(e) => setNote(e.target.value)}
+                        />{" "}
+                      </SlideFromTop>
+                    </Box>
                   )}
-
                   {selectedStatus === "finished" && (
-                    <Flex flexDir={"column"}>
-                      <Separator mt={4} mb={4} borderColor={"gray.300"} />
-                      <Flex
-                        flexDir={"column"}
-                        justifyContent={"left"}
-                        alignItems={"start"}
-                        gap={2}
-                        ml={0}
-                      >
+                    <Box ml={"2"} colorPalette={"blue"} mt={5}>
+                      <SlideFromTop>
+                        <Button>Inserir Resultado</Button>
+                      </SlideFromTop>
+                    </Box>
+                  )}
+                  {selectedStatus === "suspended" && (
+                    <Box mt={5}>
+                      <SlideFromTop>
                         <Text ml={"2"}>Insira a data de Reabertura</Text>
-                        <Flex flexDir={{ base: "column" }} gap={{ base: 2 }}>
-                          <Input
-                            ml={"2"}
-                            width="298px"
-                            type="date"
-                            value={reopeningDate}
-                            onChange={(e) => setReopeningDate(e.target.value)}
-                          />
-                          <Input
-                            ml={"2"}
-                            width="100px"
-                            type="time"
-                            value={reopeningTime}
-                            onChange={(e) => setReopeningTime(e.target.value)}
-                          />
-                        </Flex>
-                      </Flex>
+                        <Input
+                          disabled={undefinedDate}
+                          ml={"2"}
+                          width="298px"
+                          type="date"
+                          value={reopeningDate}
+                          onChange={(e) => setReopeningDate(e.target.value)}
+                        />
+                        <Input
+                          disabled={undefinedDate}
+                          ml={"2"}
+                          width="100px"
+                          type="time"
+                          value={reopeningTime}
+                          onChange={(e) => setReopeningTime(e.target.value)}
+                        />
 
-                      <Flex
-                        flexDir={"column"}
-                        justifyContent={"left"}
-                        alignItems={"start"}
-                        gap={2}
+                        <Switch.Root
+                          ml={"2"}
+                          mt={2}
+                          colorPalette={"blue"}
+                          onCheckedChange={() => {
+                            setUndefinedDate(!undefinedDate)
+                            setReopeningDate("")
+                            setReopeningTime("")
+                          }}
+                        >
+                          <Switch.HiddenInput />
+                          <Switch.Control />
+                          <Switch.Label>Data indefinida</Switch.Label>
+                        </Switch.Root>
+
+                        <Text mt={3} ml={"2"}>
+                          Inserir comentário:
+                        </Text>
+                        <Input
+                          ml={"2"}
+                          width="298px"
+                          type="text"
+                          value={note}
+                          onChange={(e) => setNote(e.target.value)}
+                        />
+                      </SlideFromTop>
+                    </Box>
+                  )}
+                  {selectedStatus === "reopened" && (
+                    <Box mt={5}>
+                      <Text ml={"2"}>Insira a data de Reabertura</Text>
+                      <Input
+                        disabled={undefinedDate}
+                        ml={"2"}
+                        width="298px"
+                        type="date"
+                        value={reopeningDate}
+                        onChange={(e) => setReopeningDate(e.target.value)}
+                      />
+                      <Input
+                        disabled={undefinedDate}
+                        ml={"2"}
+                        width="100px"
+                        type="time"
+                        value={reopeningTime}
+                        onChange={(e) => setReopeningTime(e.target.value)}
+                      />
+
+                      <Switch.Root
+                        ml={"2"}
                         mt={2}
-                        ml={0}
+                        colorPalette={"blue"}
+                        onCheckedChange={() => {
+                          setUndefinedDate(!undefinedDate)
+                          setReopeningDate("")
+                          setReopeningTime("")
+                        }}
                       >
-                        <Text ml={"2"}>Insira uma nota informativa</Text>
-                        <Flex flexDir={{ base: "column" }} gap={{ base: 2 }}>
-                          <Input
-                            ml={"2"}
-                            width="298px"
-                            type="text"
-                            placeholder="Ex: Suspensão para análise de amostras"
-                            value={note}
-                            onChange={(e) => setNote(e.target.value)}
-                          />
-                        </Flex>
-                      </Flex>
-                    </Flex>
+                        <Switch.HiddenInput />
+                        <Switch.Control />
+                        <Switch.Label>Data indefinida</Switch.Label>
+                      </Switch.Root>
+
+                      <Text mt={3} ml={"2"}>
+                        Inserir comentário:
+                      </Text>
+                      <Input
+                        ml={"2"}
+                        width="298px"
+                        type="text"
+                        value={note}
+                        onChange={(e) => setNote(e.target.value)}
+                      />
+                    </Box>
+                  )}
+                  {selectedStatus == "cancelled" && (
+                    <Box mt={5}>
+                      <SlideFromTop>
+                        <Text mt={3} ml={"2"}>
+                          Inserir comentário:
+                        </Text>
+                        <Input
+                          ml={"2"}
+                          width="298px"
+                          type="text"
+                          value={note}
+                          onChange={(e) => setNote(e.target.value)}
+                        />
+                      </SlideFromTop>
+                    </Box>
                   )}
                 </Flex>
               </Flex>
