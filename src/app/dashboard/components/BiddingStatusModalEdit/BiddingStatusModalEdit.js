@@ -29,7 +29,10 @@ import { db } from "@/components/libs/firebaseinit"
 import AlertCustom from "../AlertCustom/AlertCustom"
 import CustomSelect from "../../addTenderForm/components/BiddingWizard/components/steps/IdentificationStep/components/CustomSelect/CustomSelect"
 import biddingResultOptions from "@/constants/biddingResultOptions"
-import { biddingStatusOptions } from "@/constants/biddingStatusOptions"
+import {
+  initialBiddingStatusOptions,
+  biddingStatusOptions,
+} from "@/constants/biddingStatusOptions"
 import { getBiddingDisplayStatus } from "@/utils/biddingStatus"
 import { useState } from "react"
 
@@ -49,63 +52,37 @@ export default function BiddingStatusModalEdit({
   const [showAlertSucess, setShowAlertSucess] = useState(false)
 
   const handleStatusUpdate = async () => {
-    if (!selectedStatus) {
-      setShowAlertErrorStatus(true)
-      setTimeout(() => {
-        setShowAlertErrorStatus(false)
-      }, 5000)
-      return
+    if (!selectedStatus) return
+
+    const biddingRef = doc(db, "biddings", biddingData.id)
+
+    const updatePayload = {
+      updatedAt: Timestamp.now(),
     }
 
-    try {
-      setIsLoading(true)
+    const resultValues = ["win", "loss", "pending"]
 
-      const biddingRef = doc(db, "biddings", biddingData.id)
-
-      const updatePayload = {
-        result: selectedStatus,
-        status: selectedStatus,
-      }
-
-      if (selectedStatus === "reopened") {
-        if (!reopeningDate) {
-          setShowAlertErrorDate(true)
-          setTimeout(() => {
-            setShowAlertErrorDate(false)
-          }, 5000)
-          return
-        }
-
-        const reopeningDateTime = new Date(
-          `${reopeningDate}T${reopeningTime || "00:00"}`
-        )
-
-        updatePayload.status = "reopened"
-
-        updatePayload.reopenHistory = arrayUnion({
-          id: uuidv4(),
-          createdAt: Timestamp.now(),
-          reopenedAt: Timestamp.fromDate(reopeningDateTime),
-          notes: note || "",
-        })
-      }
-      await updateDoc(biddingRef, updatePayload)
-
-      setShowAlertSucess(true)
-
-      refresh()
-
-      setTimeout(() => {
-        onClose()
-      }, 1500)
-    } catch (error) {
-      console.error(error)
-      alert("Erro ao atualizar")
-    } finally {
-      setIsLoading(false)
+    if (resultValues.includes(selectedStatus)) {
+      updatePayload.result = selectedStatus
+      updatePayload.status = "finished"
+    } else {
+      updatePayload.status = selectedStatus
     }
+
+    updatePayload.statusHistory = arrayUnion({
+      id: uuidv4(),
+      previousStatus: biddingData.status,
+      newStatus: updatePayload.status,
+      result: updatePayload.result || null,
+      note: note || "",
+      createdAt: Timestamp.now(),
+    })
+
+    await updateDoc(biddingRef, updatePayload)
+
+    refresh()
+    onClose()
   }
-
   return (
     <Dialog.Root open={isOpen} onOpenChange={onClose}>
       <Portal>
@@ -182,8 +159,23 @@ export default function BiddingStatusModalEdit({
                   <Text ml={"2"}>Novo Status</Text>
                   <CustomSelect
                     placeholder={"Selecione o novo status"}
-                    options={biddingStatusOptions}
+                    options={
+                      biddingData.status === "awaiting_approval"
+                        ? initialBiddingStatusOptions
+                        : biddingStatusOptions
+                    }
                     onValueChange={(value) => setSelectedStatus(value[0])}
+                  />
+
+                  <Text mt={3} ml={"2"}>
+                    Nota
+                  </Text>
+                  <Input
+                    ml={"2"}
+                    width="298px"
+                    type="text"
+                    value={note}
+                    onChange={(e) => setNote(e.target.value)}
                   />
 
                   {selectedStatus === "reopened" && (

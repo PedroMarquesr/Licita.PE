@@ -1,3 +1,8 @@
+export const initialBiddingStatusOptions = [
+  { label: "Aprovar", value: "scheduled" },
+  { label: "Rejeitar", value: "rejected" },
+]
+
 export const biddingStatusOptions = [
   { label: "Aguardando Aprovação", value: "awaiting_approval" },
   { label: "Agendada", value: "scheduled" },
