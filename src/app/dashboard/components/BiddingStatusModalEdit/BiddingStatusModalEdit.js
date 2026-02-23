@@ -1,4 +1,4 @@
-"use Client";
+"use Client"
 
 import {
   Button,
@@ -12,13 +12,11 @@ import {
   Alert,
   Flex,
   Text,
-} from "@chakra-ui/react";
-
-import { IoDocumentText } from "react-icons/io5";
-import { RiInfoCardFill } from "react-icons/ri";
-
-import { v4 as uuidv4 } from "uuid";
-
+} from "@chakra-ui/react"
+// ICONS
+import { IoDocumentText } from "react-icons/io5"
+import { RiInfoCardFill } from "react-icons/ri"
+import { v4 as uuidv4 } from "uuid"
 import {
   collection,
   getDocs,
@@ -26,87 +24,87 @@ import {
   updateDoc,
   arrayUnion,
   Timestamp,
-} from "firebase/firestore";
-
-import { db } from "@/components/libs/firebaseinit";
-
-import CustomSelect from "../../addTenderForm/components/BiddingWizard/components/steps/IdentificationStep/components/CustomSelect/CustomSelect";
-import biddingResult from "@/constants/biddingResult";
-
-import AlertCustom from "../AlertCustom/AlertCustom";
-
-import { getBiddingDisplayStatus } from "@/utils/biddingStatus";
-
-import { useState } from "react";
+} from "firebase/firestore"
+import { db } from "@/components/libs/firebaseinit"
+import AlertCustom from "../AlertCustom/AlertCustom"
+import CustomSelect from "../../addTenderForm/components/BiddingWizard/components/steps/IdentificationStep/components/CustomSelect/CustomSelect"
+import biddingResultOptions from "@/constants/biddingResultOptions"
+import { biddingStatusOptions } from "@/constants/biddingStatusOptions"
+import { getBiddingDisplayStatus } from "@/utils/biddingStatus"
+import { useState } from "react"
 
 export default function BiddingStatusModalEdit({
   isOpen,
   onClose,
   biddingData,
+  refresh,
 }) {
-  const [selectedStatus, setSelectedStatus] = useState("");
-  const [reopeningDate, setReopeningDate] = useState("");
-  const [reopeningTime, setReopeningTime] = useState("");
-  const [note, setNote] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
-
-  const [showAlertErrorStatus, setShowAlertErrorStatus] = useState(false);
-  const [showAlertErrorDate, setShowAlertErrorDate] = useState(false);
-  const [showAlertSucess, setShowAlertSucess] = useState(false);
+  const [selectedStatus, setSelectedStatus] = useState("")
+  const [reopeningDate, setReopeningDate] = useState("")
+  const [reopeningTime, setReopeningTime] = useState("")
+  const [note, setNote] = useState("")
+  const [isLoading, setIsLoading] = useState(false)
+  const [showAlertErrorStatus, setShowAlertErrorStatus] = useState(false)
+  const [showAlertErrorDate, setShowAlertErrorDate] = useState(false)
+  const [showAlertSucess, setShowAlertSucess] = useState(false)
 
   const handleStatusUpdate = async () => {
     if (!selectedStatus) {
-      setShowAlertErrorStatus(true);
+      setShowAlertErrorStatus(true)
       setTimeout(() => {
-        setShowAlertErrorStatus(false);
-      }, 5000);
-      return;
+        setShowAlertErrorStatus(false)
+      }, 5000)
+      return
     }
 
     try {
-      setIsLoading(true);
+      setIsLoading(true)
 
-      const biddingRef = doc(db, "biddings", biddingData.id);
+      const biddingRef = doc(db, "biddings", biddingData.id)
 
       const updatePayload = {
         result: selectedStatus,
-      };
+        status: selectedStatus,
+      }
 
       if (selectedStatus === "reopened") {
         if (!reopeningDate) {
-          setShowAlertErrorDate(true);
+          setShowAlertErrorDate(true)
           setTimeout(() => {
-            setShowAlertErrorDate(false);
-          }, 5000);
-          return;
+            setShowAlertErrorDate(false)
+          }, 5000)
+          return
         }
 
         const reopeningDateTime = new Date(
-          `${reopeningDate}T${reopeningTime || "00:00"}`,
-        );
+          `${reopeningDate}T${reopeningTime || "00:00"}`
+        )
 
-        updatePayload.status = "reopened";
+        updatePayload.status = "reopened"
 
         updatePayload.reopenHistory = arrayUnion({
           id: uuidv4(),
           createdAt: Timestamp.now(),
           reopenedAt: Timestamp.fromDate(reopeningDateTime),
           notes: note || "",
-        });
+        })
       }
-      await updateDoc(biddingRef, updatePayload);
+      await updateDoc(biddingRef, updatePayload)
 
-      setShowAlertSucess(true);
+      setShowAlertSucess(true)
+
+      refresh()
+
       setTimeout(() => {
-        onClose();
-      }, 2000);
+        onClose()
+      }, 1500)
     } catch (error) {
-      console.error(error);
-      alert("Erro ao atualizar");
+      console.error(error)
+      alert("Erro ao atualizar")
     } finally {
-      setIsLoading(false);
+      setIsLoading(false)
     }
-  };
+  }
 
   return (
     <Dialog.Root open={isOpen} onOpenChange={onClose}>
@@ -184,11 +182,63 @@ export default function BiddingStatusModalEdit({
                   <Text ml={"2"}>Novo Status</Text>
                   <CustomSelect
                     placeholder={"Selecione o novo status"}
-                    options={biddingResult}
+                    options={biddingStatusOptions}
                     onValueChange={(value) => setSelectedStatus(value[0])}
                   />
 
                   {selectedStatus === "reopened" && (
+                    <Flex flexDir={"column"}>
+                      <Separator mt={4} mb={4} borderColor={"gray.300"} />
+                      <Flex
+                        flexDir={"column"}
+                        justifyContent={"left"}
+                        alignItems={"start"}
+                        gap={2}
+                        ml={0}
+                      >
+                        <Text ml={"2"}>Insira a data de Reabertura</Text>
+                        <Flex flexDir={{ base: "column" }} gap={{ base: 2 }}>
+                          <Input
+                            ml={"2"}
+                            width="298px"
+                            type="date"
+                            value={reopeningDate}
+                            onChange={(e) => setReopeningDate(e.target.value)}
+                          />
+                          <Input
+                            ml={"2"}
+                            width="100px"
+                            type="time"
+                            value={reopeningTime}
+                            onChange={(e) => setReopeningTime(e.target.value)}
+                          />
+                        </Flex>
+                      </Flex>
+
+                      <Flex
+                        flexDir={"column"}
+                        justifyContent={"left"}
+                        alignItems={"start"}
+                        gap={2}
+                        mt={2}
+                        ml={0}
+                      >
+                        <Text ml={"2"}>Insira uma nota informativa</Text>
+                        <Flex flexDir={{ base: "column" }} gap={{ base: 2 }}>
+                          <Input
+                            ml={"2"}
+                            width="298px"
+                            type="text"
+                            placeholder="Ex: Suspensão para análise de amostras"
+                            value={note}
+                            onChange={(e) => setNote(e.target.value)}
+                          />
+                        </Flex>
+                      </Flex>
+                    </Flex>
+                  )}
+
+                  {selectedStatus === "finished" && (
                     <Flex flexDir={"column"}>
                       <Separator mt={4} mb={4} borderColor={"gray.300"} />
                       <Flex
@@ -273,7 +323,9 @@ export default function BiddingStatusModalEdit({
                 </Button>
               </Dialog.ActionTrigger>
               <Button
-                onClick={handleStatusUpdate}
+                onClick={async () => {
+                  await handleStatusUpdate()
+                }}
                 isLoading={isLoading}
                 _hover={{ backgroundColor: "blue.500" }}
               >
@@ -287,5 +339,5 @@ export default function BiddingStatusModalEdit({
         </Dialog.Positioner>
       </Portal>
     </Dialog.Root>
-  );
+  )
 }
