@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import {
   Flex,
@@ -13,55 +13,57 @@ import {
   Stack,
   Icon,
   Field,
-} from "@chakra-ui/react"
+} from "@chakra-ui/react";
 
-import { PasswordInput } from "@/components/ui/password-input"
-import BtnGoogle from "./components/BtnGoogle/BtnGoogle"
-import DialogDefault from "@/components/DialogDefault/DialogDefault"
-import VerificationResendCountdown from "./components/VerificationResendCountdown/VerificationResendCountdown"
-import { CiMail } from "react-icons/ci"
-import { PiPassword } from "react-icons/pi"
-import { MdSmsFailed } from "react-icons/md"
-import { FaCheckCircle } from "react-icons/fa"
+import { PasswordInput } from "@/components/ui/password-input";
+import BtnGoogle from "./components/BtnGoogle/BtnGoogle";
+import DialogDefault from "@/components/DialogDefault/DialogDefault";
+import PasswordReset from "./components/PasswordReset/PasswordReset";
+import VerificationResendCountdown from "./components/VerificationResendCountdown/VerificationResendCountdown";
+import { CiMail } from "react-icons/ci";
+import { PiPassword } from "react-icons/pi";
+import { MdSmsFailed } from "react-icons/md";
+import { FaCheckCircle } from "react-icons/fa";
 
 import {
   getAuth,
   sendEmailVerification,
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
-} from "firebase/auth"
+} from "firebase/auth";
 
-import useStore from "../../components/globalStates/store"
-import { useRouter } from "next/navigation"
+import useStore from "../../components/globalStates/store";
+import { useRouter } from "next/navigation";
 
-import { useState } from "react"
+import { useState } from "react";
 
 export default function Login() {
-  const [showRegister, setShowRegister] = useState(false)
-  const [email, setEmail] = useState("")
-  const [password, setPassword] = useState("")
-  const [confirmEmail, setConfirmEmail] = useState("")
-  const [confirmPassword, setConfirmPassword] = useState("")
-  const [emailLogin, setEmailLogin] = useState("")
+  const [showRegister, setShowRegister] = useState(false);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmEmail, setConfirmEmail] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [emailLogin, setEmailLogin] = useState("");
 
-  const [isLengthValid, setIsLengthValid] = useState(false)
-  const [passwordLogin, setPasswordLogin] = useState("")
-  const [hasUppercase, setHasUppercase] = useState(false)
-  const [hasLowercase, setHasLowercase] = useState(false)
-  const [hasSpecialChar, setHasSpecialChar] = useState(false)
-  const [hasNumber, setHasNumber] = useState(false)
+  const [isLengthValid, setIsLengthValid] = useState(false);
+  const [passwordLogin, setPasswordLogin] = useState("");
+  const [hasUppercase, setHasUppercase] = useState(false);
+  const [hasLowercase, setHasLowercase] = useState(false);
+  const [hasSpecialChar, setHasSpecialChar] = useState(false);
+  const [hasNumber, setHasNumber] = useState(false);
   const [showDialogEmailNotVerified, setShowDialogEmailNotVerified] =
-    useState(false)
+    useState(false);
 
   const [showDialogSucessRegister, setShowDialogSucessRegister] =
-    useState(false)
-  const [showLoginError, setShowLoginError] = useState(false)
-  const [showCounter, setShowCounter] = useState(false)
-  const [intervalSeconds, setIntervalSeconds] = useState(120)
+    useState(false);
+  const [showLoginError, setShowLoginError] = useState(false);
+  const [showCounter, setShowCounter] = useState(false);
+  const [showPasswordReset, setShowPasswordReset] = useState(false);
+  const [intervalSeconds, setIntervalSeconds] = useState(120);
 
-  const getUser = useStore((state) => state.getUser)
+  const getUser = useStore((state) => state.getUser);
 
-  const router = useRouter()
+  const router = useRouter();
 
   const isPasswordValid =
     hasUppercase &&
@@ -70,60 +72,60 @@ export default function Login() {
     hasSpecialChar &&
     isLengthValid &&
     password === confirmPassword &&
-    email === confirmEmail
+    email === confirmEmail;
 
   const handleRegister = async () => {
     if (!isPasswordValid) {
-      alert("Algum requisito de senha não foi cumprido")
-      return
+      alert("Algum requisito de senha não foi cumprido");
+      return;
     }
 
     try {
-      const auth = getAuth()
+      const auth = getAuth();
 
       const userCredential = await createUserWithEmailAndPassword(
         auth,
         email,
-        password
-      )
+        password,
+      );
 
-      const user = userCredential.user
+      const user = userCredential.user;
 
-      auth.languageCode = "pt-BR"
+      auth.languageCode = "pt-BR";
 
-      await sendEmailVerification(user)
+      await sendEmailVerification(user);
 
-      setShowDialogSucessRegister(true)
+      setShowDialogSucessRegister(true);
       // await auth.signOut() // ← virificar o que fazer com isso
 
-      setShowRegister(false)
+      setShowRegister(false);
       // ↓ Provisão temprorária, preciso tranformar tudo em apenas um useState
-      setEmail("")
-      setPassword("")
-      setConfirmEmail("")
-      setConfirmPassword("")
-      setEmailLogin("")
+      setEmail("");
+      setPassword("");
+      setConfirmEmail("");
+      setConfirmPassword("");
+      setEmailLogin("");
       // ↑ Provisão temprorária, preciso tranformar tudo em apenas um useState
-      setShowCounter(true)
+      setShowCounter(true);
     } catch (error) {
-      console.log("Erro real:", error)
+      console.log("Erro real:", error);
     }
-  }
+  };
 
   const handleResendEmail = async () => {
     try {
-      const auth = getAuth()
-      const user = auth.currentUser
+      const auth = getAuth();
+      const user = auth.currentUser;
       if (user) {
-        await sendEmailVerification(user)
-        console.log("Email reenviado")
-        setIntervalSeconds(120)
-        setShowSeconds(true)
+        await sendEmailVerification(user);
+        console.log("Email reenviado");
+        setIntervalSeconds(120);
+        setShowSeconds(true);
       }
     } catch (error) {
-      console.log(error)
+      console.log(error);
     }
-  }
+  };
   const requirementPassword = [
     { requirement: "De 6 a 15 caracteres", valid: isLengthValid },
     {
@@ -152,59 +154,59 @@ export default function Login() {
       valid: password !== "" && password === confirmPassword,
       ref: "password",
     },
-  ]
+  ];
   const checkRequirementPassword = (pass) => {
     if (/[A-Z]/.test(pass)) {
-      setHasUppercase(true)
+      setHasUppercase(true);
     } else {
-      setHasUppercase(false)
+      setHasUppercase(false);
     }
 
     if (/[a-z]/.test(pass)) {
-      setHasLowercase(true)
+      setHasLowercase(true);
     } else {
-      setHasLowercase(false)
+      setHasLowercase(false);
     }
 
     if (/\d/.test(pass)) {
-      setHasNumber(true)
+      setHasNumber(true);
     } else {
-      setHasNumber(false)
+      setHasNumber(false);
     }
     if (/[@#$%&*!?\-_=.,;:]/.test(pass)) {
-      setHasSpecialChar(true)
+      setHasSpecialChar(true);
     } else {
-      setHasSpecialChar(false)
+      setHasSpecialChar(false);
     }
     if (pass.length >= 6 && pass.length <= 15) {
-      setIsLengthValid(true)
+      setIsLengthValid(true);
     } else {
-      setIsLengthValid(false)
+      setIsLengthValid(false);
     }
-  }
+  };
 
   const handleLogin = () => {
-    const auth = getAuth()
+    const auth = getAuth();
 
     signInWithEmailAndPassword(auth, emailLogin, passwordLogin)
       .then((userCredential) => {
-        const user = userCredential.user
+        const user = userCredential.user;
 
         if (!user.emailVerified) {
-          setShowDialogEmailNotVerified(true)
-          auth.signOut()
-          return
+          setShowDialogEmailNotVerified(true);
+          auth.signOut();
+          return;
         }
 
-        getUser()
-        router.push("/dashboard")
+        getUser();
+        router.push("/dashboard");
       })
       .catch((error) => {
-        const errorCode = error.code
-        const errorMessage = error.message
-        setShowLoginError(true)
-      })
-  }
+        const errorCode = error.code;
+        const errorMessage = error.message;
+        setShowLoginError(true);
+      });
+  };
 
   return (
     <>
@@ -237,7 +239,11 @@ export default function Login() {
           message="Email ou senha inválidos"
           onClose={() => setShowLoginError(false)}
         />
-
+        <Button>Abrir Redefinição de senha</Button>
+        <PasswordReset
+          open={showPasswordReset}
+          onClose={() => setShowPasswordReset(false)}
+        />
         <Flex justify={"center"}>
           <Image
             my={{ base: "3", md: "5" }}
@@ -375,7 +381,12 @@ export default function Login() {
         </Flex>
         <Flex>
           <Text fontSize={{ base: "sm", md: "xs" }} color="gray.600">
-            <Link color="gray.600" _hover={{ color: "blue.500" }} as={"button"}>
+            <Link
+              color="gray.600"
+              _hover={{ color: "blue.500" }}
+              as={"button"}
+              onClick={() => setShowPasswordReset(!showPasswordReset)}
+            >
               Esqueceu sua senha?{" "}
             </Link>
           </Text>
@@ -439,8 +450,8 @@ export default function Login() {
                   <PasswordInput
                     value={password}
                     onChange={(e) => {
-                      setPassword(e.target.value)
-                      checkRequirementPassword(e.target.value)
+                      setPassword(e.target.value);
+                      checkRequirementPassword(e.target.value);
                     }}
                     size={"sm"}
                     placeholder="Senha"
@@ -452,7 +463,7 @@ export default function Login() {
                   <PasswordInput
                     value={confirmPassword}
                     onChange={(e) => {
-                      setConfirmPassword(e.target.value)
+                      setConfirmPassword(e.target.value);
                     }}
                     _hover={{ borderColor: "gray.500" }}
                     _focus={{
@@ -550,5 +561,5 @@ export default function Login() {
         )}
       </Flex>
     </>
-  )
+  );
 }
