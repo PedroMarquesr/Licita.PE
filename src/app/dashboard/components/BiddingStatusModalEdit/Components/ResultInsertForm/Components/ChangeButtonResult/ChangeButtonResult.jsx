@@ -17,8 +17,8 @@ export default function ChangeButtonResult({
       as={"button"}
       cursor={"pointer"}
       onClick={onClick}
-      px={8}
-      py={5}
+      px={1}
+      py={1}
       border={"2px solid "}
       borderColor={
         type === "sucess" && ative
@@ -29,12 +29,19 @@ export default function ChangeButtonResult({
       }
       borderRadius={"md"}
       alignContent={"center"}
+      bgColor={
+        type === "sucess" && ative
+          ? "green.100"
+          : type === "lose" && ative
+          ? "red.100"
+          : "gray.100"
+      }
     >
       <Flex align={"center"}>
         <Icon
           display={type === "sucess" ? "flex" : "none"}
-          mr={3}
-          size={"lg"}
+          mr={1}
+          size={"sm"}
           color={
             type === "sucess" && ative
               ? "green.500"
@@ -47,8 +54,8 @@ export default function ChangeButtonResult({
         </Icon>
         <Icon
           display={type === "lose" ? "flex" : "none"}
-          mr={3}
-          size={"lg"}
+          mr={1}
+          size={"sm"}
           color={
             type === "sucess" && ative
               ? "green.500"
@@ -60,7 +67,7 @@ export default function ChangeButtonResult({
           <BiSolidDislike />
         </Icon>
         <Text
-          fontSize={"xl"}
+          fontSize={"sm"}
           color={
             type === "sucess" && ative
               ? "green.500"

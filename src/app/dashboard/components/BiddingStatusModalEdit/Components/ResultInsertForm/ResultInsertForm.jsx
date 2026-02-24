@@ -15,6 +15,7 @@ import {
 import { FaBoxes } from "react-icons/fa"
 import { TbAlignBoxLeftTopFilled } from "react-icons/tb"
 import { useState } from "react"
+import FormResult from "./Components/FormResult/FormResult"
 import ChangeButtonResult from "./Components/ChangeButtonResult/ChangeButtonResult"
 import SucessResultForm from "./Components/SucessResultForm/SucessResultForm"
 import LoseResultForm from "./Components/LoseResultForm/LoseResultForm"
@@ -44,7 +45,7 @@ export default function ResultInsertForm({ open }) {
       <SlideFromTop>
         <Dialog.Root open={open} size={"full"}>
           <Portal>
-            {/* <Dialog.Backdrop /> */}
+            <Dialog.Backdrop />
             <Dialog.Positioner>
               <Dialog.Content
                 bg="white"
@@ -65,13 +66,17 @@ export default function ResultInsertForm({ open }) {
                   </Flex>
                 </Dialog.Header>
                 <Dialog.Body>
-                  <Flex
+
+                  <Flex>
+                    <FormResult/>
+                  </Flex>
+                  {/* <Flex
                     pt={4}
-                    justifyContent={"center"}
+                    justifyContent={"initial"}
                     alignItems={"center"}
                     gap={3}
-                  >
-                    <ChangeButtonResult
+                  > */}
+                  {/* <ChangeButtonResult
                       onClick={() => {
                         setResultSelectedSucessAtive(!resultSelectedSucessAtive)
                         {
@@ -98,23 +103,8 @@ export default function ResultInsertForm({ open }) {
                         }
                       }}
                       ative={resultSelectedLoseAtive}
-                    />
-                  </Flex>
-                  {resultSelectedSucessAtive && (
-                    <Flex>
-                      <SlideFromTop>
-                        <SucessResultForm />
-                      </SlideFromTop>
-                    </Flex>
-                  )}
-
-                  {resultSelectedLoseAtive && (
-                    <Flex>
-                      <SlideFromTop>
-                        <LoseResultForm />
-                      </SlideFromTop>
-                    </Flex>
-                  )}
+                    /> */}
+                  {/* </Flex> */}
                 </Dialog.Body>
               </Dialog.Content>
             </Dialog.Positioner>
