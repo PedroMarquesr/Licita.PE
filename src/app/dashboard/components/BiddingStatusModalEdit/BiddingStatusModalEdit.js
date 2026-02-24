@@ -19,6 +19,7 @@ import {
 import { IoDocumentText } from "react-icons/io5"
 import { motion } from "framer-motion"
 import { SlideFromTop } from "@/components/animations/ScrollAnimations"
+import ResultInsertForm from "./Components/ResultInsertForm"
 import { RiInfoCardFill } from "react-icons/ri"
 import { v4 as uuidv4 } from "uuid"
 import {
@@ -168,7 +169,7 @@ export default function BiddingStatusModalEdit({
                     </Text>
                   </Flex>
                 </Flex>
-
+                <ResultInsertForm />
                 <Flex flexDir={"column"}>
                   <Text ml={"2"}>Status Atual</Text>
                   <Text ml={"2"} fontWeight={"bold"} color={"green.900"}>
