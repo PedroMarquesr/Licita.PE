@@ -18,8 +18,9 @@ import { useState } from "react"
 import ChangeButtonResult from "./Components/ChangeButtonResult/ChangeButtonResult"
 
 export default function ResultInsertForm({ open }) {
-  const [resultSelectedSucess, setResultSelectedSucess] = useState(true)
-  const [resultSelectedLose, setResultSelectedLose] = useState(false)
+  const [resultSelectedSucessAtive, setResultSelectedSucessAtive] =
+    useState(true)
+  const [resultSelectedLoseAtive, setResultSelectedLoseAtive] = useState(false)
 
   return (
     <Dialog.Root open={open} size={"full"}>
@@ -52,12 +53,32 @@ export default function ResultInsertForm({ open }) {
                 gap={3}
               >
                 <ChangeButtonResult
+                  onClick={() => {
+                    setResultSelectedSucessAtive(!resultSelectedSucessAtive)
+                    {
+                      if (resultSelectedLoseAtive) {
+                        setResultSelectedLoseAtive(false)
+                      }
+                    }
+                  }}
                   type={"sucess"}
                   changeResultTitle={"Processo ganho"}
+                  ative={resultSelectedSucessAtive}
                 />
+
                 <ChangeButtonResult
                   type={"lose"}
                   changeResultTitle={"Processo perdido"}
+                  onClick={() => {
+                    setResultSelectedLoseAtive(!resultSelectedLoseAtive)
+
+                    {
+                      if (resultSelectedSucessAtive) {
+                        setResultSelectedSucessAtive(false)
+                      }
+                    }
+                  }}
+                  ative={resultSelectedLoseAtive}
                 />
               </Flex>
             </Dialog.Body>
