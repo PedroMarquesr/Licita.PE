@@ -1,41 +1,42 @@
-"use client";
+"use client"
 import {
   Flex,
-  Field,
-  Text,
-  Fieldset,
-  Stack,
-  Input,
   useFilter,
   Combobox,
   useListCollection,
   Portal,
-} from "@chakra-ui/react";
+} from "@chakra-ui/react"
 
-export default function CustomSelect({
+export default function CustomSelectResult({
   legend,
   placeholder,
   onValueChange,
   options,
   value,
   edit,
+  width,
+  columnTitle,
 }) {
-  const { contains } = useFilter({ sensitivity: "base" });
+  const { contains } = useFilter({ sensitivity: "base" })
 
   const { collection, filter } = useListCollection({
     initialItems: options || [],
     filter: contains,
-  });
+  })
   return (
-    <>
-           <Combobox.Root
+    <Flex>
+      <Text p={0} m={0} color={"gray.700"} fontSize={"sm"} textAlign={"left"}>
+        {columnTitle}
+      </Text>
+      <Combobox.Root
         disabled={edit}
         collection={collection}
         onInputValueChange={(e) => filter(e.inputValue)}
         onValueChange={(e) => onValueChange && onValueChange(e.value)}
-        width="320px"
+        width={width}
+        h={6}
       >
-        <Flex alignItems="center" gap={2}>
+        <Flex alignItems="center" gap={2} h={6}>
           <Combobox.Label fontWeight={"semibold"}>{legend}</Combobox.Label>
           <Combobox.Control>
             <Combobox.Input
@@ -63,6 +64,6 @@ export default function CustomSelect({
           </Combobox.Positioner>
         </Portal>
       </Combobox.Root>
-    </>
-  );
+    </Flex>
+  )
 }
