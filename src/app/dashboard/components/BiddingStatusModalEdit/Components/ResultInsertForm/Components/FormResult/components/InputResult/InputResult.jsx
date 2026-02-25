@@ -5,7 +5,7 @@ import CustomSelect from "@/app/dashboard/addTenderForm/components/BiddingWizard
 
 export default function InputResult({ columnTitle, width, textAlignInput }) {
   return (
-    <Field.Root w={width} gap={0}>
+    <Field.Root w={width} gap={0} ml={5}>
       <Text p={0} m={0} color={"gray.700"} fontSize={"sm"} textAlign={"left"}>
         {columnTitle}
       </Text>

@@ -6,7 +6,7 @@ import { useState } from "react"
 
 export default function ResultItemRow({ showBatch }) {
   return (
-    <>
+    <Flex  border={"1px solid red"} w={2500}>
       <Flex display={showBatch === "batch" ? "flex" : "none"}>
         <InputResult
           columnTitle={"Lote"}
@@ -15,6 +15,7 @@ export default function ResultItemRow({ showBatch }) {
           showBatch={showBatch}
         />
       </Flex>
+
       <InputResult columnTitle={"Item"} width={30} textAlignInput={"center"} />
       <InputResult
         columnTitle={"Descritivo"}
@@ -36,6 +37,6 @@ export default function ResultItemRow({ showBatch }) {
         width={"15%"}
         showBatch={showBatch}
       />
-    </>
+    </Flex>
   )
 }

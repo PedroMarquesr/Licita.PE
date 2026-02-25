@@ -1,9 +1,10 @@
 "use client"
 
-import { Flex, Field, Icon } from "@chakra-ui/react"
+import { Flex, Field, Icon, Button } from "@chakra-ui/react"
 import SelectTypeDispute from "./components/SelectTypeDispute/SelectTypeDispute"
 import ResultItemRow from "./components/ResultItemRow/ResultItemRow"
 import { FaUserPlus } from "react-icons/fa6"
+import { BsFillPlusCircleFill } from "react-icons/bs"
 
 import { useState } from "react"
 
@@ -19,12 +20,20 @@ export default function FormResult() {
         />
       </Field.Root>
       {typeDispute && (
-        <Flex mt={17} gap={5} justify={"center"}>
+        <Flex mt={17} justify={"center"} align={"center"}>
           <ResultItemRow showBatch={typeDispute} />
-
-          <Icon>
-            <FaUserPlus />
-          </Icon>
+          <Flex gap={2}>
+            <Button colorPalette={"blue"} size={"xs"}>
+              <Icon>
+                <FaUserPlus />
+              </Icon>
+            </Button>
+            <Button colorPalette={"green"} size={"xs"}>
+              <Icon>
+                <BsFillPlusCircleFill />
+              </Icon>
+            </Button>
+          </Flex>
         </Flex>
       )}
     </Flex>

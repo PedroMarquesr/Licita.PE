@@ -66,45 +66,9 @@ export default function ResultInsertForm({ open }) {
                   </Flex>
                 </Dialog.Header>
                 <Dialog.Body>
-
                   <Flex>
-                    <FormResult/>
+                    <FormResult />
                   </Flex>
-                  {/* <Flex
-                    pt={4}
-                    justifyContent={"initial"}
-                    alignItems={"center"}
-                    gap={3}
-                  > */}
-                  {/* <ChangeButtonResult
-                      onClick={() => {
-                        setResultSelectedSucessAtive(!resultSelectedSucessAtive)
-                        {
-                          if (resultSelectedLoseAtive) {
-                            setResultSelectedLoseAtive(false)
-                          }
-                        }
-                      }}
-                      type={"sucess"}
-                      changeResultTitle={"Processo ganho"}
-                      ative={resultSelectedSucessAtive}
-                    />
-
-                    <ChangeButtonResult
-                      type={"lose"}
-                      changeResultTitle={"Processo perdido"}
-                      onClick={() => {
-                        setResultSelectedLoseAtive(!resultSelectedLoseAtive)
-
-                        {
-                          if (resultSelectedSucessAtive) {
-                            setResultSelectedSucessAtive(false)
-                          }
-                        }
-                      }}
-                      ative={resultSelectedLoseAtive}
-                    /> */}
-                  {/* </Flex> */}
                 </Dialog.Body>
               </Dialog.Content>
             </Dialog.Positioner>
