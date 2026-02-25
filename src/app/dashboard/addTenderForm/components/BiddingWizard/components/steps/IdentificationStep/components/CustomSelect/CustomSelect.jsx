@@ -1,4 +1,4 @@
-"use client";
+"use client"
 import {
   Flex,
   Field,
@@ -10,7 +10,7 @@ import {
   Combobox,
   useListCollection,
   Portal,
-} from "@chakra-ui/react";
+} from "@chakra-ui/react"
 
 export default function CustomSelect({
   legend,
@@ -20,15 +20,15 @@ export default function CustomSelect({
   value,
   edit,
 }) {
-  const { contains } = useFilter({ sensitivity: "base" });
+  const { contains } = useFilter({ sensitivity: "base" })
 
   const { collection, filter } = useListCollection({
     initialItems: options || [],
     filter: contains,
-  });
+  })
   return (
     <>
-           <Combobox.Root
+      <Combobox.Root
         disabled={edit}
         collection={collection}
         onInputValueChange={(e) => filter(e.inputValue)}
@@ -64,5 +64,5 @@ export default function CustomSelect({
         </Portal>
       </Combobox.Root>
     </>
-  );
+  )
 }
