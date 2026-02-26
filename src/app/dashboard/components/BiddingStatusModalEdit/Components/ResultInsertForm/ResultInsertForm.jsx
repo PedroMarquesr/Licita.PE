@@ -1,28 +1,14 @@
 "use client"
-import {
-  Button,
-  Icon,
-  Dialog,
-  Portal,
-  Input,
-  Switch,
-  Box,
-  CloseButton,
-  Flex,
-  Text,
-} from "@chakra-ui/react"
+import { Icon, Dialog, Portal, Flex } from "@chakra-ui/react"
 
 import { FaBoxes } from "react-icons/fa"
 import { TbAlignBoxLeftTopFilled } from "react-icons/tb"
 import { useState } from "react"
 import FormResult from "./Components/FormResult/FormResult"
-import ChangeButtonResult from "./Components/ChangeButtonResult/ChangeButtonResult"
-import SucessResultForm from "./Components/SucessResultForm/SucessResultForm"
-import LoseResultForm from "./Components/LoseResultForm/LoseResultForm"
 
 import { motion } from "framer-motion"
 
-export default function ResultInsertForm({ open }) {
+export default function ResultInsertForm({ open, bidding }) {
   const [resultSelectedSucessAtive, setResultSelectedSucessAtive] =
     useState(true)
   const [resultSelectedLoseAtive, setResultSelectedLoseAtive] = useState(false)
@@ -55,14 +41,20 @@ export default function ResultInsertForm({ open }) {
                 w={"full"}
               >
                 <Dialog.Header>
-                  <Flex align={"center"} gap={3}>
-                    <Icon size={"xl"} colorPalette={"blue"} color={"blue.600"}>
-                      <Dialog.CloseTrigger top="0" asChild>
-                        <CloseButton bg="bg" size="sm" />
-                      </Dialog.CloseTrigger>
-                      <TbAlignBoxLeftTopFilled />
-                    </Icon>
-                    <Dialog.Title>Inserção de Resultado</Dialog.Title>
+                  <Flex justifyContent={"space-between"} w={"100%"}>
+                    <Flex align={"center"} gap={3}>
+                      <Icon
+                        size={"xl"}
+                        colorPalette={"blue"}
+                        color={"blue.600"}
+                      >
+                        <TbAlignBoxLeftTopFilled />
+                      </Icon>
+                      <Dialog.Title>Inserção de Resultado</Dialog.Title>
+                      <Dialog.Title color={"blue.800"} textStyle={"underline"}>
+                        {`${bidding?.responsibleAgency} - ${bidding?.identificationNumber}`}
+                      </Dialog.Title>
+                    </Flex>
                   </Flex>
                 </Dialog.Header>
                 <Dialog.Body>

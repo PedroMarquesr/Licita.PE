@@ -200,7 +200,10 @@ export default function BiddingStatusModalEdit({
                           Inserir Resultado
                         </Button>
                       </SlideFromTop>
-                      <ResultInsertForm open={showInsertResult} />
+                      <ResultInsertForm
+                        bidding={biddingData}
+                        open={showInsertResult}
+                      />
                     </Box>
                   )}
                   {selectedStatus === "suspended" && (
