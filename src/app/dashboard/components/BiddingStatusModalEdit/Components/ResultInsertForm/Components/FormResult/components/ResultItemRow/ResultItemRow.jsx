@@ -1,38 +1,45 @@
 "use client"
 
-import { Flex } from "@chakra-ui/react"
+import { Flex, Box } from "@chakra-ui/react"
 import InputResult from "../InputResult/InputResult"
 import { useState } from "react"
 
 export default function ResultItemRow({ showBatch }) {
   return (
-    <Flex  border={"1px solid red"} w={2500}>
-      <Flex display={showBatch === "batch" ? "flex" : "none"}>
+    <Flex w={"90%"}>
+      <Box display={showBatch === "batch" ? "flex" : "none"}>
         <InputResult
           columnTitle={"Lote"}
           width={30}
           textAlignInput={"center"}
           showBatch={showBatch}
+          mrField={4}
         />
-      </Flex>
+      </Box>
 
-      <InputResult columnTitle={"Item"} width={30} textAlignInput={"center"} />
+      <InputResult
+        columnTitle={"Item"}
+        width={30}
+        textAlignInput={"center"}
+        mrField={4}
+      />
       <InputResult
         columnTitle={"Descritivo"}
         width={"60%"}
         textAlignInput={"left"}
         showBatch={showBatch}
+        mrField={1}
       />
 
       <InputResult
         columnTitle={"Quantidade"}
-        width={"7%"}
+        width={"9%"}
         textAlignInput={"center"}
         showBatch={showBatch}
+        mrField={1}
       />
       <InputResult
-        columnTitle={"Unidade fornecimento"}
-        //          width={"auto"}
+        columnTitle={"Und fornecimento"}
         textAlignInput={"center"}
         width={"15%"}
         showBatch={showBatch}

@@ -43,7 +43,6 @@ export default function OverviewSimple() {
     fetchBiddings()
   }, [user])
 
-  // 🔹 3. Evita render enquanto redireciona
   if (!user) {
     return null
   }
