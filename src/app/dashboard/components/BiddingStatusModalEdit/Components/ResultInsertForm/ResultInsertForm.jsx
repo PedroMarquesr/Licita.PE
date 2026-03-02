@@ -1,17 +1,17 @@
-"use client"
-import { Icon, Dialog, Portal, Flex } from "@chakra-ui/react"
+"use client";
+import { Icon, Dialog, Portal, Flex } from "@chakra-ui/react";
 
-import { FaBoxes } from "react-icons/fa"
-import { TbAlignBoxLeftTopFilled } from "react-icons/tb"
-import { useState } from "react"
-import FormResult from "./Components/FormResult/FormResult"
+import { FaBoxes } from "react-icons/fa";
+import { TbAlignBoxLeftTopFilled } from "react-icons/tb";
+import { useState } from "react";
+import FormResult from "./Components/FormResult/FormResult";
 
-import { motion } from "framer-motion"
+import { motion } from "framer-motion";
 
 export default function ResultInsertForm({ open, bidding }) {
   const [resultSelectedSucessAtive, setResultSelectedSucessAtive] =
-    useState(true)
-  const [resultSelectedLoseAtive, setResultSelectedLoseAtive] = useState(false)
+    useState(true);
+  const [resultSelectedLoseAtive, setResultSelectedLoseAtive] = useState(false);
 
   const SlideFromTop = ({ children, delay = 0 }) => {
     return (
@@ -23,8 +23,8 @@ export default function ResultInsertForm({ open, bidding }) {
       >
         {children}
       </motion.div>
-    )
-  }
+    );
+  };
 
   return (
     <>
@@ -50,7 +50,7 @@ export default function ResultInsertForm({ open, bidding }) {
                       >
                         <TbAlignBoxLeftTopFilled />
                       </Icon>
-                      <Dialog.Title>Inserção de Resultado</Dialog.Title>
+                      <Dialog.Title> de Resultado</Dialog.Title>
                       <Dialog.Title color={"blue.800"} textStyle={"underline"}>
                         {`${bidding?.responsibleAgency} - ${bidding?.identificationNumber}`}
                       </Dialog.Title>
@@ -68,5 +68,5 @@ export default function ResultInsertForm({ open, bidding }) {
         </Dialog.Root>
       </SlideFromTop>
     </>
-  )
+  );
 }
