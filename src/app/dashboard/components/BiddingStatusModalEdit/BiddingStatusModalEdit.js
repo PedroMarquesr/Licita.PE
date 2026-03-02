@@ -12,7 +12,6 @@ import {
   Flex,
   Text,
 } from "@chakra-ui/react"
-// ICONS
 import { IoDocumentText } from "react-icons/io5"
 import { motion } from "framer-motion"
 

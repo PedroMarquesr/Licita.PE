@@ -1,16 +1,16 @@
-"use client";
+"use client"
 
-import { Flex, Field, Icon, Button, Text } from "@chakra-ui/react";
-import { Tooltip } from "@/components/ui/tooltip";
+import { Flex, Field, Icon, Button, Text } from "@chakra-ui/react"
+import { Tooltip } from "@/components/ui/tooltip"
 
-import SelectTypeDispute from "./components/SelectTypeDispute/SelectTypeDispute";
-import ResultItemRow from "./components/ResultItemRow/ResultItemRow";
-import ResultParticipantRow from "./components/ResultParticipantRow/ResultParticipantRow";
+import SelectTypeDispute from "./components/SelectTypeDispute/SelectTypeDispute"
+import ResultItemRow from "./components/ResultItemRow/ResultItemRow"
+import ResultParticipantRow from "./components/ResultParticipantRow/ResultParticipantRow"
 
-import { FaUserPlus, FaBoxesStacked } from "react-icons/fa6";
-import { BsFillPlusCircleFill } from "react-icons/bs";
+import { FaUserPlus, FaBoxesStacked } from "react-icons/fa6"
+import { BsFillPlusCircleFill } from "react-icons/bs"
 
-import { useState } from "react";
+import { useState } from "react"
 
 export default function FormResult() {
   const [dispute, setDispute] = useState({
@@ -29,13 +29,13 @@ export default function FormResult() {
         ],
       },
     ],
-  });
+  })
 
   function handleTypeChange(value) {
     setDispute((prev) => ({
       ...prev,
       type: value,
-    }));
+    }))
   }
 
   function handleAddParticipant(groupId, itemId) {
@@ -57,15 +57,16 @@ export default function FormResult() {
                           bidder: "",
                           brand: "",
                           price: "",
+                          isSelf: false,
                         },
                       ],
                     }
-                  : item,
+                  : item
               ),
             }
-          : group,
+          : group
       ),
-    }));
+    }))
   }
 
   function handleParticipantChange(
@@ -73,7 +74,7 @@ export default function FormResult() {
     itemId,
     participantId,
     field,
-    value,
+    value
   ) {
     setDispute((prev) => ({
       ...prev,
@@ -88,15 +89,15 @@ export default function FormResult() {
                       participants: item.participants.map((participant) =>
                         participant.id === participantId
                           ? { ...participant, [field]: value }
-                          : participant,
+                          : participant
                       ),
                     }
-                  : item,
+                  : item
               ),
             }
-          : group,
+          : group
       ),
-    }));
+    }))
   }
 
   function handleAddItem(groupId) {
@@ -117,11 +118,33 @@ export default function FormResult() {
                 },
               ],
             }
-          : group,
+          : group
       ),
-    }));
+    }))
   }
+  function handleSelectSelf(groupId, itemId, participantId, checked) {
+    setDispute((prev) => ({
+      ...prev,
+      groups: prev.groups.map((group) => {
+        if (group.groupId !== groupId) return group
 
+        return {
+          ...group,
+          items: group.items.map((item) => {
+            if (item.itemId !== itemId) return item
+
+            return {
+              ...item,
+              participants: item.participants.map((participant) => ({
+                ...participant,
+                isSelf: checked ? participant.id === participantId : false,
+              })),
+            }
+          }),
+        }
+      }),
+    }))
+  }
   return (
     <Flex w="100%" py={4} px={5} flexDir="column">
       <Field.Root>
@@ -150,16 +173,25 @@ export default function FormResult() {
                             item.itemId,
                             participant.id,
                             field,
-                            value,
+                            value
                           )
                         }
                         mb={2}
                         ml={8}
+                        onCheckedChange={(checked) =>
+                          handleSelectSelf(
+                            group.groupId,
+                            item.itemId,
+                            participant.id,
+                            checked
+                          )
+                        }
+                        checked={participant.isSelf}
                       />
                     ))}
 
                     <Flex gap={2} ml={3} flexDir="column" mt={3} mb={4}>
-                      <Tooltip content="Adicionar participante a este item">
+                      <Tooltip content="Adicionar participante para este item">
                         <Flex align="center">
                           <Button
                             colorPalette="blue"
@@ -222,5 +254,5 @@ export default function FormResult() {
         {JSON.stringify(dispute, null, 2)}
       </Text>
     </Flex>
-  );
+  )
 }
