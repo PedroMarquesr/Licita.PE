@@ -58,6 +58,7 @@ export default function FormResult() {
                           brand: "",
                           price: "",
                           isSelf: false,
+                          win: false,
                         },
                       ],
                     }
@@ -66,6 +67,30 @@ export default function FormResult() {
             }
           : group
       ),
+    }))
+  }
+
+  function handleSelectWinner(groupId, itemId, participantId, checked) {
+    setDispute((prev) => ({
+      ...prev,
+      groups: prev.groups.map((group) => {
+        if (group.groupId !== groupId) return group
+
+        return {
+          ...group,
+          items: group.items.map((item) => {
+            if (item.itemId !== itemId) return item
+
+            return {
+              ...item,
+              participants: item.participants.map((participant) => ({
+                ...participant,
+                win: checked ? participant.id === participantId : false,
+              })),
+            }
+          }),
+        }
+      }),
     }))
   }
 
@@ -187,6 +212,15 @@ export default function FormResult() {
                           )
                         }
                         checked={participant.isSelf}
+                        onCheckedChangeWinner={(checked) =>
+                          handleSelectWinner(
+                            group.groupId,
+                            item.itemId,
+                            participant.id,
+                            checked
+                          )
+                        }
+                        winnerChecked={participant.win}
                       />
                     ))}
 

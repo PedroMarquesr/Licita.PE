@@ -28,7 +28,7 @@ export default function InputResult({
       <Input
         value={value}
         onChange={onChange}
-        ref={withMask("(99) 99999-9999")}
+        // ref={withMask("(99) 99999-9999")}
         border={"1px solid"}
         borderColor={"gray.300"}
         _hover={{ borderColor: "gray.400" }}
