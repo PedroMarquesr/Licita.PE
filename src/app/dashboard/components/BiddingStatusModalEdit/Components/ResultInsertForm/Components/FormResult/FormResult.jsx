@@ -221,6 +221,7 @@ export default function FormResult() {
                           )
                         }
                         winnerChecked={participant.win}
+                        showCheckdeclassification={!participant.win}
                       />
                     ))}
 
