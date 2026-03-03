@@ -8,15 +8,16 @@ export default function ResultParticipantRow({
   mb,
   ml,
   onChange,
-  // Props para "Meu resultado"
+  // ↓ "Meu resultado"
   onCheckedChangeSelf,
   isSelfChecked,
-  // Props para "Participante vencedor"
+  // ↓ "Participante vencedor"
   onCheckedChangeWinner,
   winnerChecked,
-  // Props para "Participante desclassificado"
+  // ↓  "Participante desclassificado"
   onCheckedChangeDisqualified,
   disqualificationChecked,
+  showCheckDisqualification,
 }) {
   return (
     <Flex
@@ -74,7 +75,6 @@ export default function ResultParticipantRow({
             typeInput={"number"}
           />
 
-
           <Checkbox.Root
             ml={3}
             colorPalette={"green"}
@@ -109,6 +109,7 @@ export default function ResultParticipantRow({
             size={"xs"}
             onCheckedChange={(e) => onCheckedChangeDisqualified(e.checked)}
             checked={disqualificationChecked}
+            display={showCheckDisqualification ? "flex" : "none"}
           >
             <Checkbox.HiddenInput />
             <Checkbox.Control
@@ -129,8 +130,14 @@ export default function ResultParticipantRow({
             bg="red.50"
             alignItems="center"
           >
-            <Text color="red.600" fontWeight="medium" mr={3} minW="60px">
-              Motivo:
+            <Text
+              color="red.600"
+              fontWeight="medium"
+              mr={3}
+              // minW="20px"
+              fontSize={"sm"}
+            >
+              Motivo/Observação{" "}
             </Text>
             <InputResult
               value={participant.disqualificationReason || ""}

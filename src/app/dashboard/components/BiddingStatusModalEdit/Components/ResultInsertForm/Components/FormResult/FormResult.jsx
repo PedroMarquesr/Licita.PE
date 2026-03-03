@@ -112,7 +112,6 @@ export default function FormResult() {
               ...item,
               participants: item.participants.map((participant) => ({
                 ...participant,
-                // ✅ Agora só pode haver UM vencedor por item
                 win: checked ? participant.id === participantId : false,
               })),
             }
@@ -240,7 +239,7 @@ export default function FormResult() {
                         }
                         mb={2}
                         ml={8}
-                        // Props para "Meu resultado"
+                        // My result
                         onCheckedChangeSelf={(checked) =>
                           handleSelectSelf(
                             group.groupId,
@@ -250,7 +249,7 @@ export default function FormResult() {
                           )
                         }
                         isSelfChecked={participant.isSelf}
-                        // Props para "Participante vencedor"
+                        // Winner
                         onCheckedChangeWinner={(checked) =>
                           handleSelectWinner(
                             group.groupId,
@@ -260,7 +259,7 @@ export default function FormResult() {
                           )
                         }
                         winnerChecked={participant.win}
-                        // Props para "Participante desclassificado"
+                        // "Participante desclassificado"
                         onCheckedChangeDisqualified={(checked) =>
                           handleSelectDisqualified(
                             group.groupId,
@@ -270,6 +269,7 @@ export default function FormResult() {
                           )
                         }
                         disqualificationChecked={participant.disqualified}
+                        showCheckDisqualification={!participant.win}
                       />
                     ))}
 
