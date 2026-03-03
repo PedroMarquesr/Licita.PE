@@ -59,6 +59,8 @@ export default function FormResult() {
                           price: "",
                           isSelf: false,
                           win: false,
+                          disqualified: false,
+                          disqualificationReason: "",
                         },
                       ],
                     }
@@ -67,6 +69,31 @@ export default function FormResult() {
             }
           : group
       ),
+    }))
+  }
+
+  function handleSelectSelf(groupId, itemId, participantId, checked) {
+    setDispute((prev) => ({
+      ...prev,
+      groups: prev.groups.map((group) => {
+        if (group.groupId !== groupId) return group
+
+        return {
+          ...group,
+          items: group.items.map((item) => {
+            if (item.itemId !== itemId) return item
+
+            return {
+              ...item,
+              participants: item.participants.map((participant) => ({
+                ...participant,
+
+                isSelf: checked ? participant.id === participantId : false,
+              })),
+            }
+          }),
+        }
+      }),
     }))
   }
 
@@ -85,12 +112,44 @@ export default function FormResult() {
               ...item,
               participants: item.participants.map((participant) => ({
                 ...participant,
+                // ✅ Agora só pode haver UM vencedor por item
                 win: checked ? participant.id === participantId : false,
               })),
             }
           }),
         }
       }),
+    }))
+  }
+
+  function handleSelectDisqualified(groupId, itemId, participantId, checked) {
+    setDispute((prev) => ({
+      ...prev,
+      groups: prev.groups.map((group) =>
+        group.groupId === groupId
+          ? {
+              ...group,
+              items: group.items.map((item) =>
+                item.itemId === itemId
+                  ? {
+                      ...item,
+                      participants: item.participants.map((participant) =>
+                        participant.id === participantId
+                          ? {
+                              ...participant,
+                              disqualified: checked,
+                              disqualificationReason: checked
+                                ? participant.disqualificationReason
+                                : "",
+                            }
+                          : participant
+                      ),
+                    }
+                  : item
+              ),
+            }
+          : group
+      ),
     }))
   }
 
@@ -147,29 +206,7 @@ export default function FormResult() {
       ),
     }))
   }
-  function handleSelectSelf(groupId, itemId, participantId, checked) {
-    setDispute((prev) => ({
-      ...prev,
-      groups: prev.groups.map((group) => {
-        if (group.groupId !== groupId) return group
 
-        return {
-          ...group,
-          items: group.items.map((item) => {
-            if (item.itemId !== itemId) return item
-
-            return {
-              ...item,
-              participants: item.participants.map((participant) => ({
-                ...participant,
-                isSelf: checked ? participant.id === participantId : false,
-              })),
-            }
-          }),
-        }
-      }),
-    }))
-  }
   return (
     <Flex w="100%" py={4} px={5} flexDir="column">
       <Field.Root>
@@ -203,7 +240,8 @@ export default function FormResult() {
                         }
                         mb={2}
                         ml={8}
-                        onCheckedChange={(checked) =>
+                        // Props para "Meu resultado"
+                        onCheckedChangeSelf={(checked) =>
                           handleSelectSelf(
                             group.groupId,
                             item.itemId,
@@ -211,7 +249,8 @@ export default function FormResult() {
                             checked
                           )
                         }
-                        checked={participant.isSelf}
+                        isSelfChecked={participant.isSelf}
+                        // Props para "Participante vencedor"
                         onCheckedChangeWinner={(checked) =>
                           handleSelectWinner(
                             group.groupId,
@@ -221,7 +260,16 @@ export default function FormResult() {
                           )
                         }
                         winnerChecked={participant.win}
-                        showCheckdeclassification={!participant.win}
+                        // Props para "Participante desclassificado"
+                        onCheckedChangeDisqualified={(checked) =>
+                          handleSelectDisqualified(
+                            group.groupId,
+                            item.itemId,
+                            participant.id,
+                            checked
+                          )
+                        }
+                        disqualificationChecked={participant.disqualified}
                       />
                     ))}
 
@@ -285,7 +333,7 @@ export default function FormResult() {
         </Flex>
       )}
 
-      <Text mt={6} fontSize="sm">
+      <Text mt={6} fontSize="sm" whiteSpace="pre-wrap">
         {JSON.stringify(dispute, null, 2)}
       </Text>
     </Flex>
