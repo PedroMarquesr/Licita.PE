@@ -4,7 +4,7 @@ import { Flex, Box } from "@chakra-ui/react"
 import InputResult from "../InputResult/InputResult"
 import { useState } from "react"
 
-export default function ResultItemRow({ showBatch }) {
+export default function ResultItemRow({ showBatch, item, onChange }) {
   return (
     <Flex
       w={"90%"}
@@ -37,6 +37,8 @@ export default function ResultItemRow({ showBatch }) {
         width={30}
         textAlignInput={"center"}
         mrField={4}
+        value={item.itemNumber}
+        onChange={(e) => onChange("itemNumber", e.target.value)}
       />
       <InputResult
         columnTitle={"Descritivo"}
@@ -44,6 +46,8 @@ export default function ResultItemRow({ showBatch }) {
         textAlignInput={"left"}
         showBatch={showBatch}
         mrField={1}
+        value={item.descriptive}
+        onChange={(e) => onChange("descriptive", e.target.value)}
       />
 
       <InputResult
@@ -53,14 +57,17 @@ export default function ResultItemRow({ showBatch }) {
         showBatch={showBatch}
         mrField={1}
         typeInput={"text"}
+        value={item.amount}
+        onChange={(e) => onChange("amount", e.target.value)}
       />
       <InputResult
         columnTitle={"Und fornecimento"}
         textAlignInput={"center"}
         width={"15%"}
         showBatch={showBatch}
+        value={item.supplyUnit}
+        onChange={(e) => onChange("supplyUnit", e.target.value)}
       />
     </Flex>
   )
 }
-

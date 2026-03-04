@@ -2,6 +2,7 @@
 
 import { Flex, Text, Checkbox } from "@chakra-ui/react"
 import InputResult from "../InputResult/InputResult"
+import calcTotalPrice from "../../modules/priceTotalCalculator"
 
 export default function ResultParticipantRow({
   participant,
@@ -18,6 +19,9 @@ export default function ResultParticipantRow({
   onCheckedChangeDisqualified,
   disqualificationChecked,
   showCheckDisqualification,
+
+  // ↓ Ref quantidade
+  amountItemParticipant,
 }) {
   return (
     <Flex
@@ -74,49 +78,58 @@ export default function ResultParticipantRow({
             width={"7%"}
             typeInput={"number"}
           />
+          <InputResult
+            value={calcTotalPrice(amountItemParticipant, participant.price)}
+            columnTitle={"Valor total"}
+            textAlignInput={"center"}
+            width={"7%"}
+            typeInput={"number"}
+            readOnlyInput={true}
+          />
+          <Flex flexDir={"column"}>
+            <Checkbox.Root
+              ml={3}
+              colorPalette={"green"}
+              size={"xs"}
+              onCheckedChange={(e) => onCheckedChangeSelf(e.checked)}
+              checked={isSelfChecked}
+            >
+              <Checkbox.HiddenInput />
+              <Checkbox.Control
+                borderColor={isSelfChecked ? "green.500" : "gray.300"}
+              />
+              <Checkbox.Label>Meu resultado</Checkbox.Label>
+            </Checkbox.Root>
 
-          <Checkbox.Root
-            ml={3}
-            colorPalette={"green"}
-            size={"xs"}
-            onCheckedChange={(e) => onCheckedChangeSelf(e.checked)}
-            checked={isSelfChecked}
-          >
-            <Checkbox.HiddenInput />
-            <Checkbox.Control
-              borderColor={isSelfChecked ? "green.500" : "gray.300"}
-            />
-            <Checkbox.Label>Meu resultado</Checkbox.Label>
-          </Checkbox.Root>
+            <Checkbox.Root
+              ml={3}
+              colorPalette={"purple"}
+              size={"xs"}
+              onCheckedChange={(e) => onCheckedChangeWinner(e.checked)}
+              checked={winnerChecked}
+            >
+              <Checkbox.HiddenInput />
+              <Checkbox.Control
+                borderColor={winnerChecked ? "purple.500" : "gray.300"}
+              />
+              <Checkbox.Label>Participante vencedor</Checkbox.Label>
+            </Checkbox.Root>
 
-          <Checkbox.Root
-            ml={3}
-            colorPalette={"purple"}
-            size={"xs"}
-            onCheckedChange={(e) => onCheckedChangeWinner(e.checked)}
-            checked={winnerChecked}
-          >
-            <Checkbox.HiddenInput />
-            <Checkbox.Control
-              borderColor={winnerChecked ? "purple.500" : "gray.300"}
-            />
-            <Checkbox.Label>Participante vencedor</Checkbox.Label>
-          </Checkbox.Root>
-
-          <Checkbox.Root
-            ml={3}
-            colorPalette={"red"}
-            size={"xs"}
-            onCheckedChange={(e) => onCheckedChangeDisqualified(e.checked)}
-            checked={disqualificationChecked}
-            display={showCheckDisqualification ? "flex" : "none"}
-          >
-            <Checkbox.HiddenInput />
-            <Checkbox.Control
-              borderColor={disqualificationChecked ? "red.500" : "gray.300"}
-            />
-            <Checkbox.Label>Participante desclassificado</Checkbox.Label>
-          </Checkbox.Root>
+            <Checkbox.Root
+              ml={3}
+              colorPalette={"red"}
+              size={"xs"}
+              onCheckedChange={(e) => onCheckedChangeDisqualified(e.checked)}
+              checked={disqualificationChecked}
+              display={showCheckDisqualification ? "flex" : "none"}
+            >
+              <Checkbox.HiddenInput />
+              <Checkbox.Control
+                borderColor={disqualificationChecked ? "red.500" : "gray.300"}
+              />
+              <Checkbox.Label>Participante desclassificado</Checkbox.Label>
+            </Checkbox.Root>
+          </Flex>
         </Flex>
 
         {disqualificationChecked && (

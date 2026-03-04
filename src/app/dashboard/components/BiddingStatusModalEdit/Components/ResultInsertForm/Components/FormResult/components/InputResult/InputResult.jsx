@@ -11,6 +11,7 @@ export default function InputResult({
   mrField,
   value,
   onChange,
+  readOnlyInput,
 }) {
   return (
     <>
@@ -27,6 +28,7 @@ export default function InputResult({
           {columnTitle}
         </Text>
         <Input
+          readOnly={readOnlyInput}
           value={value}
           onChange={onChange}
           // ref={withMask("(99) 99999-9999")}

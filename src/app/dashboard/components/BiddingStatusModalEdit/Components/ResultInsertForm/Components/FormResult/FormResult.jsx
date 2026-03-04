@@ -21,6 +21,7 @@ export default function FormResult() {
         items: [
           {
             itemId: 1,
+            itemNumber: "",
             descriptive: "",
             amount: 0,
             supplyUnit: "",
@@ -30,7 +31,21 @@ export default function FormResult() {
       },
     ],
   })
-
+  function handleItemChange(groupId, itemId, field, value) {
+    setDispute((prev) => ({
+      ...prev,
+      groups: prev.groups.map((group) =>
+        group.groupId === groupId
+          ? {
+              ...group,
+              items: group.items.map((item) =>
+                item.itemId === itemId ? { ...item, [field]: value } : item
+              ),
+            }
+          : group
+      ),
+    }))
+  }
   function handleTypeChange(value) {
     setDispute((prev) => ({
       ...prev,
@@ -222,10 +237,21 @@ export default function FormResult() {
               <Flex key={group.groupId} direction="column" mt={4}>
                 {group.items.map((item) => (
                   <Flex key={item.itemId} direction="column">
-                    <ResultItemRow item={item} />
+                    <ResultItemRow
+                      item={item}
+                      onChange={(field, value) =>
+                        handleItemChange(
+                          group.groupId,
+                          item.itemId,
+                          field,
+                          value
+                        )
+                      }
+                    />
 
                     {item.participants.map((participant) => (
                       <ResultParticipantRow
+                        amountItemParticipant={item.amount}
                         key={participant.id}
                         participant={participant}
                         onChange={(field, value) =>
