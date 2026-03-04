@@ -49,7 +49,14 @@ export default function AddTenderFormFixed({ setEdit, edit }) {
     maximumValue: "",
     observations: "",
 
-    result: "",
+    disputeStructure: {
+      type: "",
+      groups: [],
+    },
+
+    result: {
+      groups: [],
+    },
     status: BIDDING_STATUS.SCHEDULED,
 
     reopenHistory: [],

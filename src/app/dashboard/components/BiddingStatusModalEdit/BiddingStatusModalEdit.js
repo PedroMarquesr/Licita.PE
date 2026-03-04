@@ -6,33 +6,22 @@ import {
   CloseButton,
   Dialog,
   Portal,
-  Separator,
-  Fade,
   Input,
-  Alert,
   Switch,
   Box,
   Flex,
   Text,
 } from "@chakra-ui/react"
-// ICONS
 import { IoDocumentText } from "react-icons/io5"
 import { motion } from "framer-motion"
-import { SlideFromTop } from "@/components/animations/ScrollAnimations"
+
+import ResultInsertForm from "./Components/ResultInsertForm/ResultInsertForm"
 import { RiInfoCardFill } from "react-icons/ri"
 import { v4 as uuidv4 } from "uuid"
-import {
-  collection,
-  getDocs,
-  doc,
-  updateDoc,
-  arrayUnion,
-  Timestamp,
-} from "firebase/firestore"
+import { doc, updateDoc, arrayUnion, Timestamp } from "firebase/firestore"
 import { db } from "@/components/libs/firebaseinit"
 import AlertCustom from "../AlertCustom/AlertCustom"
 import CustomSelect from "../../addTenderForm/components/BiddingWizard/components/steps/IdentificationStep/components/CustomSelect/CustomSelect"
-import biddingResultOptions from "@/constants/biddingResultOptions"
 
 import {
   initialBiddingStatusOptions,
@@ -57,6 +46,7 @@ export default function BiddingStatusModalEdit({
   const [showAlertErrorDate, setShowAlertErrorDate] = useState(false)
   const [showAlertSucess, setShowAlertSucess] = useState(false)
   const [undefinedDate, setUndefinedDate] = useState(false)
+  const [showInsertResult, setShowInsertResult] = useState(false)
 
   const handleStatusUpdate = async () => {
     if (!selectedStatus) return
@@ -168,7 +158,7 @@ export default function BiddingStatusModalEdit({
                     </Text>
                   </Flex>
                 </Flex>
-
+                <ResultInsertForm />
                 <Flex flexDir={"column"}>
                   <Text ml={"2"}>Status Atual</Text>
                   <Text ml={"2"} fontWeight={"bold"} color={"green.900"}>
@@ -203,8 +193,16 @@ export default function BiddingStatusModalEdit({
                   {selectedStatus === "finished" && (
                     <Box ml={"2"} colorPalette={"blue"} mt={5}>
                       <SlideFromTop>
-                        <Button>Inserir Resultado</Button>
+                        <Button
+                          onClick={() => setShowInsertResult(!showInsertResult)}
+                        >
+                          Inserir Resultado
+                        </Button>
                       </SlideFromTop>
+                      <ResultInsertForm
+                        bidding={biddingData}
+                        open={showInsertResult}
+                      />
                     </Box>
                   )}
                   {selectedStatus === "suspended" && (
