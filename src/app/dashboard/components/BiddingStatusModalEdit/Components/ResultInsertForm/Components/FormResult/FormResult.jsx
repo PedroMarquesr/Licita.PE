@@ -253,27 +253,30 @@ export default function FormResult() {
       ),
     }));
   }
-  // ↓ Lot
 
-  function handleAddLot() {
+  function handleDeleteParticipant(groupId, itemId, participantId) {
     setDispute((prev) => ({
       ...prev,
-      groups: [
-        ...prev.groups,
-        {
-          groupId: prev.groups.length + 1,
-          participants: [],
-          items: [
-            {
-              itemId: 1,
-              itemNumber: "",
-              descriptive: "",
-              amount: 0,
-              supplyUnit: "",
-            },
-          ],
-        },
-      ],
+
+      groups: prev.groups.map((group) => {
+        if (group.groupId !== groupId) return group;
+
+        return {
+          ...group,
+
+          items: group.items.map((item) => {
+            if (item.itemId !== itemId) return item;
+
+            return {
+              ...item,
+
+              participants: item.participants.filter(
+                (participant) => participant.id !== participantId,
+              ),
+            };
+          }),
+        };
+      }),
     }));
   }
 
@@ -363,6 +366,15 @@ export default function FormResult() {
                         }
                         ineligibleChecked={participant.ineligible}
                         showCheckIneligible={!participant.win}
+                        // Delete participant
+
+                        deleteParticipant={() =>
+                          handleDeleteParticipant(
+                            group.groupId,
+                            item.itemId,
+                            participant.id,
+                          )
+                        }
                       />
                     ))}
 
@@ -493,8 +505,18 @@ export default function FormResult() {
                         }
                         disqualificationChecked={participant.disqualified}
                         showCheckDisqualification={!participant.win}
+                        // Delete participant
+                        // deleteParticipant={() => {
+                        //   handleDeleteParticipant(
+                        //     group.groupId,
+                        //     item.itemId,
+                        //     participant.id,
+                        //   );
+                        // }}
 
-                        //
+                        deleteParticipant={() =>
+                          console.log(`Botão funcionando`)
+                        }
                       />
                     ))}
 
