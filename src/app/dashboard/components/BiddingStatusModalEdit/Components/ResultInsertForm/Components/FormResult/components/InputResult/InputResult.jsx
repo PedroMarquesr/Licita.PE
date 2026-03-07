@@ -1,6 +1,6 @@
-"use client"
+"use client";
 
-import { Flex, Text, Field, Input } from "@chakra-ui/react"
+import { Flex, Text, Field, Input } from "@chakra-ui/react";
 
 export default function InputResult({
   columnTitle,
@@ -31,7 +31,6 @@ export default function InputResult({
           readOnly={readOnlyInput}
           value={value}
           onChange={onChange}
-          // ref={withMask("(99) 99999-9999")}
           border={"1px solid"}
           borderColor={"gray.300"}
           _hover={{ borderColor: "gray.400" }}
@@ -50,5 +49,5 @@ export default function InputResult({
         />
       </Field.Root>
     </>
-  )
+  );
 }
