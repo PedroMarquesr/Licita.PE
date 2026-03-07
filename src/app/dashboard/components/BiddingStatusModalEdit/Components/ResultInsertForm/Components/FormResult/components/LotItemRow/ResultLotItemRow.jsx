@@ -1,9 +1,8 @@
 "use client";
-
 import { Flex, Box } from "@chakra-ui/react";
 import InputResult from "../InputResult/InputResult";
 
-export default function ResultItemRow({ item, onChange }) {
+export default function ResultLotItemRow({ item, onChange }) {
   return (
     <Flex
       w={{ base: "100%", lg: "90%" }}
