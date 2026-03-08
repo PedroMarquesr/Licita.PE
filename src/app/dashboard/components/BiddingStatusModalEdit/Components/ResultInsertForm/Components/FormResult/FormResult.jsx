@@ -281,6 +281,192 @@ export default function FormResult() {
     }));
   }
 
+  function handleAddBatch() {
+    setDispute((prev) => ({
+      ...prev,
+      groups: [
+        ...prev.groups,
+        {
+          groupId: prev.groups.length + 1,
+          participants: [],
+          items: [
+            {
+              itemId: 1,
+              itemNumber: "",
+              descriptive: "",
+              amount: 0,
+              supplyUnit: "",
+              participants: [],
+            },
+          ],
+        },
+      ],
+    }));
+  }
+  function handleAddItemOfBatch(groupId) {
+    setDispute((prev) => ({
+      ...prev,
+      groups: prev.groups.map((group) =>
+        group.groupId === groupId
+          ? {
+              ...group,
+              items: [
+                ...group.items,
+                {
+                  itemId: group.items.length + 1,
+                  itemNumber: "",
+                  descriptive: "",
+                  amount: 0,
+                  supplyUnit: "",
+                  participants: [],
+                },
+              ],
+            }
+          : group,
+      ),
+    }));
+  }
+  function handleAddParticipantOfBatch(groupId) {
+    setDispute((prev) => ({
+      ...prev,
+      groups: prev.groups.map((group) =>
+        group.groupId === groupId
+          ? {
+              ...group,
+              participants: [
+                ...group.participants,
+                {
+                  id: crypto.randomUUID(),
+                  position: group.participants.length + 1,
+                  bidder: "",
+                  brand: "",
+                  price: "",
+                  isSelf: false,
+                  win: false,
+                  disqualified: false,
+                  disqualificationReason: "",
+                },
+              ],
+            }
+          : group,
+      ),
+    }));
+  }
+
+  function handleSelectSelfBatch(groupId, participantId, checked) {
+    setDispute((prev) => ({
+      ...prev,
+      groups: prev.groups.map((group) => {
+        if (group.groupId !== groupId) return group;
+
+        return {
+          ...group,
+          participants: group.participants.map((participant) => ({
+            ...participant,
+            isSelf: checked ? participant.id === participantId : false,
+          })),
+        };
+      }),
+    }));
+  }
+
+  function handleSelectWinnerBatch(groupId, participantId, checked) {
+    setDispute((prev) => ({
+      ...prev,
+      groups: prev.groups.map((group) => {
+        if (group.groupId !== groupId) return group;
+
+        return {
+          ...group,
+          participants: group.participants.map((participant) => ({
+            ...participant,
+            win: checked ? participant.id === participantId : false,
+          })),
+        };
+      }),
+    }));
+  }
+
+  function handleSelectDisqualifiedBatch(groupId, participantId, checked) {
+    setDispute((prev) => ({
+      ...prev,
+      groups: prev.groups.map((group) =>
+        group.groupId === groupId
+          ? {
+              ...group,
+              participants: group.participants.map((participant) =>
+                participant.id === participantId
+                  ? {
+                      ...participant,
+                      disqualified: checked,
+                      disqualificationReason: checked
+                        ? participant.disqualificationReason
+                        : "",
+                    }
+                  : participant,
+              ),
+            }
+          : group,
+      ),
+    }));
+  }
+
+  function handleSelectIneligibleBatch(groupId, participantId, checked) {
+    setDispute((prev) => ({
+      ...prev,
+      groups: prev.groups.map((group) =>
+        group.groupId === groupId
+          ? {
+              ...group,
+              participants: group.participants.map((participant) =>
+                participant.id === participantId
+                  ? {
+                      ...participant,
+                      ineligible: checked,
+                      ineligibleReason: checked
+                        ? participant.ineligibleReason
+                        : "",
+                    }
+                  : participant,
+              ),
+            }
+          : group,
+      ),
+    }));
+  }
+
+  function handleParticipantChangeBatch(groupId, participantId, field, value) {
+    setDispute((prev) => ({
+      ...prev,
+      groups: prev.groups.map((group) =>
+        group.groupId === groupId
+          ? {
+              ...group,
+              participants: group.participants.map((participant) =>
+                participant.id === participantId
+                  ? { ...participant, [field]: value }
+                  : participant,
+              ),
+            }
+          : group,
+      ),
+    }));
+  }
+  function handleDeleteParticipantBatch(groupId, participantId) {
+    setDispute((prev) => ({
+      ...prev,
+      groups: prev.groups.map((group) =>
+        group.groupId === groupId
+          ? {
+              ...group,
+              participants: group.participants.filter(
+                (participant) => participant.id !== participantId,
+              ),
+            }
+          : group,
+      ),
+    }));
+  }
   return (
     <Flex w="100%" py={4} px={5} flexDir="column">
       <Field.Root>
@@ -378,8 +564,50 @@ export default function FormResult() {
                         }
                       />
                     ))}
-
                     <Flex gap={2} ml={3} flexDir="column" mt={3} mb={4}>
+                      <Tooltip content="Adicionar participante para este item">
+                        <Flex align="center">
+                          <Button
+                            variant="outline"
+                            colorPalette="blue"
+                            size="xs"
+                            h="8"
+                            w="10"
+                            onClick={() =>
+                              handleAddParticipant(group.groupId, item.itemId)
+                            }
+                            borderRadius="lg"
+                            borderWidth="1.5px"
+                            borderColor="blue.200"
+                            bg="transparent"
+                            _hover={{
+                              bg: "blue.50",
+                              borderColor: "blue.400",
+                              transform: "scale(1.05)",
+                              boxShadow: "0 4px 12px rgba(0, 0, 0, 0.05)",
+                            }}
+                            _active={{
+                              bg: "blue.100",
+                              transform: "scale(0.95)",
+                            }}
+                            transition="all 0.2s cubic-bezier(0.4, 0, 0.2, 1)"
+                          >
+                            <Icon color="blue.500" boxSize={4}>
+                              <FaUserPlus />
+                            </Icon>
+                          </Button>
+                          <Text
+                            pl={3}
+                            fontSize="sm"
+                            color="gray.600"
+                            fontWeight="normal"
+                          >
+                            Adicionar Participante
+                          </Text>
+                        </Flex>
+                      </Tooltip>
+                    </Flex>
+                    {/* <Flex gap={2} ml={3} flexDir="column" mt={3} mb={4}>
                       <Tooltip content="Adicionar participante para este item">
                         <Flex align="center">
                           <Button
@@ -397,7 +625,7 @@ export default function FormResult() {
                           <Text pl={3}>Adicionar Participante</Text>
                         </Flex>
                       </Tooltip>
-                    </Flex>
+                    </Flex> */}
                   </Flex>
                 ))}
 
@@ -405,31 +633,40 @@ export default function FormResult() {
                   <Tooltip content="Adicionar item">
                     <Flex align="center">
                       <Button
+                        variant="outline"
                         colorPalette="green"
                         size="xs"
+                        h="8"
                         w="10"
                         onClick={() => handleAddItem(group.groupId)}
+                        borderRadius="lg"
+                        borderWidth="1.5px"
+                        borderColor="green.200"
+                        bg="transparent"
+                        _hover={{
+                          bg: "green.50",
+                          borderColor: "green.400",
+                          transform: "scale(1.05)",
+                          boxShadow: "0 4px 12px rgba(0, 0, 0, 0.05)",
+                        }}
+                        _active={{
+                          bg: "green.100",
+                          transform: "scale(0.95)",
+                        }}
+                        transition="all 0.2s cubic-bezier(0.4, 0, 0.2, 1)"
                       >
-                        <Icon>
+                        <Icon color="green.500" boxSize={4}>
                           <BsFillPlusCircleFill />
                         </Icon>
                       </Button>
-                      <Text pl={3}>Adicionar Item</Text>
-                    </Flex>
-                  </Tooltip>
-
-                  <Tooltip content="Adicionar lote">
-                    <Flex align="center">
-                      <Button
-                        disabled={dispute.type === "item"}
-                        colorPalette="purple"
-                        size="xs"
+                      <Text
+                        pl={3}
+                        fontSize="sm"
+                        color="gray.600"
+                        fontWeight="normal"
                       >
-                        <Icon>
-                          <FaBoxesStacked />
-                        </Icon>
-                      </Button>
-                      <Text pl={3}>Adicionar Lote</Text>
+                        Adicionar Item
+                      </Text>
                     </Flex>
                   </Tooltip>
                 </Flex>
@@ -440,7 +677,207 @@ export default function FormResult() {
       )}
       {dispute.type === "batch" && (
         <Flex mt={10} justify="center" align="center" flexDir={"column"}>
-          <Text>Lote</Text>
+          <Flex flexDir="column" w="100%">
+            {dispute.groups.map((group) => (
+              // renderiza o lote
+              <Flex
+                key={group.groupId}
+                direction="column"
+                mt={4}
+                bg="blue.50"
+                borderRadius="md"
+                borderWidth="1px"
+                boxShadow="sm"
+                borderColor="gray.400"
+              >
+                <Flex flexDir={"column"} w={{ base: "100%", lg: "90%" }}>
+                  {group.items.map((item) => (
+                    <ResultLotItemRow
+                      key={item.itemId}
+                      groupId={group.groupId}
+                      item={item}
+                      onChange={(field, value) =>
+                        handleItemChange(
+                          group.groupId,
+                          item.itemId,
+                          field,
+                          value,
+                        )
+                      }
+                    />
+                  ))}
+                </Flex>
+                <Flex gap={2} ml={3} flexDir="column" mt={3} mb={4}>
+                  {group.participants.map((participant) => (
+                    <ResultParticipantRow
+                      // amountItemParticipant={item.amount}
+                      typeDispute="batch"
+                      key={participant.id}
+                      participant={participant}
+                      onChange={(field, value) =>
+                        handleParticipantChangeBatch(
+                          group.groupId,
+                          participant.id,
+                          field,
+                          value,
+                        )
+                      }
+                      mb={2}
+                      ml={8}
+                      // My result
+                      onCheckedChangeSelf={(checked) =>
+                        handleSelectSelfBatch(
+                          group.groupId,
+                          participant.id,
+                          checked,
+                        )
+                      }
+                      isSelfChecked={participant.isSelf}
+                      // Winner
+                      onCheckedChangeWinner={(checked) =>
+                        handleSelectWinnerBatch(
+                          group.groupId,
+                          participant.id,
+                          checked,
+                        )
+                      }
+                      winnerChecked={participant.win}
+                      // "Participante desclassificado"
+                      onCheckedChangeDisqualified={(checked) =>
+                        handleSelectDisqualifiedBatch(
+                          group.groupId,
+                          participant.id,
+                          checked,
+                        )
+                      }
+                      disqualificationChecked={participant.disqualified}
+                      showCheckDisqualification={!participant.win}
+                      // "Participante inabilitado"
+                      onCheckedChangeIneligible={(checked) =>
+                        handleSelectIneligibleBatch(
+                          group.groupId,
+                          participant.id,
+                          checked,
+                        )
+                      }
+                      ineligibleChecked={participant.ineligible}
+                      showCheckIneligible={!participant.win}
+                      // Delete participant
+
+                      deleteParticipant={() =>
+                        handleDeleteParticipantBatch(
+                          group.groupId,
+                          participant.id,
+                        )
+                      }
+                    />
+                  ))}
+
+                  <Tooltip content="Adicionar item ao lote">
+                    <Flex w="100%">
+                      <Button
+                        variant="outline"
+                        colorPalette="green"
+                        size="sm"
+                        h="8"
+                        w={{ base: "100%", md: "280px" }}
+                        onClick={() => handleAddItemOfBatch(group.groupId)}
+                        borderRadius="lg"
+                        borderWidth="1.5px"
+                        borderColor="green.200"
+                        bg="transparent"
+                        _hover={{
+                          bg: "green.50",
+                          borderColor: "green.400",
+                          transform: "scale(1.02)",
+                          boxShadow: "0 4px 12px rgba(0, 0, 0, 0.05)",
+                        }}
+                        _active={{
+                          bg: "green.100",
+                          transform: "scale(0.98)",
+                        }}
+                        transition="all 0.2s cubic-bezier(0.4, 0, 0.2, 1)"
+                        leftIcon={
+                          <Icon
+                            as={BsFillPlusCircleFill}
+                            boxSize={3.5}
+                            color="green.500"
+                          />
+                        }
+                        fontWeight="normal"
+                        letterSpacing="0.3px"
+                      >
+                        <Text fontSize="sm" color="gray.700">
+                          Adicionar Item ao Lote
+                        </Text>
+                      </Button>
+                    </Flex>
+                  </Tooltip>
+
+                  <Tooltip content="Adicionar participante para este lote">
+                    <Flex align="center" w="100%">
+                      <Button
+                        variant="outline"
+                        colorPalette="blue"
+                        size="sm"
+                        h="8"
+                        w={{ base: "100%", md: "280px" }}
+                        onClick={() =>
+                          handleAddParticipantOfBatch(group.groupId)
+                        }
+                        borderRadius="lg"
+                        borderWidth="1.5px"
+                        borderColor="blue.200"
+                        bg="transparent"
+                        _hover={{
+                          bg: "blue.50",
+                          borderColor: "blue.400",
+                          transform: "scale(1.02)",
+                          boxShadow: "0 4px 12px rgba(0, 0, 0, 0.05)",
+                        }}
+                        _active={{
+                          bg: "blue.100",
+                          transform: "scale(0.98)",
+                        }}
+                        transition="all 0.2s cubic-bezier(0.4, 0, 0.2, 1)"
+                        leftIcon={
+                          <Icon
+                            as={FaUserPlus}
+                            boxSize={3.5}
+                            color="blue.500"
+                          />
+                        }
+                        fontWeight="normal"
+                        letterSpacing="0.3px"
+                      >
+                        <Text fontSize="sm" color="gray.700">
+                          Adicionar Participante ao Lote
+                        </Text>
+                      </Button>
+                    </Flex>
+                  </Tooltip>
+                </Flex>
+              </Flex>
+            ))}
+          </Flex>
+
+          <Tooltip content="Adicionar lote">
+            <Flex align="center" w={"100%"} mt={5}>
+              <Button
+                w={"25%"}
+                colorPalette="purple"
+                size="xs"
+                onClick={() => handleAddBatch()}
+              >
+                <Icon>
+                  <FaBoxesStacked />
+                </Icon>
+                <Text pl={2} fontSize={"md"}>
+                  Adicionar Lote
+                </Text>
+              </Button>
+            </Flex>
+          </Tooltip>
         </Flex>
       )}
       <Text mt={6} fontSize="sm" whiteSpace="pre-wrap">

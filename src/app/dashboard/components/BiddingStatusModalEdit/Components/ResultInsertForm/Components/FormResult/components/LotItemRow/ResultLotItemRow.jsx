@@ -2,17 +2,12 @@
 import { Flex, Box } from "@chakra-ui/react";
 import InputResult from "../InputResult/InputResult";
 
-export default function ResultLotItemRow({ item, onChange }) {
+export default function ResultLotItemRow({ item, groupId, onChange }) {
   return (
     <Flex
-      w={{ base: "100%", lg: "90%" }}
+      w={{ base: "100%", lg: "100%" }}
       bg="blue.50"
       p={3}
-      borderRadius="md"
-      borderWidth="1px"
-      borderColor="gray.400"
-      boxShadow="sm"
-      mb={5}
       gap={3}
       flexWrap="wrap"
       flexDir={{ base: "column", md: "row" }}
@@ -23,6 +18,15 @@ export default function ResultLotItemRow({ item, onChange }) {
         bg: "blue.100",
       }}
     >
+      <Box w={{ base: "100%", md: "70px" }}>
+        <InputResult
+          columnTitle={"Lote"}
+          width="100%"
+          textAlignInput={"center"}
+          value={groupId}
+          onChange={(e) => onChange("itemNumber", e.target.value)}
+        />
+      </Box>
       <Box w={{ base: "100%", md: "70px" }}>
         <InputResult
           columnTitle={"Item"}
@@ -59,8 +63,8 @@ export default function ResultLotItemRow({ item, onChange }) {
           columnTitle={"Und fornecimento"}
           width="100%"
           textAlignInput={"center"}
-          value={item.supplyUnit}
-          onChange={(e) => onChange("supplyUnit", e.target.value)}
+          //  value={item.supplyUnit}
+          // onChange={(e) => onChange("supplyUnit", e.target.value)}
         />
       </Box>
     </Flex>
