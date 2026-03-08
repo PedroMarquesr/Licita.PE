@@ -607,25 +607,6 @@ export default function FormResult() {
                         </Flex>
                       </Tooltip>
                     </Flex>
-                    {/* <Flex gap={2} ml={3} flexDir="column" mt={3} mb={4}>
-                      <Tooltip content="Adicionar participante para este item">
-                        <Flex align="center">
-                          <Button
-                            colorPalette="blue"
-                            size="xs"
-                            w="10"
-                            onClick={() =>
-                              handleAddParticipant(group.groupId, item.itemId)
-                            }
-                          >
-                            <Icon>
-                              <FaUserPlus />
-                            </Icon>
-                          </Button>
-                          <Text pl={3}>Adicionar Participante</Text>
-                        </Flex>
-                      </Tooltip>
-                    </Flex> */}
                   </Flex>
                 ))}
 
