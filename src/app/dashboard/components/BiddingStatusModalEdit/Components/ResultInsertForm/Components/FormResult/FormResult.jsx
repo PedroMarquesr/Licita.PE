@@ -20,6 +20,7 @@ export default function FormResult() {
       {
         groupId: 1,
         participants: [],
+        lotNumber: 1,
 
         items: [
           {
@@ -53,6 +54,24 @@ export default function FormResult() {
     setDispute((prev) => ({
       ...prev,
       type: value,
+      groups: [
+        {
+          groupId: 1,
+          participants: [],
+          lotNumber: 1,
+
+          items: [
+            {
+              itemId: 1,
+              itemNumber: "",
+              descriptive: "",
+              amount: 0,
+              supplyUnit: "",
+              participants: [],
+            },
+          ],
+        },
+      ],
     }));
   }
 
@@ -288,6 +307,8 @@ export default function FormResult() {
         ...prev.groups,
         {
           groupId: prev.groups.length + 1,
+          lotNumber: prev.groups.length + 1,
+
           participants: [],
           items: [
             {
@@ -464,6 +485,15 @@ export default function FormResult() {
               ),
             }
           : group,
+      ),
+    }));
+  }
+
+  function handleLotNumberChange(groupId, value) {
+    setDispute((prev) => ({
+      ...prev,
+      groups: prev.groups.map((group) =>
+        group.groupId === groupId ? { ...group, lotNumber: value } : group,
       ),
     }));
   }
@@ -675,6 +705,7 @@ export default function FormResult() {
                   {group.items.map((item) => (
                     <ResultLotItemRow
                       key={item.itemId}
+                      lotNumber={group.lotNumber}
                       groupId={group.groupId}
                       item={item}
                       onChange={(field, value) =>
@@ -753,90 +784,92 @@ export default function FormResult() {
                       }
                     />
                   ))}
-
-                  <Tooltip content="Adicionar item ao lote">
-                    <Flex w="100%">
-                      <Button
-                        variant="outline"
-                        colorPalette="green"
-                        size="sm"
-                        h="8"
-                        w={{ base: "100%", md: "280px" }}
-                        onClick={() => handleAddItemOfBatch(group.groupId)}
-                        borderRadius="lg"
-                        borderWidth="1.5px"
-                        borderColor="green.200"
-                        bg="transparent"
-                        _hover={{
-                          bg: "green.50",
-                          borderColor: "green.400",
-                          transform: "scale(1.02)",
-                          boxShadow: "0 4px 12px rgba(0, 0, 0, 0.05)",
-                        }}
-                        _active={{
-                          bg: "green.100",
-                          transform: "scale(0.98)",
-                        }}
-                        transition="all 0.2s cubic-bezier(0.4, 0, 0.2, 1)"
-                        leftIcon={
-                          <Icon
-                            as={BsFillPlusCircleFill}
-                            boxSize={3.5}
-                            color="green.500"
-                          />
-                        }
-                        fontWeight="normal"
-                        letterSpacing="0.3px"
-                      >
-                        <Text fontSize="sm" color="gray.700">
+                  <Flex gap={2} ml={3} flexDir="column" mt={3}>
+                    <Tooltip content="Adicionar item">
+                      <Flex align="center">
+                        <Button
+                          variant="outline"
+                          colorPalette="green"
+                          size="xs"
+                          h="8"
+                          w="10"
+                          onClick={() => handleAddItemOfBatch(group.groupId)}
+                          borderRadius="lg"
+                          borderWidth="1.5px"
+                          borderColor="green.200"
+                          bg="transparent"
+                          _hover={{
+                            bg: "green.50",
+                            borderColor: "green.400",
+                            transform: "scale(1.05)",
+                            boxShadow: "0 4px 12px rgba(0, 0, 0, 0.05)",
+                          }}
+                          _active={{
+                            bg: "green.100",
+                            transform: "scale(0.95)",
+                          }}
+                          transition="all 0.2s cubic-bezier(0.4, 0, 0.2, 1)"
+                        >
+                          <Icon color="green.500" boxSize={4}>
+                            <BsFillPlusCircleFill />
+                          </Icon>
+                        </Button>
+                        <Text
+                          pl={3}
+                          fontSize="sm"
+                          color="gray.600"
+                          fontWeight="normal"
+                        >
                           Adicionar Item ao Lote
                         </Text>
-                      </Button>
-                    </Flex>
-                  </Tooltip>
+                      </Flex>
+                    </Tooltip>
+                  </Flex>
 
-                  <Tooltip content="Adicionar participante para este lote">
-                    <Flex align="center" w="100%">
-                      <Button
-                        variant="outline"
-                        colorPalette="blue"
-                        size="sm"
-                        h="8"
-                        w={{ base: "100%", md: "280px" }}
-                        onClick={() =>
-                          handleAddParticipantOfBatch(group.groupId)
-                        }
-                        borderRadius="lg"
-                        borderWidth="1.5px"
-                        borderColor="blue.200"
-                        bg="transparent"
-                        _hover={{
-                          bg: "blue.50",
-                          borderColor: "blue.400",
-                          transform: "scale(1.02)",
-                          boxShadow: "0 4px 12px rgba(0, 0, 0, 0.05)",
-                        }}
-                        _active={{
-                          bg: "blue.100",
-                          transform: "scale(0.98)",
-                        }}
-                        transition="all 0.2s cubic-bezier(0.4, 0, 0.2, 1)"
-                        leftIcon={
-                          <Icon
-                            as={FaUserPlus}
-                            boxSize={3.5}
-                            color="blue.500"
-                          />
-                        }
-                        fontWeight="normal"
-                        letterSpacing="0.3px"
-                      >
-                        <Text fontSize="sm" color="gray.700">
+                  {/* // Add participant */}
+                  <Flex gap={2} ml={3} flexDir="column" mt={3} mb={4}>
+                    <Tooltip content="Adicionar participante para este item">
+                      <Flex align="center">
+                        <Button
+                          variant="outline"
+                          colorPalette="blue"
+                          size="xs"
+                          h="8"
+                          w="10"
+                          onClick={() =>
+                            handleAddParticipantOfBatch(group.groupId)
+                          }
+                          borderRadius="lg"
+                          borderWidth="1.5px"
+                          borderColor="blue.200"
+                          bg="transparent"
+                          _hover={{
+                            bg: "blue.50",
+                            borderColor: "blue.400",
+                            transform: "scale(1.05)",
+                            boxShadow: "0 4px 12px rgba(0, 0, 0, 0.05)",
+                          }}
+                          _active={{
+                            bg: "blue.100",
+                            transform: "scale(0.95)",
+                          }}
+                          transition="all 0.2s cubic-bezier(0.4, 0, 0.2, 1)"
+                        >
+                          <Icon color="blue.500" boxSize={4}>
+                            <FaUserPlus />
+                          </Icon>
+                        </Button>
+                        <Text
+                          pl={3}
+                          fontSize="sm"
+                          color="gray.600"
+                          fontWeight="normal"
+                        >
                           Adicionar Participante ao Lote
                         </Text>
-                      </Button>
-                    </Flex>
-                  </Tooltip>
+                      </Flex>
+                    </Tooltip>
+                  </Flex>
                 </Flex>
               </Flex>
             ))}
