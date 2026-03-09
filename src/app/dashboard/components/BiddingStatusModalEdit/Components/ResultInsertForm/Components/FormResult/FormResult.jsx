@@ -488,6 +488,24 @@ export default function FormResult() {
       ),
     }));
   }
+  // function handleAddUnitPriceToBatchItem(groupId, itemId) {
+  //   setDispute((prev) => ({
+  //     ...prev,
+  //     groups: prev.groups.map((group) => {
+  //       group.groupId === groupId
+  //         ? {
+  //           group.items.map((item) => {
+  //           ...items,
+  //         })
+  //         } : {
+          
+  //       }
+  //     })
+
+
+  //   }))
+  // }
+
 
   function handleLotNumberChange(groupId, value) {
     setDispute((prev) => ({
