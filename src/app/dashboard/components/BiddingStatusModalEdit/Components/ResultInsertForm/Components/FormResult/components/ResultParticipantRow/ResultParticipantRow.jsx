@@ -1,15 +1,19 @@
-"use client";
+"use client"
 
-import { Flex, Text, Checkbox, Button, Icon } from "@chakra-ui/react";
-import InputResult from "../InputResult/InputResult";
-import calcTotalPrice from "../../modules/priceTotalCalculator";
-import { TiDelete } from "react-icons/ti";
+import { Flex, Text, Checkbox, Button, Icon, Switch } from "@chakra-ui/react"
+import InputResult from "../InputResult/InputResult"
+import UnitPriceAllocatorBatch from "./components/UnitPriceAllocatorBatch/UnitPriceAllocatorBatch"
+import calcTotalPrice from "../../modules/priceTotalCalculator"
+import { useState } from "react"
+import { TiDelete } from "react-icons/ti"
 
 export default function ResultParticipantRow({
   participant,
   mb,
   ml,
   onChange,
+
+  typeDispute,
   // ↓ "Meu resultado"
   onCheckedChangeSelf,
   isSelfChecked,
@@ -31,31 +35,38 @@ export default function ResultParticipantRow({
 
   deleteParticipant,
 }) {
+  const [showUnitPriceDistributor, setShowUnitPriceDistributor] =
+    useState(false)
+
+  const getBgColor = () => {
+    if (winnerChecked) return "yellow.50"
+    if (ineligibleChecked || disqualificationChecked) return "red.50"
+    return "white"
+  }
+
   return (
     <Flex
       w={{ base: "100%", lg: "90%" }}
       mb={mb}
       ml={{ base: 0, md: ml }}
-      bg={
-        winnerChecked
-          ? "yellow.100"
-          : ineligibleChecked || disqualificationChecked
-            ? "red.100"
-            : "gray.100"
-      }
-      //  bg="purple.50"
+      bg={getBgColor()}
       p={3}
-      borderRadius="md"
+      borderRadius="lg"
       borderWidth="1px"
       borderColor="gray.200"
       boxShadow="sm"
       flexDir={{ base: "column", lg: "row" }}
       _hover={{
-        borderColor: "gray.200",
+        borderColor: "blue.200",
         boxShadow: "md",
         transition: "all 0.2s",
-        bg: "gray.100",
+        bg: winnerChecked
+          ? "yellow.100"
+          : ineligibleChecked || disqualificationChecked
+          ? "red.100"
+          : "blue.50",
       }}
+      transition="all 0.2s"
     >
       <Flex flexDir="column" w="100%">
         <Flex
@@ -70,6 +81,13 @@ export default function ResultParticipantRow({
             textAlignInput={"center"}
             value={participant.position}
             onChange={(e) => onChange("position", e.target.value)}
+            bg="white"
+            borderColor="gray.300"
+            _hover={{ borderColor: "blue.400" }}
+            _focus={{
+              borderColor: "blue.500",
+              boxShadow: "0 0 0 1px blue.500",
+            }}
           />
 
           <InputResult
@@ -78,6 +96,13 @@ export default function ResultParticipantRow({
             textAlignInput={"left"}
             value={participant.bidder}
             onChange={(e) => onChange("bidder", e.target.value)}
+            bg="white"
+            borderColor="gray.300"
+            _hover={{ borderColor: "blue.400" }}
+            _focus={{
+              borderColor: "blue.500",
+              boxShadow: "0 0 0 1px blue.500",
+            }}
           />
 
           <InputResult
@@ -86,6 +111,13 @@ export default function ResultParticipantRow({
             columnTitle={"Marca"}
             textAlignInput={"left"}
             width={{ base: "100%", md: "150px" }}
+            bg="white"
+            borderColor="gray.300"
+            _hover={{ borderColor: "blue.400" }}
+            _focus={{
+              borderColor: "blue.500",
+              boxShadow: "0 0 0 1px blue.500",
+            }}
           />
 
           <InputResult
@@ -95,16 +127,29 @@ export default function ResultParticipantRow({
             textAlignInput={"center"}
             width={{ base: "100%", md: "120px" }}
             typeInput={"number"}
+            bg="white"
+            borderColor="gray.300"
+            _hover={{ borderColor: "blue.400" }}
+            _focus={{
+              borderColor: "blue.500",
+              boxShadow: "0 0 0 1px blue.500",
+            }}
           />
 
-          <InputResult
-            value={calcTotalPrice(amountItemParticipant, participant.price)}
-            columnTitle={"Valor total"}
-            textAlignInput={"center"}
-            width={{ base: "100%", md: "140px" }}
-            typeInput={"number"}
-            readOnlyInput={true}
-          />
+          {typeDispute !== "batch" && (
+            <InputResult
+              value={calcTotalPrice(amountItemParticipant, participant.price)}
+              columnTitle={"Valor total"}
+              textAlignInput={"center"}
+              width={{ base: "100%", md: "140px" }}
+              typeInput={"number"}
+              readOnlyInput={true}
+              bg="gray.50"
+              borderColor="gray.300"
+              color="gray.700"
+              fontWeight="medium"
+            />
+          )}
 
           {/* CHECKBOXES */}
           <Flex flexDir="column" gap={1} mt={{ base: 2, md: 0 }}>
@@ -115,8 +160,13 @@ export default function ResultParticipantRow({
               checked={isSelfChecked}
             >
               <Checkbox.HiddenInput />
-              <Checkbox.Control />
-              <Checkbox.Label>Meu resultado</Checkbox.Label>
+              <Checkbox.Control
+                borderColor={isSelfChecked ? "green.500" : "gray.400"}
+                _checked={{ bg: "green.500", borderColor: "green.500" }}
+              />
+              <Checkbox.Label color="gray.700" fontSize="xs">
+                Meu resultado
+              </Checkbox.Label>
             </Checkbox.Root>
 
             <Checkbox.Root
@@ -126,8 +176,13 @@ export default function ResultParticipantRow({
               checked={winnerChecked}
             >
               <Checkbox.HiddenInput />
-              <Checkbox.Control />
-              <Checkbox.Label>Participante vencedor</Checkbox.Label>
+              <Checkbox.Control
+                borderColor={winnerChecked ? "purple.500" : "gray.400"}
+                _checked={{ bg: "purple.500", borderColor: "purple.500" }}
+              />
+              <Checkbox.Label color="gray.700" fontSize="xs">
+                Participante vencedor
+              </Checkbox.Label>
             </Checkbox.Root>
 
             <Checkbox.Root
@@ -138,8 +193,13 @@ export default function ResultParticipantRow({
               display={showCheckDisqualification ? "flex" : "none"}
             >
               <Checkbox.HiddenInput />
-              <Checkbox.Control />
-              <Checkbox.Label>Participante desclassificado</Checkbox.Label>
+              <Checkbox.Control
+                borderColor={disqualificationChecked ? "red.500" : "gray.400"}
+                _checked={{ bg: "red.500", borderColor: "red.500" }}
+              />
+              <Checkbox.Label color="gray.700" fontSize="xs">
+                Participante desclassificado
+              </Checkbox.Label>
             </Checkbox.Root>
           </Flex>
 
@@ -152,10 +212,33 @@ export default function ResultParticipantRow({
               display={showCheckIneligible ? "flex" : "none"}
             >
               <Checkbox.HiddenInput />
-              <Checkbox.Control />
-              <Checkbox.Label>Participante inabilitado</Checkbox.Label>
+              <Checkbox.Control
+                borderColor={ineligibleChecked ? "red.500" : "gray.400"}
+                _checked={{ bg: "red.500", borderColor: "red.500" }}
+              />
+              <Checkbox.Label color="gray.700" fontSize="xs">
+                Participante inabilitado
+              </Checkbox.Label>
             </Checkbox.Root>
           </Flex>
+          {typeDispute === "batch" && (
+            <Flex flexDir={"column"}>
+              <Switch.Root
+                colorPalette={"green"}
+                size={"xs"}
+                onCheckedChange={() =>
+                  setShowUnitPriceDistributor(!showUnitPriceDistributor)
+                }
+              >
+                <Switch.HiddenInput />
+                <Switch.Control />
+                <Switch.Label>
+                  <Text fontSize={"xs"}>Redistribuir valores unitários</Text>
+                </Switch.Label>
+              </Switch.Root>
+              {showUnitPriceDistributor && <UnitPriceAllocatorBatch />}
+            </Flex>
+          )}
         </Flex>
 
         {disqualificationChecked && (
@@ -164,13 +247,18 @@ export default function ResultParticipantRow({
             borderWidth="1px"
             borderColor="red.200"
             mt={4}
-            p={2}
+            p={3}
             bg="red.50"
             flexDir={{ base: "column", md: "row" }}
-            gap={2}
-            align={"center"}
+            gap={3}
+            align={{ md: "center" }}
           >
-            <Text color="red.800" fontWeight="medium" fontSize="xs">
+            <Text
+              color="red.700"
+              fontWeight="medium"
+              fontSize="xs"
+              minW="130px"
+            >
               Motivo da desclassificação:
             </Text>
 
@@ -181,6 +269,13 @@ export default function ResultParticipantRow({
               }
               width={{ base: "100%", md: "50%" }}
               placeholder="Digite o motivo..."
+              bg="white"
+              borderColor="red.300"
+              _hover={{ borderColor: "red.400" }}
+              _focus={{
+                borderColor: "red.500",
+                boxShadow: "0 0 0 1px red.500",
+              }}
             />
           </Flex>
         )}
@@ -191,13 +286,18 @@ export default function ResultParticipantRow({
             borderWidth="1px"
             borderColor="red.200"
             mt={4}
-            p={2}
+            p={3}
             bg="red.50"
             flexDir={{ base: "column", md: "row" }}
-            gap={2}
-            align={"center"}
+            gap={3}
+            align={{ md: "center" }}
           >
-            <Text color="red.800" fontWeight="medium" fontSize="xs">
+            <Text
+              color="red.700"
+              fontWeight="medium"
+              fontSize="xs"
+              minW="130px"
+            >
               Motivo da inabilitação:
             </Text>
 
@@ -206,6 +306,13 @@ export default function ResultParticipantRow({
               onChange={(e) => onChange("ineligibleReason", e.target.value)}
               width={{ base: "100%", md: "50%" }}
               placeholder="Digite o motivo..."
+              bg="white"
+              borderColor="red.300"
+              _hover={{ borderColor: "red.400" }}
+              _focus={{
+                borderColor: "red.500",
+                boxShadow: "0 0 0 1px red.500",
+              }}
             />
           </Flex>
         )}
@@ -226,10 +333,11 @@ export default function ResultParticipantRow({
           h="auto"
           onClick={() => deleteParticipant?.()}
           _hover={{
-            bg: "red.50",
+            bg: "red.100",
             transform: "scale(1.1)",
             transition: "all 0.2s",
           }}
+          color="gray.600"
         >
           <Icon boxSize={5}>
             <TiDelete />
@@ -237,5 +345,5 @@ export default function ResultParticipantRow({
         </Button>
       </Flex>
     </Flex>
-  );
+  )
 }
