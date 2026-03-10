@@ -1,19 +1,23 @@
-"use client"
+"use client";
 
-import { Flex, Text, Checkbox, Button, Icon, Switch } from "@chakra-ui/react"
-import InputResult from "../InputResult/InputResult"
-import UnitPriceAllocatorBatch from "./components/UnitPriceAllocatorBatch/UnitPriceAllocatorBatch"
-import calcTotalPrice from "../../modules/priceTotalCalculator"
-import { useState } from "react"
-import { TiDelete } from "react-icons/ti"
+import { Flex, Text, Checkbox, Button, Icon, Switch } from "@chakra-ui/react";
+import InputResult from "../InputResult/InputResult";
+import UnitPriceAllocatorBatch from "./components/UnitPriceAllocatorBatch/UnitPriceAllocatorBatch";
+import calcTotalPrice from "../../modules/priceTotalCalculator";
+import { useState } from "react";
+import { TiDelete } from "react-icons/ti";
 
 export default function ResultParticipantRow({
+  group,
   participant,
   mb,
   ml,
   onChange,
-
+  itemId,
+  unitPriceChange,
+  groupId,
   typeDispute,
+
   // ↓ "Meu resultado"
   onCheckedChangeSelf,
   isSelfChecked,
@@ -36,13 +40,13 @@ export default function ResultParticipantRow({
   deleteParticipant,
 }) {
   const [showUnitPriceDistributor, setShowUnitPriceDistributor] =
-    useState(false)
+    useState(false);
 
   const getBgColor = () => {
-    if (winnerChecked) return "yellow.50"
-    if (ineligibleChecked || disqualificationChecked) return "red.50"
-    return "white"
-  }
+    if (winnerChecked) return "yellow.50";
+    if (ineligibleChecked || disqualificationChecked) return "red.50";
+    return "white";
+  };
 
   return (
     <Flex
@@ -63,8 +67,8 @@ export default function ResultParticipantRow({
         bg: winnerChecked
           ? "yellow.100"
           : ineligibleChecked || disqualificationChecked
-          ? "red.100"
-          : "blue.50",
+            ? "red.100"
+            : "blue.50",
       }}
       transition="all 0.2s"
     >
@@ -236,7 +240,23 @@ export default function ResultParticipantRow({
                   <Text fontSize={"xs"}>Redistribuir valores unitários</Text>
                 </Switch.Label>
               </Switch.Root>
-              {showUnitPriceDistributor && <UnitPriceAllocatorBatch />}
+              {showUnitPriceDistributor && (
+                <>
+                  {group.items.map((item) => {
+                    return (
+                      <>
+                        <UnitPriceAllocatorBatch
+                          groupId={group.groupId}
+                          //itemId={item.itemId}
+                          participant={participant}
+                          marca={item.descriptive}
+                          unitPriceChange={unitPriceChange}
+                        />
+                      </>
+                    );
+                  })}
+                </>
+              )}
             </Flex>
           )}
         </Flex>
@@ -345,5 +365,5 @@ export default function ResultParticipantRow({
         </Button>
       </Flex>
     </Flex>
-  )
+  );
 }

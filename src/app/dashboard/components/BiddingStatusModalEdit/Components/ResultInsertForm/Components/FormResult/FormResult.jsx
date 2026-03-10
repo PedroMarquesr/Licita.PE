@@ -488,24 +488,6 @@ export default function FormResult() {
       ),
     }));
   }
-  // function handleAddUnitPriceToBatchItem(groupId, itemId) {
-  //   setDispute((prev) => ({
-  //     ...prev,
-  //     groups: prev.groups.map((group) => {
-  //       group.groupId === groupId
-  //         ? {
-  //           group.items.map((item) => {
-  //           ...items,
-  //         })
-  //         } : {
-          
-  //       }
-  //     })
-
-
-  //   }))
-  // }
-
 
   function handleLotNumberChange(groupId, value) {
     setDispute((prev) => ({
@@ -513,6 +495,37 @@ export default function FormResult() {
       groups: prev.groups.map((group) =>
         group.groupId === groupId ? { ...group, lotNumber: value } : group,
       ),
+    }));
+  }
+
+  function handleBatchItemChange(groupId, itemId, participantId, field, value) {
+    setDispute((prev) => ({
+      ...prev,
+
+      groups: prev.groups.map((group) => {
+        if (group.groupId !== groupId) return group;
+
+        return {
+          ...group,
+
+          participants: group.participants.map((participant) => {
+            if (participant.id !== participantId) return participant;
+
+            return {
+              ...participant,
+
+              items: {
+                ...(participant.items || {}),
+
+                [itemId]: {
+                  ...(participant.items?.[itemId] || {}),
+                  [field]: value,
+                },
+              },
+            };
+          }),
+        };
+      }),
     }));
   }
   return (
@@ -800,8 +813,14 @@ export default function FormResult() {
                           participant.id,
                         )
                       }
+                      groupId={group.groupId}
+                      group={group}
+                      // itemId={item.itemId}
+                      participantId={participant.id}
+                      unitPriceChange={handleBatchItemChange}
                     />
                   ))}
+
                   <Flex gap={2} ml={3} flexDir="column" mt={3}>
                     <Tooltip content="Adicionar item">
                       <Flex align="center">
