@@ -202,6 +202,7 @@ export default function BiddingStatusModalEdit({
                       <ResultInsertForm
                         bidding={biddingData}
                         open={showInsertResult}
+                        onClose={() => setShowInsertResult(!showInsertResult)}
                       />
                     </Box>
                   )}
