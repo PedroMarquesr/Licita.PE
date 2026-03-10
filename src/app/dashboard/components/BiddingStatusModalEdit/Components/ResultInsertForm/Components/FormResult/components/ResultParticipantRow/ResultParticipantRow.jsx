@@ -8,19 +8,24 @@ import { useState } from "react"
 import { TiDelete } from "react-icons/ti"
 
 export default function ResultParticipantRow({
+  group,
   participant,
   mb,
   ml,
   onChange,
-
   typeDispute,
-  // ↓ "Meu resultado"
+  itemPrices,
+  onItemPriceChange,
+
+  // "Meu resultado"
   onCheckedChangeSelf,
   isSelfChecked,
-  // ↓ "Participante vencedor"
+
+  // "Participante vencedor"
   onCheckedChangeWinner,
   winnerChecked,
-  // ↓  "Participante desclassificado"
+
+  // "Participante desclassificado"
   onCheckedChangeDisqualified,
   disqualificationChecked,
   showCheckDisqualification,
@@ -30,7 +35,7 @@ export default function ResultParticipantRow({
   ineligibleChecked,
   showCheckIneligible,
 
-  // ↓ Ref quantidade
+  // Ref quantidade (para item)
   amountItemParticipant,
 
   deleteParticipant,
@@ -42,6 +47,18 @@ export default function ResultParticipantRow({
     if (winnerChecked) return "yellow.50"
     if (ineligibleChecked || disqualificationChecked) return "red.50"
     return "white"
+  }
+
+  const calculateTotalPrice = () => {
+    if (typeDispute !== "batch" || !group || !itemPrices) {
+      return null
+    }
+
+    return group.items.reduce((total, item) => {
+      const itemPrice = parseFloat(itemPrices[item.itemId]) || 0
+      const itemAmount = parseFloat(item.amount) || 0
+      return total + itemPrice * itemAmount
+    }, 0)
   }
 
   return (
@@ -76,9 +93,9 @@ export default function ResultParticipantRow({
           flexDir={{ base: "column", md: "row" }}
         >
           <InputResult
-            columnTitle={"Coloc."}
+            columnTitle="Coloc."
             width={{ base: "100%", md: "60px" }}
-            textAlignInput={"center"}
+            textAlignInput="center"
             value={participant.position}
             onChange={(e) => onChange("position", e.target.value)}
             bg="white"
@@ -91,9 +108,9 @@ export default function ResultParticipantRow({
           />
 
           <InputResult
-            columnTitle={"Participante"}
+            columnTitle="Participante"
             width={{ base: "100%", md: "280px" }}
-            textAlignInput={"left"}
+            textAlignInput="left"
             value={participant.bidder}
             onChange={(e) => onChange("bidder", e.target.value)}
             bg="white"
@@ -108,8 +125,8 @@ export default function ResultParticipantRow({
           <InputResult
             value={participant.brand}
             onChange={(e) => onChange("brand", e.target.value)}
-            columnTitle={"Marca"}
-            textAlignInput={"left"}
+            columnTitle="Marca"
+            textAlignInput="left"
             width={{ base: "100%", md: "150px" }}
             bg="white"
             borderColor="gray.300"
@@ -123,10 +140,15 @@ export default function ResultParticipantRow({
           <InputResult
             value={participant.price}
             onChange={(e) => onChange("price", e.target.value)}
-            columnTitle={"Preço"}
-            textAlignInput={"center"}
-            width={{ base: "100%", md: "120px" }}
-            typeInput={"number"}
+            columnTitle={
+              typeDispute === "batch" ? "Preço total do lote" : "Preço"
+            }
+            textAlignInput="center"
+            width={{
+              base: "100%",
+              md: typeDispute === "batch" ? "160px" : "120px",
+            }}
+            typeInput="number"
             bg="white"
             borderColor="gray.300"
             _hover={{ borderColor: "blue.400" }}
@@ -136,13 +158,28 @@ export default function ResultParticipantRow({
             }}
           />
 
-          {typeDispute !== "batch" && (
+          {typeDispute !== "batch" && amountItemParticipant && (
             <InputResult
               value={calcTotalPrice(amountItemParticipant, participant.price)}
-              columnTitle={"Valor total"}
-              textAlignInput={"center"}
+              columnTitle="Valor total"
+              textAlignInput="center"
               width={{ base: "100%", md: "140px" }}
-              typeInput={"number"}
+              typeInput="number"
+              readOnlyInput={true}
+              bg="gray.50"
+              borderColor="gray.300"
+              color="gray.700"
+              fontWeight="medium"
+            />
+          )}
+
+          {typeDispute === "batch" && (
+            <InputResult
+              value={calculateTotalPrice()}
+              columnTitle="Valor total"
+              textAlignInput="center"
+              width={{ base: "100%", md: "140px" }}
+              typeInput="number"
               readOnlyInput={true}
               bg="gray.50"
               borderColor="gray.300"
@@ -201,9 +238,7 @@ export default function ResultParticipantRow({
                 Participante desclassificado
               </Checkbox.Label>
             </Checkbox.Root>
-          </Flex>
 
-          <Flex flexDir="column">
             <Checkbox.Root
               colorPalette="red"
               size="xs"
@@ -221,11 +256,12 @@ export default function ResultParticipantRow({
               </Checkbox.Label>
             </Checkbox.Root>
           </Flex>
-          {typeDispute === "batch" && (
-            <Flex flexDir={"column"}>
+
+          {typeDispute === "batch" && group && (
+            <Flex flexDir="column" ml={{ md: 2 }}>
               <Switch.Root
-                colorPalette={"green"}
-                size={"xs"}
+                colorPalette="green"
+                size="xs"
                 onCheckedChange={() =>
                   setShowUnitPriceDistributor(!showUnitPriceDistributor)
                 }
@@ -233,13 +269,28 @@ export default function ResultParticipantRow({
                 <Switch.HiddenInput />
                 <Switch.Control />
                 <Switch.Label>
-                  <Text fontSize={"xs"}>Redistribuir valores unitários</Text>
+                  <Text fontSize="xs">Redistribuir valores unitários</Text>
                 </Switch.Label>
               </Switch.Root>
-              {showUnitPriceDistributor && <UnitPriceAllocatorBatch />}
             </Flex>
           )}
         </Flex>
+
+        {typeDispute === "batch" && showUnitPriceDistributor && group && (
+          <Flex flexDir="column" mt={4} gap={3}>
+            {group.items.map((item) => (
+              <UnitPriceAllocatorBatch
+                key={item.itemId}
+                groupId={group.groupId}
+                itemId={item.itemId}
+                item={item}
+                participantId={participant.id}
+                value={itemPrices?.[item.itemId] || ""}
+                onChange={(value) => onItemPriceChange(item.itemId, value)}
+              />
+            ))}
+          </Flex>
+        )}
 
         {disqualificationChecked && (
           <Flex
