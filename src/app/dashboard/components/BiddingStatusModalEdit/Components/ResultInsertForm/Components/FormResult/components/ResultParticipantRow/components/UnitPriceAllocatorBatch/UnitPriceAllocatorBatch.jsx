@@ -1,25 +1,24 @@
-"use client";
+"use client"
 
-import { Flex, Text, Box, Field, Input } from "@chakra-ui/react";
-import InputResult from "../../../InputResult/InputResult";
+import { Flex, Text, Field, Input } from "@chakra-ui/react"
 
-export default function UnitPriceAllocatorBatch({
-  groupId,
-  itemId,
-  participant,
-  unitPriceChange,
-}) {
+export default function UnitPriceAllocatorBatch({ item, value, onChange }) {
+  const calculateTotal = () => {
+    const price = parseFloat(value) || 0
+    const amount = parseFloat(item.amount) || 0
+    return (price * amount).toFixed(2)
+  }
+
   return (
     <Flex
-      mt={3}
-      w={{ base: "100%", lg: "90%" }}
+      // mt={2}
+      w="100%"
       bg="blue.50"
-      p={2}
+      // p={3}
       borderRadius="lg"
       borderWidth="1px"
       borderColor="gray.300"
       boxShadow="sm"
-      mb={5}
       gap={4}
       flexWrap="wrap"
       flexDir={{ base: "column", md: "row" }}
@@ -40,42 +39,65 @@ export default function UnitPriceAllocatorBatch({
           {/* Item e Descrição */}
           <Flex align="center" gap={2} flex={2} minW="300px">
             <Input
-              h={5}
-              w={10}
-              border={"none"}
-              value="1"
+              h={7}
+              w={12}
+              border="1px solid"
+              borderColor="gray.300"
+              borderRadius="md"
+              value={item.itemNumber || item.itemId}
               readOnly
               textAlign="center"
+              bg="white"
+              fontSize="xs"
             />
             <Input
-              h={5}
+              h={7}
               flex={1}
-              border={"none"}
+              border="1px solid"
+              borderColor="gray.300"
+              borderRadius="md"
               px={2}
-              //  value={marca}
+              value={item.descriptive}
               readOnly
               fontSize="xs"
               fontWeight="medium"
+              bg="white"
             />
           </Flex>
 
-          {/* Marca */}
-          <Flex gap={2} align="center" flex={1} minW="150px">
+          {/* Quantidade e unidade */}
+          <Flex gap={2} align="center" minW="120px">
             <Text
               fontSize="xs"
               fontWeight="medium"
               color="gray.600"
               whiteSpace="nowrap"
             >
-              Marca:
+              Qtd:
             </Text>
             <Input
-              h={5}
+              h={7}
+              w="70px"
+              border="none"
               borderColor="gray.300"
               borderRadius="md"
+              value={item.amount}
+              readOnly
+              textAlign="center"
               bg="white"
-              _hover={{ borderColor: "blue.300" }}
-              _focus={{ borderColor: "blue.500", boxShadow: "outline" }}
+              fontSize="xs"
+            />
+            <Input
+              h={7}
+              w="50px"
+              border="1px solid"
+              borderColor="gray.300"
+              borderRadius="md"
+              value={item.supplyUnit}
+              readOnly
+              textAlign="center"
+              bg="white"
+              fontSize="xs"
             />
           </Flex>
 
@@ -90,22 +112,17 @@ export default function UnitPriceAllocatorBatch({
               Valor unitário:
             </Text>
             <Input
-              h={5}
+              h={7}
               w="100px"
               borderColor="gray.300"
               borderRadius="md"
               bg="white"
-              onChange={(e) =>
-                unitPriceChange(
-                  groupId,
-                  itemId,
-                  participant.id,
-                  "price",
-                  e.target.value,
-                )
-              }
+              type="number"
+              value={value}
+              onChange={(e) => onChange(e.target.value)}
               _hover={{ borderColor: "blue.300" }}
               _focus={{ borderColor: "blue.500", boxShadow: "outline" }}
+              fontSize="xs"
             />
           </Flex>
 
@@ -120,17 +137,20 @@ export default function UnitPriceAllocatorBatch({
               Valor total:
             </Text>
             <Input
-              h={5}
+              h={7}
               w="100px"
               borderColor="gray.300"
               borderRadius="md"
-              bg="white"
+              bg="gray.50"
+              value={calculateTotal()}
+              readOnly
               _hover={{ borderColor: "blue.300" }}
-              _focus={{ borderColor: "blue.500", boxShadow: "outline" }}
+              fontSize="xs"
+              fontWeight="medium"
             />
           </Flex>
         </Flex>
       </Field.Root>
     </Flex>
-  );
+  )
 }

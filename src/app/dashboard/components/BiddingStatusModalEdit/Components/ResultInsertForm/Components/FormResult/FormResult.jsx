@@ -1,82 +1,82 @@
-"use client";
+"use client"
 
-import { Flex, Field, Icon, Button, Text } from "@chakra-ui/react";
-import { Tooltip } from "@/components/ui/tooltip";
+import { Flex, Field, Icon, Button, Text } from "@chakra-ui/react"
+import { Tooltip } from "@/components/ui/tooltip"
 
-import SelectTypeDispute from "./components/SelectTypeDispute/SelectTypeDispute";
-import ResultItemRow from "./components/ResultItemRow/ResultItemRow";
-import ResultParticipantRow from "./components/ResultParticipantRow/ResultParticipantRow";
-import ResultLotItemRow from "./components/LotItemRow/ResultLotItemRow";
+import SelectTypeDispute from "./components/SelectTypeDispute/SelectTypeDispute"
+import ResultItemRow from "./components/ResultItemRow/ResultItemRow"
+import ResultParticipantRow from "./components/ResultParticipantRow/ResultParticipantRow"
+import ResultLotItemRow from "./components/LotItemRow/ResultLotItemRow"
 
-import { FaUserPlus, FaBoxesStacked } from "react-icons/fa6";
-import { BsFillPlusCircleFill } from "react-icons/bs";
+import { FaUserPlus, FaBoxesStacked } from "react-icons/fa6"
+import { BsFillPlusCircleFill } from "react-icons/bs"
 
-import { useState } from "react";
+import { useState } from "react"
+
+const initialItemDispute = {
+  type: "item",
+  groups: [
+    {
+      groupId: 1,
+      items: [
+        {
+          itemId: 1,
+          itemNumber: "",
+          descriptive: "",
+          amount: 0,
+          supplyUnit: "",
+          participants: [],
+        },
+      ],
+    },
+  ],
+}
+
+const initialBatchDispute = {
+  type: "batch",
+  groups: [
+    {
+      groupId: 1,
+      lotNumber: 1,
+      participants: [],
+      items: [
+        {
+          itemId: 1,
+          itemNumber: "",
+          descriptive: "",
+          amount: 0,
+          supplyUnit: "",
+        },
+      ],
+    },
+  ],
+}
 
 export default function FormResult() {
-  const [dispute, setDispute] = useState({
-    type: "",
-    groups: [
-      {
-        groupId: 1,
-        participants: [],
-        lotNumber: 1,
+  const [itemDispute, setItemDispute] = useState(initialItemDispute)
+  const [batchDispute, setBatchDispute] = useState(initialBatchDispute)
+  const [disputeType, setDisputeType] = useState("")
 
-        items: [
-          {
-            itemId: 1,
-            itemNumber: "",
-            descriptive: "",
-            amount: 0,
-            supplyUnit: "",
-            participants: [],
-          },
-        ],
-      },
-    ],
-  });
+  // type Item functions
+
   function handleItemChange(groupId, itemId, field, value) {
-    setDispute((prev) => ({
+    setItemDispute((prev) => ({
       ...prev,
       groups: prev.groups.map((group) =>
         group.groupId === groupId
           ? {
               ...group,
               items: group.items.map((item) =>
-                item.itemId === itemId ? { ...item, [field]: value } : item,
+                item.itemId === itemId ? { ...item, [field]: value } : item
               ),
             }
-          : group,
+          : group
       ),
-    }));
-  }
-  function handleTypeChange(value) {
-    setDispute((prev) => ({
-      ...prev,
-      type: value,
-      groups: [
-        {
-          groupId: 1,
-          participants: [],
-          lotNumber: 1,
-
-          items: [
-            {
-              itemId: 1,
-              itemNumber: "",
-              descriptive: "",
-              amount: 0,
-              supplyUnit: "",
-              participants: [],
-            },
-          ],
-        },
-      ],
-    }));
+    }))
   }
 
   function handleAddParticipant(groupId, itemId) {
-    setDispute((prev) => ({
+    setItemDispute((prev) => ({
       ...prev,
       groups: prev.groups.map((group) =>
         group.groupId === groupId
@@ -98,68 +98,51 @@ export default function FormResult() {
                           win: false,
                           disqualified: false,
                           disqualificationReason: "",
+                          ineligible: false,
+                          ineligibleReason: "",
                         },
                       ],
                     }
-                  : item,
+                  : item
               ),
             }
-          : group,
+          : group
       ),
-    }));
+    }))
   }
 
-  function handleSelectSelf(groupId, itemId, participantId, checked) {
-    setDispute((prev) => ({
+  function handleAddItem(groupId) {
+    setItemDispute((prev) => ({
       ...prev,
-      groups: prev.groups.map((group) => {
-        if (group.groupId !== groupId) return group;
-
-        return {
-          ...group,
-          items: group.items.map((item) => {
-            if (item.itemId !== itemId) return item;
-
-            return {
-              ...item,
-              participants: item.participants.map((participant) => ({
-                ...participant,
-
-                isSelf: checked ? participant.id === participantId : false,
-              })),
-            };
-          }),
-        };
-      }),
-    }));
+      groups: prev.groups.map((group) =>
+        group.groupId === groupId
+          ? {
+              ...group,
+              items: [
+                ...group.items,
+                {
+                  itemId: group.items.length + 1,
+                  itemNumber: "",
+                  descriptive: "",
+                  amount: 0,
+                  supplyUnit: "",
+                  participants: [],
+                },
+              ],
+            }
+          : group
+      ),
+    }))
   }
 
-  function handleSelectWinner(groupId, itemId, participantId, checked) {
-    setDispute((prev) => ({
-      ...prev,
-      groups: prev.groups.map((group) => {
-        if (group.groupId !== groupId) return group;
-
-        return {
-          ...group,
-          items: group.items.map((item) => {
-            if (item.itemId !== itemId) return item;
-
-            return {
-              ...item,
-              participants: item.participants.map((participant) => ({
-                ...participant,
-                win: checked ? participant.id === participantId : false,
-              })),
-            };
-          }),
-        };
-      }),
-    }));
-  }
-
-  function handleSelectIneligible(groupId, itemId, participantId, checked) {
-    setDispute((prev) => ({
+  function handleParticipantChange(
+    groupId,
+    itemId,
+    participantId,
+    field,
+    value
+  ) {
+    setItemDispute((prev) => ({
       ...prev,
       groups: prev.groups.map((group) =>
         group.groupId === groupId
@@ -171,26 +154,68 @@ export default function FormResult() {
                       ...item,
                       participants: item.participants.map((participant) =>
                         participant.id === participantId
-                          ? {
-                              ...participant,
-                              ineligible: checked,
-                              ineligibleReason: checked
-                                ? participant.ineligibleReason
-                                : "",
-                            }
-                          : participant,
+                          ? { ...participant, [field]: value }
+                          : participant
                       ),
                     }
-                  : item,
+                  : item
               ),
             }
-          : group,
+          : group
       ),
-    }));
+    }))
+  }
+
+  function handleSelectSelf(groupId, itemId, participantId, checked) {
+    setItemDispute((prev) => ({
+      ...prev,
+      groups: prev.groups.map((group) => {
+        if (group.groupId !== groupId) return group
+
+        return {
+          ...group,
+          items: group.items.map((item) => {
+            if (item.itemId !== itemId) return item
+
+            return {
+              ...item,
+              participants: item.participants.map((participant) => ({
+                ...participant,
+                isSelf: checked ? participant.id === participantId : false,
+              })),
+            }
+          }),
+        }
+      }),
+    }))
+  }
+
+  function handleSelectWinner(groupId, itemId, participantId, checked) {
+    setItemDispute((prev) => ({
+      ...prev,
+      groups: prev.groups.map((group) => {
+        if (group.groupId !== groupId) return group
+
+        return {
+          ...group,
+          items: group.items.map((item) => {
+            if (item.itemId !== itemId) return item
+
+            return {
+              ...item,
+              participants: item.participants.map((participant) => ({
+                ...participant,
+                win: checked ? participant.id === participantId : false,
+              })),
+            }
+          }),
+        }
+      }),
+    }))
   }
 
   function handleSelectDisqualified(groupId, itemId, participantId, checked) {
-    setDispute((prev) => ({
+    setItemDispute((prev) => ({
       ...prev,
       groups: prev.groups.map((group) =>
         group.groupId === groupId
@@ -209,25 +234,19 @@ export default function FormResult() {
                                 ? participant.disqualificationReason
                                 : "",
                             }
-                          : participant,
+                          : participant
                       ),
                     }
-                  : item,
+                  : item
               ),
             }
-          : group,
+          : group
       ),
-    }));
+    }))
   }
 
-  function handleParticipantChange(
-    groupId,
-    itemId,
-    participantId,
-    field,
-    value,
-  ) {
-    setDispute((prev) => ({
+  function handleSelectIneligible(groupId, itemId, participantId, checked) {
+    setItemDispute((prev) => ({
       ...prev,
       groups: prev.groups.map((group) =>
         group.groupId === groupId
@@ -239,76 +258,72 @@ export default function FormResult() {
                       ...item,
                       participants: item.participants.map((participant) =>
                         participant.id === participantId
-                          ? { ...participant, [field]: value }
-                          : participant,
+                          ? {
+                              ...participant,
+                              ineligible: checked,
+                              ineligibleReason: checked
+                                ? participant.ineligibleReason
+                                : "",
+                            }
+                          : participant
                       ),
                     }
-                  : item,
+                  : item
               ),
             }
-          : group,
+          : group
       ),
-    }));
+    }))
   }
 
-  function handleAddItem(groupId) {
-    setDispute((prev) => ({
+  function handleDeleteParticipant(groupId, itemId, participantId) {
+    setItemDispute((prev) => ({
+      ...prev,
+      groups: prev.groups.map((group) => {
+        if (group.groupId !== groupId) return group
+
+        return {
+          ...group,
+          items: group.items.map((item) => {
+            if (item.itemId !== itemId) return item
+
+            return {
+              ...item,
+              participants: item.participants.filter(
+                (participant) => participant.id !== participantId
+              ),
+            }
+          }),
+        }
+      }),
+    }))
+  }
+
+  // type Batch functions
+  function handleBatchItemChange(groupId, itemId, field, value) {
+    setBatchDispute((prev) => ({
       ...prev,
       groups: prev.groups.map((group) =>
         group.groupId === groupId
           ? {
               ...group,
-              items: [
-                ...group.items,
-                {
-                  itemId: group.items.length + 1,
-                  descriptive: "",
-                  amount: 0,
-                  supplyUnit: "",
-                  participants: [],
-                },
-              ],
-            }
-          : group,
-      ),
-    }));
-  }
-
-  function handleDeleteParticipant(groupId, itemId, participantId) {
-    setDispute((prev) => ({
-      ...prev,
-
-      groups: prev.groups.map((group) => {
-        if (group.groupId !== groupId) return group;
-
-        return {
-          ...group,
-
-          items: group.items.map((item) => {
-            if (item.itemId !== itemId) return item;
-
-            return {
-              ...item,
-
-              participants: item.participants.filter(
-                (participant) => participant.id !== participantId,
+              items: group.items.map((item) =>
+                item.itemId === itemId ? { ...item, [field]: value } : item
               ),
-            };
-          }),
-        };
-      }),
-    }));
+            }
+          : group
+      ),
+    }))
   }
 
   function handleAddBatch() {
-    setDispute((prev) => ({
+    setBatchDispute((prev) => ({
       ...prev,
       groups: [
         ...prev.groups,
         {
           groupId: prev.groups.length + 1,
           lotNumber: prev.groups.length + 1,
-
           participants: [],
           items: [
             {
@@ -317,15 +332,15 @@ export default function FormResult() {
               descriptive: "",
               amount: 0,
               supplyUnit: "",
-              participants: [],
             },
           ],
         },
       ],
-    }));
+    }))
   }
-  function handleAddItemOfBatch(groupId) {
-    setDispute((prev) => ({
+
+  function handleAddItemToBatch(groupId) {
+    setBatchDispute((prev) => ({
       ...prev,
       groups: prev.groups.map((group) =>
         group.groupId === groupId
@@ -339,16 +354,16 @@ export default function FormResult() {
                   descriptive: "",
                   amount: 0,
                   supplyUnit: "",
-                  participants: [],
                 },
               ],
             }
-          : group,
+          : group
       ),
-    }));
+    }))
   }
-  function handleAddParticipantOfBatch(groupId) {
-    setDispute((prev) => ({
+
+  function handleAddParticipantToBatch(groupId) {
+    setBatchDispute((prev) => ({
       ...prev,
       groups: prev.groups.map((group) =>
         group.groupId === groupId
@@ -366,19 +381,40 @@ export default function FormResult() {
                   win: false,
                   disqualified: false,
                   disqualificationReason: "",
+                  ineligible: false,
+                  ineligibleReason: "",
+                  itemPrices: {}, // Objeto para armazenar preços por item
                 },
               ],
             }
-          : group,
+          : group
       ),
-    }));
+    }))
+  }
+
+  function handleParticipantChangeBatch(groupId, participantId, field, value) {
+    setBatchDispute((prev) => ({
+      ...prev,
+      groups: prev.groups.map((group) =>
+        group.groupId === groupId
+          ? {
+              ...group,
+              participants: group.participants.map((participant) =>
+                participant.id === participantId
+                  ? { ...participant, [field]: value }
+                  : participant
+              ),
+            }
+          : group
+      ),
+    }))
   }
 
   function handleSelectSelfBatch(groupId, participantId, checked) {
-    setDispute((prev) => ({
+    setBatchDispute((prev) => ({
       ...prev,
       groups: prev.groups.map((group) => {
-        if (group.groupId !== groupId) return group;
+        if (group.groupId !== groupId) return group
 
         return {
           ...group,
@@ -386,16 +422,16 @@ export default function FormResult() {
             ...participant,
             isSelf: checked ? participant.id === participantId : false,
           })),
-        };
+        }
       }),
-    }));
+    }))
   }
 
   function handleSelectWinnerBatch(groupId, participantId, checked) {
-    setDispute((prev) => ({
+    setBatchDispute((prev) => ({
       ...prev,
       groups: prev.groups.map((group) => {
-        if (group.groupId !== groupId) return group;
+        if (group.groupId !== groupId) return group
 
         return {
           ...group,
@@ -403,13 +439,13 @@ export default function FormResult() {
             ...participant,
             win: checked ? participant.id === participantId : false,
           })),
-        };
+        }
       }),
-    }));
+    }))
   }
 
   function handleSelectDisqualifiedBatch(groupId, participantId, checked) {
-    setDispute((prev) => ({
+    setBatchDispute((prev) => ({
       ...prev,
       groups: prev.groups.map((group) =>
         group.groupId === groupId
@@ -424,16 +460,16 @@ export default function FormResult() {
                         ? participant.disqualificationReason
                         : "",
                     }
-                  : participant,
+                  : participant
               ),
             }
-          : group,
+          : group
       ),
-    }));
+    }))
   }
 
   function handleSelectIneligibleBatch(groupId, participantId, checked) {
-    setDispute((prev) => ({
+    setBatchDispute((prev) => ({
       ...prev,
       groups: prev.groups.map((group) =>
         group.groupId === groupId
@@ -448,16 +484,41 @@ export default function FormResult() {
                         ? participant.ineligibleReason
                         : "",
                     }
-                  : participant,
+                  : participant
               ),
             }
-          : group,
+          : group
       ),
-    }));
+    }))
   }
 
-  function handleParticipantChangeBatch(groupId, participantId, field, value) {
-    setDispute((prev) => ({
+  function handleDeleteParticipantBatch(groupId, participantId) {
+    setBatchDispute((prev) => ({
+      ...prev,
+      groups: prev.groups.map((group) =>
+        group.groupId === groupId
+          ? {
+              ...group,
+              participants: group.participants.filter(
+                (participant) => participant.id !== participantId
+              ),
+            }
+          : group
+      ),
+    }))
+  }
+
+  function handleLotNumberChange(groupId, value) {
+    setBatchDispute((prev) => ({
+      ...prev,
+      groups: prev.groups.map((group) =>
+        group.groupId === groupId ? { ...group, lotNumber: value } : group
+      ),
+    }))
+  }
+
+  function handleItemPriceChange(groupId, participantId, itemId, value) {
+    setBatchDispute((prev) => ({
       ...prev,
       groups: prev.groups.map((group) =>
         group.groupId === groupId
@@ -465,82 +526,47 @@ export default function FormResult() {
               ...group,
               participants: group.participants.map((participant) =>
                 participant.id === participantId
-                  ? { ...participant, [field]: value }
-                  : participant,
+                  ? {
+                      ...participant,
+                      itemPrices: {
+                        ...participant.itemPrices,
+                        [itemId]: value,
+                      },
+                    }
+                  : participant
               ),
             }
-          : group,
+          : group
       ),
-    }));
-  }
-  function handleDeleteParticipantBatch(groupId, participantId) {
-    setDispute((prev) => ({
-      ...prev,
-      groups: prev.groups.map((group) =>
-        group.groupId === groupId
-          ? {
-              ...group,
-              participants: group.participants.filter(
-                (participant) => participant.id !== participantId,
-              ),
-            }
-          : group,
-      ),
-    }));
+    }))
   }
 
-  function handleLotNumberChange(groupId, value) {
-    setDispute((prev) => ({
-      ...prev,
-      groups: prev.groups.map((group) =>
-        group.groupId === groupId ? { ...group, lotNumber: value } : group,
-      ),
-    }));
+  function handleTypeChange(value) {
+    setDisputeType(value)
+
+    // Reset para o estado apropriado quando muda o tipo
+    if (value === "item") {
+      setItemDispute(initialItemDispute)
+    } else if (value === "batch") {
+      setBatchDispute(initialBatchDispute)
+    }
   }
 
-  function handleBatchItemChange(groupId, itemId, participantId, field, value) {
-    setDispute((prev) => ({
-      ...prev,
+  // ========== RENDERIZAÇÃO ==========
 
-      groups: prev.groups.map((group) => {
-        if (group.groupId !== groupId) return group;
-
-        return {
-          ...group,
-
-          participants: group.participants.map((participant) => {
-            if (participant.id !== participantId) return participant;
-
-            return {
-              ...participant,
-
-              items: {
-                ...(participant.items || {}),
-
-                [itemId]: {
-                  ...(participant.items?.[itemId] || {}),
-                  [field]: value,
-                },
-              },
-            };
-          }),
-        };
-      }),
-    }));
-  }
   return (
     <Flex w="100%" py={4} px={5} flexDir="column">
       <Field.Root>
         <SelectTypeDispute
-          value={dispute.type}
+          value={disputeType}
           onValueChange={handleTypeChange}
         />
       </Field.Root>
 
-      {dispute.type === "item" && (
+      {disputeType === "item" && (
         <Flex mt={10} justify="center" align="center">
           <Flex flexDir="column" w="100%">
-            {dispute.groups.map((group) => (
+            {itemDispute.groups.map((group) => (
               <Flex key={group.groupId} direction="column" mt={4}>
                 {group.items.map((item) => (
                   <Flex key={item.itemId} direction="column">
@@ -551,7 +577,7 @@ export default function FormResult() {
                           group.groupId,
                           item.itemId,
                           field,
-                          value,
+                          value
                         )
                       }
                     />
@@ -567,64 +593,59 @@ export default function FormResult() {
                             item.itemId,
                             participant.id,
                             field,
-                            value,
+                            value
                           )
                         }
                         mb={2}
                         ml={8}
-                        // My result
                         onCheckedChangeSelf={(checked) =>
                           handleSelectSelf(
                             group.groupId,
                             item.itemId,
                             participant.id,
-                            checked,
+                            checked
                           )
                         }
                         isSelfChecked={participant.isSelf}
-                        // Winner
                         onCheckedChangeWinner={(checked) =>
                           handleSelectWinner(
                             group.groupId,
                             item.itemId,
                             participant.id,
-                            checked,
+                            checked
                           )
                         }
                         winnerChecked={participant.win}
-                        // "Participante desclassificado"
                         onCheckedChangeDisqualified={(checked) =>
                           handleSelectDisqualified(
                             group.groupId,
                             item.itemId,
                             participant.id,
-                            checked,
+                            checked
                           )
                         }
                         disqualificationChecked={participant.disqualified}
                         showCheckDisqualification={!participant.win}
-                        // "Participante inabilitado"
                         onCheckedChangeIneligible={(checked) =>
                           handleSelectIneligible(
                             group.groupId,
                             item.itemId,
                             participant.id,
-                            checked,
+                            checked
                           )
                         }
                         ineligibleChecked={participant.ineligible}
                         showCheckIneligible={!participant.win}
-                        // Delete participant
-
                         deleteParticipant={() =>
                           handleDeleteParticipant(
                             group.groupId,
                             item.itemId,
-                            participant.id,
+                            participant.id
                           )
                         }
                       />
                     ))}
+
                     <Flex gap={2} ml={3} flexDir="column" mt={3} mb={4}>
                       <Tooltip content="Adicionar participante para este item">
                         <Flex align="center">
@@ -717,11 +738,11 @@ export default function FormResult() {
           </Flex>
         </Flex>
       )}
-      {dispute.type === "batch" && (
-        <Flex mt={10} justify="center" align="center" flexDir={"column"}>
+
+      {disputeType === "batch" && (
+        <Flex mt={10} justify="center" align="center" flexDir="column">
           <Flex flexDir="column" w="100%">
-            {dispute.groups.map((group) => (
-              // renderiza o lote
+            {batchDispute.groups.map((group) => (
               <Flex
                 key={group.groupId}
                 direction="column"
@@ -731,8 +752,9 @@ export default function FormResult() {
                 borderWidth="1px"
                 boxShadow="sm"
                 borderColor="gray.400"
+                p={4}
               >
-                <Flex flexDir={"column"} w={{ base: "100%", lg: "90%" }}>
+                <Flex flexDir="column" w="100%">
                   {group.items.map((item) => (
                     <ResultLotItemRow
                       key={item.itemId}
@@ -740,89 +762,89 @@ export default function FormResult() {
                       groupId={group.groupId}
                       item={item}
                       onChange={(field, value) =>
-                        handleItemChange(
+                        handleBatchItemChange(
                           group.groupId,
                           item.itemId,
                           field,
-                          value,
+                          value
                         )
                       }
                     />
                   ))}
                 </Flex>
+
                 <Flex gap={2} ml={3} flexDir="column" mt={3} mb={4}>
                   {group.participants.map((participant) => (
                     <ResultParticipantRow
-                      // amountItemParticipant={item.amount}
                       typeDispute="batch"
                       key={participant.id}
                       participant={participant}
+                      group={group}
                       onChange={(field, value) =>
                         handleParticipantChangeBatch(
                           group.groupId,
                           participant.id,
                           field,
-                          value,
+                          value
                         )
                       }
                       mb={2}
                       ml={8}
-                      // My result
                       onCheckedChangeSelf={(checked) =>
                         handleSelectSelfBatch(
                           group.groupId,
                           participant.id,
-                          checked,
+                          checked
                         )
                       }
                       isSelfChecked={participant.isSelf}
-                      // Winner
                       onCheckedChangeWinner={(checked) =>
                         handleSelectWinnerBatch(
                           group.groupId,
                           participant.id,
-                          checked,
+                          checked
                         )
                       }
                       winnerChecked={participant.win}
-                      // "Participante desclassificado"
                       onCheckedChangeDisqualified={(checked) =>
                         handleSelectDisqualifiedBatch(
                           group.groupId,
                           participant.id,
-                          checked,
+                          checked
                         )
                       }
                       disqualificationChecked={participant.disqualified}
                       showCheckDisqualification={!participant.win}
-                      // "Participante inabilitado"
                       onCheckedChangeIneligible={(checked) =>
                         handleSelectIneligibleBatch(
                           group.groupId,
                           participant.id,
-                          checked,
+                          checked
                         )
                       }
                       ineligibleChecked={participant.ineligible}
                       showCheckIneligible={!participant.win}
-                      // Delete participant
-
                       deleteParticipant={() =>
                         handleDeleteParticipantBatch(
                           group.groupId,
-                          participant.id,
+                          participant.id
                         )
                       }
                       groupId={group.groupId}
-                      group={group}
-                      // itemId={item.itemId}
-                      participantId={participant.id}
-                      unitPriceChange={handleBatchItemChange}
+                      itemPrices={participant.itemPrices}
+                      onItemPriceChange={(itemId, value) =>
+                        handleItemPriceChange(
+                          group.groupId,
+                          participant.id,
+                          itemId,
+                          value
+                        )
+                      }
                     />
                   ))}
 
                   <Flex gap={2} ml={3} flexDir="column" mt={3}>
-                    <Tooltip content="Adicionar item">
+                    <Tooltip content="Adicionar item ao lote">
                       <Flex align="center">
                         <Button
                           variant="outline"
@@ -830,7 +852,7 @@ export default function FormResult() {
                           size="xs"
                           h="8"
                           w="10"
-                          onClick={() => handleAddItemOfBatch(group.groupId)}
+                          onClick={() => handleAddItemToBatch(group.groupId)}
                           borderRadius="lg"
                           borderWidth="1.5px"
                           borderColor="green.200"
@@ -863,9 +885,8 @@ export default function FormResult() {
                     </Tooltip>
                   </Flex>
 
-                  {/* // Add participant */}
                   <Flex gap={2} ml={3} flexDir="column" mt={3} mb={4}>
-                    <Tooltip content="Adicionar participante para este item">
+                    <Tooltip content="Adicionar participante ao lote">
                       <Flex align="center">
                         <Button
                           variant="outline"
@@ -874,7 +895,7 @@ export default function FormResult() {
                           h="8"
                           w="10"
                           onClick={() =>
-                            handleAddParticipantOfBatch(group.groupId)
+                            handleAddParticipantToBatch(group.groupId)
                           }
                           borderRadius="lg"
                           borderWidth="1.5px"
@@ -913,9 +934,9 @@ export default function FormResult() {
           </Flex>
 
           <Tooltip content="Adicionar lote">
-            <Flex align="center" w={"100%"} mt={5}>
+            <Flex align="center" w="100%" mt={5}>
               <Button
-                w={"25%"}
+                w="25%"
                 colorPalette="purple"
                 size="xs"
                 onClick={() => handleAddBatch()}
@@ -923,7 +944,7 @@ export default function FormResult() {
                 <Icon>
                   <FaBoxesStacked />
                 </Icon>
-                <Text pl={2} fontSize={"md"}>
+                <Text pl={2} fontSize="md">
                   Adicionar Lote
                 </Text>
               </Button>
@@ -931,9 +952,11 @@ export default function FormResult() {
           </Tooltip>
         </Flex>
       )}
+
       <Text mt={6} fontSize="sm" whiteSpace="pre-wrap">
-        {JSON.stringify(dispute, null, 2)}
+        {disputeType === "item" && JSON.stringify(itemDispute, null, 2)}
+        {disputeType === "batch" && JSON.stringify(batchDispute, null, 2)}
       </Text>
     </Flex>
-  );
+  )
 }
