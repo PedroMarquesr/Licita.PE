@@ -15,7 +15,7 @@ export default function ResultParticipantRow({
   onChange,
   typeDispute,
   itemPrices,
-  onItemPriceChange,
+  onItemDetailChange,
 
   // "Meu resultado"
   onCheckedChangeSelf,
@@ -278,17 +278,29 @@ export default function ResultParticipantRow({
 
         {typeDispute === "batch" && showUnitPriceDistributor && group && (
           <Flex flexDir="column" mt={4} gap={3}>
-            {group.items.map((item) => (
-              <UnitPriceAllocatorBatch
-                key={item.itemId}
-                groupId={group.groupId}
-                itemId={item.itemId}
-                item={item}
-                participantId={participant.id}
-                value={itemPrices?.[item.itemId] || ""}
-                onChange={(value) => onItemPriceChange(item.itemId, value)}
-              />
-            ))}
+            {group.items.map((item) => {
+              const itemPriceData = itemPrices?.find(
+                (ip) => ip.itemId === item.itemId
+              ) || {
+                itemId: item.itemId,
+                price: "",
+                brand: "",
+              }
+
+              return (
+                <UnitPriceAllocatorBatch
+                  key={item.itemId}
+                  item={item}
+                  itemPrice={itemPriceData}
+                  onPriceChange={(value) =>
+                    onItemDetailChange(item.itemId, "price", value)
+                  }
+                  onBrandChange={(value) =>
+                    onItemDetailChange(item.itemId, "brand", value)
+                  }
+                />
+              )
+            })}
           </Flex>
         )}
 
