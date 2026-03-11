@@ -363,35 +363,7 @@ export default function FormResult() {
     }))
   }
 
-  // function handleAddParticipantToBatch(groupId) {
-  //   setBatchDispute((prev) => ({
-  //     ...prev,
-  //     groups: prev.groups.map((group) =>
-  //       group.groupId === groupId
-  //         ? {
-  //             ...group,
-  //             participants: [
-  //               ...group.participants,
-  //               {
-  //                 id: crypto.randomUUID(),
-  //                 position: group.participants.length + 1,
-  //                 bidder: "",
-  //                 brand: "",
-  //                 price: "",
-  //                 isSelf: false,
-  //                 win: false,
-  //                 disqualified: false,
-  //                 disqualificationReason: "",
-  //                 ineligible: false,
-  //                 ineligibleReason: "",
-  //                 itemPrices: {}, // Objeto para armazenar preços por item
-  //               },
-  //             ],
-  //           }
-  //         : group
-  //     ),
-  //   }))
-  // }
+  
 
   function handleAddParticipantToBatch(groupId) {
     setBatchDispute((prev) => ({
@@ -552,7 +524,7 @@ export default function FormResult() {
     }))
   }
 
-  // 🎯 Função ÚNICA que atualiza tanto preço quanto marca
+  
   function handleItemDetailChange(
     groupId,
     participantId,
@@ -570,10 +542,10 @@ export default function FormResult() {
                 participant.id === participantId
                   ? {
                       ...participant,
-                      // Mapeia o array itemPrices e atualiza o item específico
+                      
                       itemPrices: participant.itemPrices.map((itemPrice) =>
                         itemPrice.itemId === itemId
-                          ? { ...itemPrice, [field]: value } // field pode ser "price" ou "brand"
+                          ? { ...itemPrice, [field]: value } 
                           : itemPrice
                       ),
                     }
@@ -594,7 +566,6 @@ export default function FormResult() {
     }
   }
 
-  // ========== RENDERIZAÇÃO ==========
 
   return (
     <Flex w="100%" py={4} px={5} flexDir="column">
