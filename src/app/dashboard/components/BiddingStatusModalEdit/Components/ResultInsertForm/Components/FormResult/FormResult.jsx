@@ -315,6 +315,7 @@ export default function FormResult() {
       ),
     }))
   }
+  //
 
   function handleAddBatch() {
     setBatchDispute((prev) => ({
@@ -362,6 +363,36 @@ export default function FormResult() {
     }))
   }
 
+  // function handleAddParticipantToBatch(groupId) {
+  //   setBatchDispute((prev) => ({
+  //     ...prev,
+  //     groups: prev.groups.map((group) =>
+  //       group.groupId === groupId
+  //         ? {
+  //             ...group,
+  //             participants: [
+  //               ...group.participants,
+  //               {
+  //                 id: crypto.randomUUID(),
+  //                 position: group.participants.length + 1,
+  //                 bidder: "",
+  //                 brand: "",
+  //                 price: "",
+  //                 isSelf: false,
+  //                 win: false,
+  //                 disqualified: false,
+  //                 disqualificationReason: "",
+  //                 ineligible: false,
+  //                 ineligibleReason: "",
+  //                 itemPrices: {}, // Objeto para armazenar preços por item
+  //               },
+  //             ],
+  //           }
+  //         : group
+  //     ),
+  //   }))
+  // }
+
   function handleAddParticipantToBatch(groupId) {
     setBatchDispute((prev) => ({
       ...prev,
@@ -383,7 +414,11 @@ export default function FormResult() {
                   disqualificationReason: "",
                   ineligible: false,
                   ineligibleReason: "",
-                  itemPrices: {}, // Objeto para armazenar preços por item
+                  itemPrices: group.items.map((item) => ({
+                    itemId: item.itemId,
+                    price: "",
+                    brand: "",
+                  })),
                 },
               ],
             }
@@ -517,7 +552,14 @@ export default function FormResult() {
     }))
   }
 
-  function handleItemPriceChange(groupId, participantId, itemId, value) {
+  // 🎯 Função ÚNICA que atualiza tanto preço quanto marca
+  function handleItemDetailChange(
+    groupId,
+    participantId,
+    itemId,
+    field,
+    value
+  ) {
     setBatchDispute((prev) => ({
       ...prev,
       groups: prev.groups.map((group) =>
@@ -528,10 +570,12 @@ export default function FormResult() {
                 participant.id === participantId
                   ? {
                       ...participant,
-                      itemPrices: {
-                        ...participant.itemPrices,
-                        [itemId]: value,
-                      },
+                      // Mapeia o array itemPrices e atualiza o item específico
+                      itemPrices: participant.itemPrices.map((itemPrice) =>
+                        itemPrice.itemId === itemId
+                          ? { ...itemPrice, [field]: value } // field pode ser "price" ou "brand"
+                          : itemPrice
+                      ),
                     }
                   : participant
               ),
@@ -540,11 +584,9 @@ export default function FormResult() {
       ),
     }))
   }
-
   function handleTypeChange(value) {
     setDisputeType(value)
 
-    // Reset para o estado apropriado quando muda o tipo
     if (value === "item") {
       setItemDispute(initialItemDispute)
     } else if (value === "batch") {
@@ -641,6 +683,21 @@ export default function FormResult() {
                             group.groupId,
                             item.itemId,
                             participant.id
+                          )
+                        }
+                        itemPrices={participant.itemPrices}
+                        onItemDetailChange={(
+                          itemId,
+                          field,
+                          value // ← NOME CORRETO!
+                        ) =>
+                          handleItemDetailChange(
+                            // ← FUNÇÃO CORRETA!
+                            group.groupId,
+                            participant.id,
+                            itemId,
+                            field,
+                            value
                           )
                         }
                       />
@@ -832,11 +889,12 @@ export default function FormResult() {
                       }
                       groupId={group.groupId}
                       itemPrices={participant.itemPrices}
-                      onItemPriceChange={(itemId, value) =>
-                        handleItemPriceChange(
+                      onItemDetailChange={(itemId, field, value) =>
+                        handleItemDetailChange(
                           group.groupId,
                           participant.id,
                           itemId,
+                          field,
                           value
                         )
                       }
