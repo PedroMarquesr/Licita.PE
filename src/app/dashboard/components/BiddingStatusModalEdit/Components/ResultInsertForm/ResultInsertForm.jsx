@@ -1,5 +1,13 @@
 "use client"
-import { Icon, Dialog, Portal, Flex } from "@chakra-ui/react"
+import {
+  Icon,
+  Dialog,
+  Portal,
+  Flex,
+  Button,
+  CloseButton,
+  Text,
+} from "@chakra-ui/react"
 
 import { FaBoxes } from "react-icons/fa"
 import { TbAlignBoxLeftTopFilled } from "react-icons/tb"
@@ -8,10 +16,8 @@ import FormResult from "./Components/FormResult/FormResult"
 
 import { motion } from "framer-motion"
 
-export default function ResultInsertForm({ open, bidding }) {
-  const [resultSelectedSucessAtive, setResultSelectedSucessAtive] =
-    useState(true)
-  const [resultSelectedLoseAtive, setResultSelectedLoseAtive] = useState(false)
+export default function ResultInsertForm({ open, bidding, onClose }) {
+  const [isOpen, setIsOpen] = useState(false)
 
   const SlideFromTop = ({ children, delay = 0 }) => {
     return (
@@ -32,6 +38,7 @@ export default function ResultInsertForm({ open, bidding }) {
         <Dialog.Root open={open} size={"full"}>
           <Portal>
             <Dialog.Backdrop />
+
             <Dialog.Positioner>
               <Dialog.Content
                 bg="white"
@@ -56,6 +63,11 @@ export default function ResultInsertForm({ open, bidding }) {
                       </Dialog.Title>
                     </Flex>
                   </Flex>
+                  <Dialog.CloseTrigger asChild>
+                    <Button colorPalette={"red"} onClick={() => onClose()}>
+                      <Text>Cancelar</Text>
+                    </Button>
+                  </Dialog.CloseTrigger>
                 </Dialog.Header>
                 <Dialog.Body>
                   <Flex>
