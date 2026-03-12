@@ -1,9 +1,10 @@
-"use client";
+"use client"
 
-import { Flex, Box } from "@chakra-ui/react";
-import InputResult from "../InputResult/InputResult";
+import { Flex, Box, Button, Icon } from "@chakra-ui/react"
+import InputResult from "../InputResult/InputResult"
+import { TiDelete } from "react-icons/ti"
 
-export default function ResultItemRow({ item, onChange }) {
+export default function ResultItemRow({ item, onChange, deleteItem }) {
   return (
     <Flex
       w={{ base: "100%", lg: "90%" }}
@@ -64,6 +65,33 @@ export default function ResultItemRow({ item, onChange }) {
           onChange={(e) => onChange("supplyUnit", e.target.value)}
         />
       </Box>
+
+      <Flex
+        alignItems="center"
+        justifyContent="center"
+        mt={{ base: 3, lg: 0 }}
+        ml={{ lg: 2 }}
+      >
+        <Button
+          colorPalette="red"
+          size="sm"
+          variant="ghost"
+          p={1}
+          minW="auto"
+          h="auto"
+          onClick={deleteItem}
+          _hover={{
+            bg: "red.100",
+            transform: "scale(1.1)",
+            transition: "all 0.2s",
+          }}
+          color="gray.600"
+        >
+          <Icon boxSize={5}>
+            <TiDelete />
+          </Icon>
+        </Button>
+      </Flex>
     </Flex>
-  );
+  )
 }

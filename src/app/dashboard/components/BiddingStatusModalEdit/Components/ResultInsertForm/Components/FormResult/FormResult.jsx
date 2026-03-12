@@ -110,6 +110,30 @@ export default function FormResult() {
       ),
     }))
   }
+  // type Item functions
+
+  function handleDeleteParticipant(groupId, itemId, participantId) {
+    setItemDispute((prev) => ({
+      ...prev,
+      groups: prev.groups.map((group) => {
+        if (group.groupId !== groupId) return group
+
+        return {
+          ...group,
+          items: group.items.map((item) => {
+            if (item.itemId !== itemId) return item
+
+            return {
+              ...item,
+              participants: item.participants.filter(
+                (participant) => participant.id !== participantId
+              ),
+            }
+          }),
+        }
+      }),
+    }))
+  }
 
   function handleAddItem(groupId) {
     setItemDispute((prev) => ({
@@ -132,6 +156,24 @@ export default function FormResult() {
             }
           : group
       ),
+    }))
+  }
+
+  function handleDeleteItem(groupId, itemId) {
+    setItemDispute((prev) => ({
+      ...prev,
+      groups: prev.groups.map((group) => {
+        groupId === group.groupId
+          ? {
+              ...group,
+              items: group.items.filter((item) => {
+                itemId !== item.itemId
+              }),
+            }
+          : {
+              group,
+            }
+      }),
     }))
   }
 
@@ -276,29 +318,19 @@ export default function FormResult() {
     }))
   }
 
-  function handleDeleteParticipant(groupId, itemId, participantId) {
+  function handleDeleteItem(groupId, itemId) {
     setItemDispute((prev) => ({
       ...prev,
-      groups: prev.groups.map((group) => {
-        if (group.groupId !== groupId) return group
-
-        return {
-          ...group,
-          items: group.items.map((item) => {
-            if (item.itemId !== itemId) return item
-
-            return {
-              ...item,
-              participants: item.participants.filter(
-                (participant) => participant.id !== participantId
-              ),
+      groups: prev.groups.map((group) =>
+        group.groupId === groupId
+          ? {
+              ...group,
+              items: group.items.filter((item) => item.itemId !== itemId),
             }
-          }),
-        }
-      }),
+          : group
+      ),
     }))
   }
-
   // type Batch functions
   function handleBatchItemChange(groupId, itemId, field, value) {
     setBatchDispute((prev) => ({
@@ -362,8 +394,6 @@ export default function FormResult() {
       ),
     }))
   }
-
-  
 
   function handleAddParticipantToBatch(groupId) {
     setBatchDispute((prev) => ({
@@ -524,7 +554,6 @@ export default function FormResult() {
     }))
   }
 
-  
   function handleItemDetailChange(
     groupId,
     participantId,
@@ -542,10 +571,10 @@ export default function FormResult() {
                 participant.id === participantId
                   ? {
                       ...participant,
-                      
+
                       itemPrices: participant.itemPrices.map((itemPrice) =>
                         itemPrice.itemId === itemId
-                          ? { ...itemPrice, [field]: value } 
+                          ? { ...itemPrice, [field]: value }
                           : itemPrice
                       ),
                     }
@@ -565,7 +594,6 @@ export default function FormResult() {
       setBatchDispute(initialBatchDispute)
     }
   }
-
 
   return (
     <Flex w="100%" py={4} px={5} flexDir="column">
@@ -592,6 +620,9 @@ export default function FormResult() {
                           field,
                           value
                         )
+                      }
+                      deleteItem={() =>
+                        handleDeleteItem(group.groupId, item.itemId)
                       }
                     />
 

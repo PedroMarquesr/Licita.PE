@@ -4,7 +4,7 @@ import { Flex, Text, Field, Input } from "@chakra-ui/react"
 
 export default function UnitPriceAllocatorBatch({
   item,
-  itemPrice, // Agora recebe o objeto completo { price, brand }
+  itemPrice, 
   onPriceChange,
   onBrandChange,
 }) {
@@ -81,18 +81,6 @@ export default function UnitPriceAllocatorBatch({
               borderColor="gray.300"
               borderRadius="md"
               value={item.amount}
-              readOnly
-              textAlign="center"
-              bg="white"
-              fontSize="xs"
-            />
-            <Input
-              h={7}
-              w="50px"
-              border="1px solid"
-              borderColor="gray.300"
-              borderRadius="md"
-              value={item.supplyUnit}
               readOnly
               textAlign="center"
               bg="white"
