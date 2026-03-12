@@ -10,6 +10,7 @@ import ResultLotItemRow from "./components/LotItemRow/ResultLotItemRow"
 
 import { FaUserPlus, FaBoxesStacked } from "react-icons/fa6"
 import { BsFillPlusCircleFill } from "react-icons/bs"
+import { MdDeleteForever } from "react-icons/md"
 
 import { useState } from "react"
 
@@ -110,7 +111,6 @@ export default function FormResult() {
       ),
     }))
   }
-  // type Item functions
 
   function handleDeleteParticipant(groupId, itemId, participantId) {
     setItemDispute((prev) => ({
@@ -371,7 +371,12 @@ export default function FormResult() {
       ],
     }))
   }
-
+  function handleDeleteBatch(groupId) {
+    setBatchDispute((prev) => ({
+      ...prev,
+      groups: prev.groups.filter((group) => group.groupId !== groupId),
+    }))
+  }
   function handleAddItemToBatch(groupId) {
     setBatchDispute((prev) => ({
       ...prev,
@@ -389,6 +394,20 @@ export default function FormResult() {
                   supplyUnit: "",
                 },
               ],
+            }
+          : group
+      ),
+    }))
+  }
+
+  function handleDeleteItemToBatch(groupId, itemId) {
+    setBatchDispute((prev) => ({
+      ...prev,
+      groups: prev.groups.map((group) =>
+        group.groupId === groupId
+          ? {
+              ...group,
+              items: group.items.filter((item) => item.itemId !== itemId),
             }
           : group
       ),
@@ -688,13 +707,8 @@ export default function FormResult() {
                           )
                         }
                         itemPrices={participant.itemPrices}
-                        onItemDetailChange={(
-                          itemId,
-                          field,
-                          value // ← NOME CORRETO!
-                        ) =>
+                        onItemDetailChange={(itemId, field, value) =>
                           handleItemDetailChange(
-                            // ← FUNÇÃO CORRETA!
                             group.groupId,
                             participant.id,
                             itemId,
@@ -827,6 +841,9 @@ export default function FormResult() {
                           field,
                           value
                         )
+                      }
+                      deleteItem={() =>
+                        handleDeleteItemToBatch(group.groupId, item.itemId)
                       }
                     />
                   ))}
@@ -988,6 +1005,38 @@ export default function FormResult() {
                       </Flex>
                     </Tooltip>
                   </Flex>
+                </Flex>
+                <Flex gap={2} ml={3} mt={3} align={"center"}>
+                  <Button
+                    variant="outline"
+                    colorPalette="blue"
+                    size="xs"
+                    h="8"
+                    w="10"
+                    onClick={() => handleDeleteBatch(group.groupId)}
+                    borderRadius="lg"
+                    borderWidth="1.5px"
+                    borderColor="red.200"
+                    bg="transparent"
+                    _hover={{
+                      bg: "red.50",
+                      borderColor: "red.400",
+                      transform: "scale(1.05)",
+                      boxShadow: "0 4px 12px rgba(0, 0, 0, 0.05)",
+                    }}
+                    _active={{
+                      bg: "red.100",
+                      transform: "scale(0.95)",
+                    }}
+                    transition="all 0.2s cubic-bezier(0.4, 0, 0.2, 1)"
+                  >
+                    <Icon color={"red.500"}>
+                      <MdDeleteForever />
+                    </Icon>
+                  </Button>
+                  <Text fontSize="sm" color="gray.600" fontWeight="normal">
+                    Excluir Lote
+                  </Text>
                 </Flex>
               </Flex>
             ))}

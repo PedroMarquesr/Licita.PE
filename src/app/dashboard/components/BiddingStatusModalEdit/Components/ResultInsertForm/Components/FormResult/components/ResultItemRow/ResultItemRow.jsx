@@ -73,6 +73,7 @@ export default function ResultItemRow({ item, onChange, deleteItem }) {
         ml={{ lg: 2 }}
       >
         <Button
+          
           colorPalette="red"
           size="sm"
           variant="ghost"
