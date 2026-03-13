@@ -1,6 +1,6 @@
 "use client"
 
-import { NativeSelect, Field, Box } from "@chakra-ui/react"
+import { NativeSelect, Field, Box, Text } from "@chakra-ui/react"
 
 export default function SelectTypeDispute({ onValueChange, value }) {
   const optionsTypeDispute = [
@@ -12,21 +12,25 @@ export default function SelectTypeDispute({ onValueChange, value }) {
     <Field.Root>
       <Field.Label>Disputa por item ou lote?</Field.Label>
       <NativeSelect.Root size="sm" width="240px">
-       
         <NativeSelect.Field
           value={value}
           onChange={(e) => onValueChange(e.target.value)}
-          bg="gray.700"
-          color="white"
+          bg="white"
+          color="gray.800"
           borderColor="gray.500"
-          _hover={{ bg: "gray.600" }}
-          _focus={{ bg: "gray.600" }}
+          _hover={{ bg: "gray.100" }}
+          _focus={{ bg: "gray.100" }}
         >
-          <option value="">Selecione uma opção</option>
+          <Text color={"gray.800"}>
+            <option value="">Selecione uma opção</option>
+          </Text>
           {optionsTypeDispute.map((item) => (
-            <option key={item.value} value={item.value}>
-              {item.label}
-            </option>
+            <Text color={"gray.800"}>
+              {" "}
+              <option key={item.value} value={item.value}>
+                {item.label}
+              </option>
+            </Text>
           ))}
         </NativeSelect.Field>
         <NativeSelect.Indicator />
