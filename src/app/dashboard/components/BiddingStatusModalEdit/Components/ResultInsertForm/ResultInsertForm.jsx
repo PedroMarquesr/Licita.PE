@@ -63,11 +63,22 @@ export default function ResultInsertForm({ open, bidding, onClose }) {
                       </Dialog.Title>
                     </Flex>
                   </Flex>
-                  <Dialog.CloseTrigger asChild>
-                    <Button colorPalette={"red"} onClick={() => onClose()}>
+                  <Flex gap={2}>
+                    <Button
+                      colorPalette={"red"}
+                      onClick={() => onClose()}
+                      size={"sm"}
+                    >
                       <Text>Cancelar</Text>
                     </Button>
-                  </Dialog.CloseTrigger>
+                    <Button
+                      colorPalette={"blue"}
+                      onClick={() => onClose()}
+                      size={"sm"}
+                    >
+                      <Text>Salvar</Text>
+                    </Button>
+                  </Flex>
                 </Dialog.Header>
                 <Dialog.Body>
                   <Flex>

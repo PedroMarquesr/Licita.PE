@@ -25,11 +25,9 @@ export default function SelectTypeDispute({ onValueChange, value }) {
             <option value="">Selecione uma opção</option>
           </Text>
           {optionsTypeDispute.map((item) => (
-            <Text color={"gray.800"}>
+            <Text key={item.value} color={"gray.800"}>
               {" "}
-              <option key={item.value} value={item.value}>
-                {item.label}
-              </option>
+              <option value={item.value}>{item.label}</option>
             </Text>
           ))}
         </NativeSelect.Field>

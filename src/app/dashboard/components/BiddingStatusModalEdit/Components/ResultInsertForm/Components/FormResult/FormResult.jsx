@@ -1061,11 +1061,6 @@ export default function FormResult() {
           </Tooltip>
         </Flex>
       )}
-
-      <Text mt={6} fontSize="sm" whiteSpace="pre-wrap">
-        {disputeType === "item" && JSON.stringify(itemDispute, null, 2)}
-        {disputeType === "batch" && JSON.stringify(batchDispute, null, 2)}
-      </Text>
     </Flex>
   )
 }

@@ -49,7 +49,14 @@ export default function BiddingStatusModalEdit({
   const [showInsertResult, setShowInsertResult] = useState(false)
 
   const handleStatusUpdate = async () => {
-    if (!selectedStatus) return
+    if (!selectedStatus) {
+      setShowAlertErrorStatus(true)
+
+      setTimeout(() => {
+        setShowAlertErrorStatus(false)
+      }, 1000)
+      return
+    }
 
     const biddingRef = doc(db, "biddings", biddingData.id)
 
@@ -158,7 +165,7 @@ export default function BiddingStatusModalEdit({
                     </Text>
                   </Flex>
                 </Flex>
-                <ResultInsertForm />
+                {/* <ResultInsertForm /> */}
                 <Flex flexDir={"column"}>
                   <Text ml={"2"}>Status Atual</Text>
                   <Text ml={"2"} fontWeight={"bold"} color={"green.900"}>
@@ -319,18 +326,17 @@ export default function BiddingStatusModalEdit({
                     </Box>
                   )}
                 </Flex>
+                <AlertCustom
+                  description="Insira o Status do processo"
+                  status="error"
+                  openAlert={showAlertErrorStatus}
+                  setOpenAlert={setShowAlertErrorStatus}
+                />
               </Flex>
             </Dialog.Body>
-            <Dialog.Footer>
-              {showAlertErrorStatus && (
-                <AlertCustom
-                  description={"Insira o Status do processo"}
-                  status={"error"}
-                  CollapsibleOpen={showAlertErrorStatus}
-                />
-              )}
 
-              {showAlertErrorDate && (
+            <Dialog.Footer>
+              {/* {showAlertErrorDate && (
                 <AlertCustom
                   description={"Insira o data de reabertura"}
                   status={"error"}
@@ -344,7 +350,7 @@ export default function BiddingStatusModalEdit({
                   status={"success"}
                   CollapsibleOpen={showAlertSucess}
                 />
-              )}
+              )} */}
 
               <Dialog.ActionTrigger asChild>
                 <Button _hover={{ color: "black", backgroundColor: "red.500" }}>
