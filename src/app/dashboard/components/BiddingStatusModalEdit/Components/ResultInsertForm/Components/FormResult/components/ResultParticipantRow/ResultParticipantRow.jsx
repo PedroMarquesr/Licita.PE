@@ -209,7 +209,11 @@ export default function ResultParticipantRow({
             <Checkbox.Root
               colorPalette="purple"
               size="xs"
-              onCheckedChange={(e) => onCheckedChangeWinner(e.checked)}
+              onCheckedChange={(e) => {
+                onCheckedChangeWinner(e.checked)
+                onCheckedChangeIneligible(false)
+                onCheckedChangeDisqualified(false)
+              }}
               checked={winnerChecked}
             >
               <Checkbox.HiddenInput />
@@ -304,7 +308,7 @@ export default function ResultParticipantRow({
           </Flex>
         )}
 
-        {disqualificationChecked && (
+        {disqualificationChecked && !winnerChecked && (
           <Flex
             borderRadius="md"
             borderWidth="1px"
@@ -343,7 +347,7 @@ export default function ResultParticipantRow({
           </Flex>
         )}
 
-        {ineligibleChecked && (
+        {ineligibleChecked && !winnerChecked && (
           <Flex
             borderRadius="md"
             borderWidth="1px"
