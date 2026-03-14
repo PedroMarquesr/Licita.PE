@@ -1,4 +1,4 @@
-"use Client"
+"use Client";
 
 import {
   Button,
@@ -11,25 +11,25 @@ import {
   Box,
   Flex,
   Text,
-} from "@chakra-ui/react"
-import { IoDocumentText } from "react-icons/io5"
-import { motion } from "framer-motion"
+} from "@chakra-ui/react";
+import { IoDocumentText } from "react-icons/io5";
+import { motion } from "framer-motion";
 
-import ResultInsertForm from "./Components/ResultInsertForm/ResultInsertForm"
-import { RiInfoCardFill } from "react-icons/ri"
-import { v4 as uuidv4 } from "uuid"
-import { doc, updateDoc, arrayUnion, Timestamp } from "firebase/firestore"
-import { db } from "@/components/libs/firebaseinit"
-import AlertCustom from "../AlertCustom/AlertCustom"
-import CustomSelect from "../../addTenderForm/components/BiddingWizard/components/steps/IdentificationStep/components/CustomSelect/CustomSelect"
+import ResultInsertForm from "./Components/ResultInsertForm/ResultInsertForm";
+import { RiInfoCardFill } from "react-icons/ri";
+import { v4 as uuidv4 } from "uuid";
+import { doc, updateDoc, arrayUnion, Timestamp } from "firebase/firestore";
+import { db } from "@/components/libs/firebaseinit";
+import AlertCustom from "../AlertCustom/AlertCustom";
+import CustomSelect from "../../addTenderForm/components/BiddingWizard/components/steps/IdentificationStep/components/CustomSelect/CustomSelect";
 
 import {
   initialBiddingStatusOptions,
   biddingStatusOptions,
   biddingStatusAfterApproval,
-} from "@/constants/biddingStatusOptions"
-import { getBiddingDisplayStatus } from "@/utils/biddingStatus"
-import { useState } from "react"
+} from "@/constants/biddingStatusOptions";
+import { getBiddingDisplayStatus } from "@/utils/biddingStatus";
+import { useState } from "react";
 
 export default function BiddingStatusModalEdit({
   isOpen,
@@ -37,40 +37,37 @@ export default function BiddingStatusModalEdit({
   biddingData,
   refresh,
 }) {
-  const [selectedStatus, setSelectedStatus] = useState("")
-  const [reopeningDate, setReopeningDate] = useState("")
-  const [reopeningTime, setReopeningTime] = useState("")
-  const [note, setNote] = useState("")
-  const [isLoading, setIsLoading] = useState(false)
-  const [showAlertErrorStatus, setShowAlertErrorStatus] = useState(false)
-  const [showAlertErrorDate, setShowAlertErrorDate] = useState(false)
-  const [showAlertSucess, setShowAlertSucess] = useState(false)
-  const [undefinedDate, setUndefinedDate] = useState(false)
-  const [showInsertResult, setShowInsertResult] = useState(false)
+  const [selectedStatus, setSelectedStatus] = useState("");
+  const [reopeningDate, setReopeningDate] = useState("");
+  const [reopeningTime, setReopeningTime] = useState("");
+  const [note, setNote] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const [showAlertErrorStatus, setShowAlertErrorStatus] = useState(false);
+  const [showAlertErrorDate, setShowAlertErrorDate] = useState(false);
+  const [showAlertSucess, setShowAlertSucess] = useState(false);
+  const [undefinedDate, setUndefinedDate] = useState(false);
+  const [showInsertResult, setShowInsertResult] = useState(false);
 
   const handleStatusUpdate = async () => {
     if (!selectedStatus) {
-      setShowAlertErrorStatus(true)
+      setShowAlertErrorStatus(true);
 
-      setTimeout(() => {
-        setShowAlertErrorStatus(false)
-      }, 1000)
-      return
+      return;
     }
 
-    const biddingRef = doc(db, "biddings", biddingData.id)
+    const biddingRef = doc(db, "biddings", biddingData.id);
 
     const updatePayload = {
       updatedAt: Timestamp.now(),
-    }
+    };
 
-    const resultValues = ["win", "loss", "pending"]
+    const resultValues = ["win", "loss", "pending"];
 
     if (resultValues.includes(selectedStatus)) {
-      updatePayload.result = selectedStatus
-      updatePayload.status = "finished"
+      updatePayload.result = selectedStatus;
+      updatePayload.status = "finished";
     } else {
-      updatePayload.status = selectedStatus
+      updatePayload.status = selectedStatus;
     }
 
     updatePayload.statusHistory = arrayUnion({
@@ -80,13 +77,16 @@ export default function BiddingStatusModalEdit({
       result: updatePayload.result || null,
       note: note || "",
       createdAt: Timestamp.now(),
-    })
+    });
 
-    await updateDoc(biddingRef, updatePayload)
+    await updateDoc(biddingRef, updatePayload);
+    setShowAlertSucess(true);
 
-    refresh()
-    onClose()
-  }
+    setTimeout(() => {
+      refresh();
+      onClose();
+    }, 2000);
+  };
 
   const SlideFromTop = ({ children, delay = 0 }) => {
     return (
@@ -98,8 +98,8 @@ export default function BiddingStatusModalEdit({
       >
         {children}
       </motion.div>
-    )
-  }
+    );
+  };
   return (
     <Dialog.Root open={isOpen} onOpenChange={onClose}>
       <Portal>
@@ -165,7 +165,6 @@ export default function BiddingStatusModalEdit({
                     </Text>
                   </Flex>
                 </Flex>
-                {/* <ResultInsertForm /> */}
                 <Flex flexDir={"column"}>
                   <Text ml={"2"}>Status Atual</Text>
                   <Text ml={"2"} fontWeight={"bold"} color={"green.900"}>
@@ -239,9 +238,9 @@ export default function BiddingStatusModalEdit({
                           mt={2}
                           colorPalette={"blue"}
                           onCheckedChange={() => {
-                            setUndefinedDate(!undefinedDate)
-                            setReopeningDate("")
-                            setReopeningTime("")
+                            setUndefinedDate(!undefinedDate);
+                            setReopeningDate("");
+                            setReopeningTime("");
                           }}
                         >
                           <Switch.HiddenInput />
@@ -287,9 +286,9 @@ export default function BiddingStatusModalEdit({
                         mt={2}
                         colorPalette={"blue"}
                         onCheckedChange={() => {
-                          setUndefinedDate(!undefinedDate)
-                          setReopeningDate("")
-                          setReopeningTime("")
+                          setUndefinedDate(!undefinedDate);
+                          setReopeningDate("");
+                          setReopeningTime("");
                         }}
                       >
                         <Switch.HiddenInput />
@@ -332,25 +331,23 @@ export default function BiddingStatusModalEdit({
                   openAlert={showAlertErrorStatus}
                   setOpenAlert={setShowAlertErrorStatus}
                 />
+                <AlertCustom
+                  description={"Status atualizado com sucesso"}
+                  status={"success"}
+                  openAlert={showAlertSucess}
+                  setOpenAlert={setShowAlertSucess}
+                />
               </Flex>
             </Dialog.Body>
 
             <Dialog.Footer>
-              {/* {showAlertErrorDate && (
+              {showAlertErrorDate && (
                 <AlertCustom
                   description={"Insira o data de reabertura"}
                   status={"error"}
                   CollapsibleOpen={showAlertErrorDate}
                 />
               )}
-
-              {showAlertSucess && (
-                <AlertCustom
-                  description={"Status atualizado com sucesso"}
-                  status={"success"}
-                  CollapsibleOpen={showAlertSucess}
-                />
-              )} */}
 
               <Dialog.ActionTrigger asChild>
                 <Button _hover={{ color: "black", backgroundColor: "red.500" }}>
@@ -359,7 +356,7 @@ export default function BiddingStatusModalEdit({
               </Dialog.ActionTrigger>
               <Button
                 onClick={async () => {
-                  await handleStatusUpdate()
+                  await handleStatusUpdate();
                 }}
                 isLoading={isLoading}
                 _hover={{ backgroundColor: "blue.500" }}
@@ -374,5 +371,5 @@ export default function BiddingStatusModalEdit({
         </Dialog.Positioner>
       </Portal>
     </Dialog.Root>
-  )
+  );
 }

@@ -1,7 +1,7 @@
-"use client"
+"use client";
 
-import { Alert, Collapsible } from "@chakra-ui/react"
-import { useEffect } from "react"
+import { Alert, Collapsible } from "@chakra-ui/react";
+import { useEffect } from "react";
 
 export default function AlertCustom({
   status,
@@ -12,12 +12,12 @@ export default function AlertCustom({
   useEffect(() => {
     if (openAlert) {
       const timer = setTimeout(() => {
-        setOpenAlert(false)
-      }, 3000)
+        setOpenAlert(false);
+      }, 3000);
 
-      return () => clearTimeout(timer)
+      return () => clearTimeout(timer);
     }
-  }, [openAlert, setOpenAlert])
+  }, [openAlert, setOpenAlert]);
 
   return (
     <Collapsible.Root
@@ -44,5 +44,5 @@ export default function AlertCustom({
         </Alert.Root>
       </Collapsible.Content>
     </Collapsible.Root>
-  )
+  );
 }

@@ -1,18 +1,18 @@
-"use client"
+"use client";
 
-import { Flex, Field, Icon, Button, Text } from "@chakra-ui/react"
-import { Tooltip } from "@/components/ui/tooltip"
+import { Flex, Field, Icon, Button, Text } from "@chakra-ui/react";
+import { Tooltip } from "@/components/ui/tooltip";
 
-import SelectTypeDispute from "./components/SelectTypeDispute/SelectTypeDispute"
-import ResultItemRow from "./components/ResultItemRow/ResultItemRow"
-import ResultParticipantRow from "./components/ResultParticipantRow/ResultParticipantRow"
-import ResultLotItemRow from "./components/LotItemRow/ResultLotItemRow"
+import SelectTypeDispute from "./components/SelectTypeDispute/SelectTypeDispute";
+import ResultItemRow from "./components/ResultItemRow/ResultItemRow";
+import ResultParticipantRow from "./components/ResultParticipantRow/ResultParticipantRow";
+import ResultLotItemRow from "./components/LotItemRow/ResultLotItemRow";
 
-import { FaUserPlus, FaBoxesStacked } from "react-icons/fa6"
-import { BsFillPlusCircleFill } from "react-icons/bs"
-import { MdDeleteForever } from "react-icons/md"
+import { FaUserPlus, FaBoxesStacked } from "react-icons/fa6";
+import { BsFillPlusCircleFill } from "react-icons/bs";
+import { MdDeleteForever } from "react-icons/md";
 
-import { useState } from "react"
+import { useState, useEffect } from "react";
 
 const initialItemDispute = {
   type: "item",
@@ -31,7 +31,7 @@ const initialItemDispute = {
       ],
     },
   ],
-}
+};
 
 const initialBatchDispute = {
   type: "batch",
@@ -51,12 +51,22 @@ const initialBatchDispute = {
       ],
     },
   ],
-}
+};
 
-export default function FormResult() {
-  const [itemDispute, setItemDispute] = useState(initialItemDispute)
-  const [batchDispute, setBatchDispute] = useState(initialBatchDispute)
-  const [disputeType, setDisputeType] = useState("")
+export default function FormResult({ bidding, onDataChange }) {
+  const [itemDispute, setItemDispute] = useState(initialItemDispute);
+  const [batchDispute, setBatchDispute] = useState(initialBatchDispute);
+  const [disputeType, setDisputeType] = useState("");
+
+  useEffect(() => {
+    if (!disputeType || !onDataChange) return;
+
+    // Pega o estado completo (já tem type e groups)
+    const activeData = disputeType === "item" ? itemDispute : batchDispute;
+
+    // Envia diretamente o objeto completo
+    onDataChange(activeData); // ← Agora envia { type, groups }
+  }, [itemDispute, batchDispute, disputeType, onDataChange]);
 
   // type Item functions
 
@@ -68,12 +78,12 @@ export default function FormResult() {
           ? {
               ...group,
               items: group.items.map((item) =>
-                item.itemId === itemId ? { ...item, [field]: value } : item
+                item.itemId === itemId ? { ...item, [field]: value } : item,
               ),
             }
-          : group
+          : group,
       ),
-    }))
+    }));
   }
 
   function handleAddParticipant(groupId, itemId) {
@@ -104,35 +114,35 @@ export default function FormResult() {
                         },
                       ],
                     }
-                  : item
+                  : item,
               ),
             }
-          : group
+          : group,
       ),
-    }))
+    }));
   }
 
   function handleDeleteParticipant(groupId, itemId, participantId) {
     setItemDispute((prev) => ({
       ...prev,
       groups: prev.groups.map((group) => {
-        if (group.groupId !== groupId) return group
+        if (group.groupId !== groupId) return group;
 
         return {
           ...group,
           items: group.items.map((item) => {
-            if (item.itemId !== itemId) return item
+            if (item.itemId !== itemId) return item;
 
             return {
               ...item,
               participants: item.participants.filter(
-                (participant) => participant.id !== participantId
+                (participant) => participant.id !== participantId,
               ),
-            }
+            };
           }),
-        }
+        };
       }),
-    }))
+    }));
   }
 
   function handleAddItem(groupId) {
@@ -154,9 +164,9 @@ export default function FormResult() {
                 },
               ],
             }
-          : group
+          : group,
       ),
-    }))
+    }));
   }
 
   function handleDeleteItem(groupId, itemId) {
@@ -167,14 +177,14 @@ export default function FormResult() {
           ? {
               ...group,
               items: group.items.filter((item) => {
-                itemId !== item.itemId
+                itemId !== item.itemId;
               }),
             }
           : {
               group,
-            }
+            };
       }),
-    }))
+    }));
   }
 
   function handleParticipantChange(
@@ -182,7 +192,7 @@ export default function FormResult() {
     itemId,
     participantId,
     field,
-    value
+    value,
   ) {
     setItemDispute((prev) => ({
       ...prev,
@@ -197,27 +207,27 @@ export default function FormResult() {
                       participants: item.participants.map((participant) =>
                         participant.id === participantId
                           ? { ...participant, [field]: value }
-                          : participant
+                          : participant,
                       ),
                     }
-                  : item
+                  : item,
               ),
             }
-          : group
+          : group,
       ),
-    }))
+    }));
   }
 
   function handleSelectSelf(groupId, itemId, participantId, checked) {
     setItemDispute((prev) => ({
       ...prev,
       groups: prev.groups.map((group) => {
-        if (group.groupId !== groupId) return group
+        if (group.groupId !== groupId) return group;
 
         return {
           ...group,
           items: group.items.map((item) => {
-            if (item.itemId !== itemId) return item
+            if (item.itemId !== itemId) return item;
 
             return {
               ...item,
@@ -225,23 +235,23 @@ export default function FormResult() {
                 ...participant,
                 isSelf: checked ? participant.id === participantId : false,
               })),
-            }
+            };
           }),
-        }
+        };
       }),
-    }))
+    }));
   }
 
   function handleSelectWinner(groupId, itemId, participantId, checked) {
     setItemDispute((prev) => ({
       ...prev,
       groups: prev.groups.map((group) => {
-        if (group.groupId !== groupId) return group
+        if (group.groupId !== groupId) return group;
 
         return {
           ...group,
           items: group.items.map((item) => {
-            if (item.itemId !== itemId) return item
+            if (item.itemId !== itemId) return item;
 
             return {
               ...item,
@@ -249,11 +259,11 @@ export default function FormResult() {
                 ...participant,
                 win: checked ? participant.id === participantId : false,
               })),
-            }
+            };
           }),
-        }
+        };
       }),
-    }))
+    }));
   }
 
   function handleSelectDisqualified(groupId, itemId, participantId, checked) {
@@ -276,15 +286,15 @@ export default function FormResult() {
                                 ? participant.disqualificationReason
                                 : "",
                             }
-                          : participant
+                          : participant,
                       ),
                     }
-                  : item
+                  : item,
               ),
             }
-          : group
+          : group,
       ),
-    }))
+    }));
   }
 
   function handleSelectIneligible(groupId, itemId, participantId, checked) {
@@ -307,15 +317,15 @@ export default function FormResult() {
                                 ? participant.ineligibleReason
                                 : "",
                             }
-                          : participant
+                          : participant,
                       ),
                     }
-                  : item
+                  : item,
               ),
             }
-          : group
+          : group,
       ),
-    }))
+    }));
   }
 
   function handleDeleteItem(groupId, itemId) {
@@ -327,9 +337,9 @@ export default function FormResult() {
               ...group,
               items: group.items.filter((item) => item.itemId !== itemId),
             }
-          : group
+          : group,
       ),
-    }))
+    }));
   }
   // type Batch functions
   function handleBatchItemChange(groupId, itemId, field, value) {
@@ -340,12 +350,12 @@ export default function FormResult() {
           ? {
               ...group,
               items: group.items.map((item) =>
-                item.itemId === itemId ? { ...item, [field]: value } : item
+                item.itemId === itemId ? { ...item, [field]: value } : item,
               ),
             }
-          : group
+          : group,
       ),
-    }))
+    }));
   }
   //
 
@@ -369,13 +379,13 @@ export default function FormResult() {
           ],
         },
       ],
-    }))
+    }));
   }
   function handleDeleteBatch(groupId) {
     setBatchDispute((prev) => ({
       ...prev,
       groups: prev.groups.filter((group) => group.groupId !== groupId),
-    }))
+    }));
   }
   function handleAddItemToBatch(groupId) {
     setBatchDispute((prev) => ({
@@ -395,9 +405,9 @@ export default function FormResult() {
                 },
               ],
             }
-          : group
+          : group,
       ),
-    }))
+    }));
   }
 
   function handleDeleteItemToBatch(groupId, itemId) {
@@ -409,9 +419,9 @@ export default function FormResult() {
               ...group,
               items: group.items.filter((item) => item.itemId !== itemId),
             }
-          : group
+          : group,
       ),
-    }))
+    }));
   }
 
   function handleAddParticipantToBatch(groupId) {
@@ -443,9 +453,9 @@ export default function FormResult() {
                 },
               ],
             }
-          : group
+          : group,
       ),
-    }))
+    }));
   }
 
   function handleParticipantChangeBatch(groupId, participantId, field, value) {
@@ -458,19 +468,19 @@ export default function FormResult() {
               participants: group.participants.map((participant) =>
                 participant.id === participantId
                   ? { ...participant, [field]: value }
-                  : participant
+                  : participant,
               ),
             }
-          : group
+          : group,
       ),
-    }))
+    }));
   }
 
   function handleSelectSelfBatch(groupId, participantId, checked) {
     setBatchDispute((prev) => ({
       ...prev,
       groups: prev.groups.map((group) => {
-        if (group.groupId !== groupId) return group
+        if (group.groupId !== groupId) return group;
 
         return {
           ...group,
@@ -478,16 +488,16 @@ export default function FormResult() {
             ...participant,
             isSelf: checked ? participant.id === participantId : false,
           })),
-        }
+        };
       }),
-    }))
+    }));
   }
 
   function handleSelectWinnerBatch(groupId, participantId, checked) {
     setBatchDispute((prev) => ({
       ...prev,
       groups: prev.groups.map((group) => {
-        if (group.groupId !== groupId) return group
+        if (group.groupId !== groupId) return group;
 
         return {
           ...group,
@@ -495,9 +505,9 @@ export default function FormResult() {
             ...participant,
             win: checked ? participant.id === participantId : false,
           })),
-        }
+        };
       }),
-    }))
+    }));
   }
 
   function handleSelectDisqualifiedBatch(groupId, participantId, checked) {
@@ -516,12 +526,12 @@ export default function FormResult() {
                         ? participant.disqualificationReason
                         : "",
                     }
-                  : participant
+                  : participant,
               ),
             }
-          : group
+          : group,
       ),
-    }))
+    }));
   }
 
   function handleSelectIneligibleBatch(groupId, participantId, checked) {
@@ -540,12 +550,12 @@ export default function FormResult() {
                         ? participant.ineligibleReason
                         : "",
                     }
-                  : participant
+                  : participant,
               ),
             }
-          : group
+          : group,
       ),
-    }))
+    }));
   }
 
   function handleDeleteParticipantBatch(groupId, participantId) {
@@ -556,21 +566,21 @@ export default function FormResult() {
           ? {
               ...group,
               participants: group.participants.filter(
-                (participant) => participant.id !== participantId
+                (participant) => participant.id !== participantId,
               ),
             }
-          : group
+          : group,
       ),
-    }))
+    }));
   }
 
   function handleLotNumberChange(groupId, value) {
     setBatchDispute((prev) => ({
       ...prev,
       groups: prev.groups.map((group) =>
-        group.groupId === groupId ? { ...group, lotNumber: value } : group
+        group.groupId === groupId ? { ...group, lotNumber: value } : group,
       ),
-    }))
+    }));
   }
 
   function handleItemDetailChange(
@@ -578,7 +588,7 @@ export default function FormResult() {
     participantId,
     itemId,
     field,
-    value
+    value,
   ) {
     setBatchDispute((prev) => ({
       ...prev,
@@ -594,23 +604,23 @@ export default function FormResult() {
                       itemPrices: participant.itemPrices.map((itemPrice) =>
                         itemPrice.itemId === itemId
                           ? { ...itemPrice, [field]: value }
-                          : itemPrice
+                          : itemPrice,
                       ),
                     }
-                  : participant
+                  : participant,
               ),
             }
-          : group
+          : group,
       ),
-    }))
+    }));
   }
   function handleTypeChange(value) {
-    setDisputeType(value)
+    setDisputeType(value);
 
     if (value === "item") {
-      setItemDispute(initialItemDispute)
+      setItemDispute(initialItemDispute);
     } else if (value === "batch") {
-      setBatchDispute(initialBatchDispute)
+      setBatchDispute(initialBatchDispute);
     }
   }
 
@@ -622,7 +632,6 @@ export default function FormResult() {
           onValueChange={handleTypeChange}
         />
       </Field.Root>
-
       {disputeType === "item" && (
         <Flex mt={10} justify="center" align="center">
           <Flex flexDir="column" w="100%">
@@ -637,7 +646,7 @@ export default function FormResult() {
                           group.groupId,
                           item.itemId,
                           field,
-                          value
+                          value,
                         )
                       }
                       deleteItem={() =>
@@ -656,7 +665,7 @@ export default function FormResult() {
                             item.itemId,
                             participant.id,
                             field,
-                            value
+                            value,
                           )
                         }
                         mb={2}
@@ -666,7 +675,7 @@ export default function FormResult() {
                             group.groupId,
                             item.itemId,
                             participant.id,
-                            checked
+                            checked,
                           )
                         }
                         isSelfChecked={participant.isSelf}
@@ -675,7 +684,7 @@ export default function FormResult() {
                             group.groupId,
                             item.itemId,
                             participant.id,
-                            checked
+                            checked,
                           )
                         }
                         winnerChecked={participant.win}
@@ -684,7 +693,7 @@ export default function FormResult() {
                             group.groupId,
                             item.itemId,
                             participant.id,
-                            checked
+                            checked,
                           )
                         }
                         disqualificationChecked={participant.disqualified}
@@ -694,7 +703,7 @@ export default function FormResult() {
                             group.groupId,
                             item.itemId,
                             participant.id,
-                            checked
+                            checked,
                           )
                         }
                         ineligibleChecked={participant.ineligible}
@@ -703,7 +712,7 @@ export default function FormResult() {
                           handleDeleteParticipant(
                             group.groupId,
                             item.itemId,
-                            participant.id
+                            participant.id,
                           )
                         }
                         itemPrices={participant.itemPrices}
@@ -713,7 +722,7 @@ export default function FormResult() {
                             participant.id,
                             itemId,
                             field,
-                            value
+                            value,
                           )
                         }
                       />
@@ -839,7 +848,7 @@ export default function FormResult() {
                           group.groupId,
                           item.itemId,
                           field,
-                          value
+                          value,
                         )
                       }
                       deleteItem={() =>
@@ -861,7 +870,7 @@ export default function FormResult() {
                           group.groupId,
                           participant.id,
                           field,
-                          value
+                          value,
                         )
                       }
                       mb={2}
@@ -870,7 +879,7 @@ export default function FormResult() {
                         handleSelectSelfBatch(
                           group.groupId,
                           participant.id,
-                          checked
+                          checked,
                         )
                       }
                       isSelfChecked={participant.isSelf}
@@ -878,7 +887,7 @@ export default function FormResult() {
                         handleSelectWinnerBatch(
                           group.groupId,
                           participant.id,
-                          checked
+                          checked,
                         )
                       }
                       winnerChecked={participant.win}
@@ -886,7 +895,7 @@ export default function FormResult() {
                         handleSelectDisqualifiedBatch(
                           group.groupId,
                           participant.id,
-                          checked
+                          checked,
                         )
                       }
                       disqualificationChecked={participant.disqualified}
@@ -895,7 +904,7 @@ export default function FormResult() {
                         handleSelectIneligibleBatch(
                           group.groupId,
                           participant.id,
-                          checked
+                          checked,
                         )
                       }
                       ineligibleChecked={participant.ineligible}
@@ -903,7 +912,7 @@ export default function FormResult() {
                       deleteParticipant={() =>
                         handleDeleteParticipantBatch(
                           group.groupId,
-                          participant.id
+                          participant.id,
                         )
                       }
                       groupId={group.groupId}
@@ -914,7 +923,7 @@ export default function FormResult() {
                           participant.id,
                           itemId,
                           field,
-                          value
+                          value,
                         )
                       }
                     />
@@ -1062,5 +1071,5 @@ export default function FormResult() {
         </Flex>
       )}
     </Flex>
-  )
+  );
 }
