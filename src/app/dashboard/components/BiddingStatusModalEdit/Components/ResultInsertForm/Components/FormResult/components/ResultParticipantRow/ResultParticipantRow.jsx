@@ -121,22 +121,22 @@ export default function ResultParticipantRow({
               boxShadow: "0 0 0 1px blue.500",
             }}
           />
-
-          <InputResult
-            value={participant.brand}
-            onChange={(e) => onChange("brand", e.target.value)}
-            columnTitle="Marca"
-            textAlignInput="left"
-            width={{ base: "100%", md: "150px" }}
-            bg="white"
-            borderColor="gray.300"
-            _hover={{ borderColor: "blue.400" }}
-            _focus={{
-              borderColor: "blue.500",
-              boxShadow: "0 0 0 1px blue.500",
-            }}
-          />
-
+          {typeDispute !== "batch" && (
+            <InputResult
+              value={participant.brand}
+              onChange={(e) => onChange("brand", e.target.value)}
+              columnTitle="Marca"
+              textAlignInput="left"
+              width={{ base: "100%", md: "150px" }}
+              bg="white"
+              borderColor="gray.300"
+              _hover={{ borderColor: "blue.400" }}
+              _focus={{
+                borderColor: "blue.500",
+                boxShadow: "0 0 0 1px blue.500",
+              }}
+            />
+          )}
           <InputResult
             value={participant.price}
             onChange={(e) => onChange("price", e.target.value)}
@@ -158,7 +158,7 @@ export default function ResultParticipantRow({
             }}
           />
 
-          {typeDispute !== "batch" && amountItemParticipant && (
+          {typeDispute !== "batch" && (
             <InputResult
               value={calcTotalPrice(amountItemParticipant, participant.price)}
               columnTitle="Valor total"
@@ -173,7 +173,7 @@ export default function ResultParticipantRow({
             />
           )}
 
-          {typeDispute === "batch" && (
+          {/* {typeDispute === "batch" && (
             <InputResult
               value={calculateTotalPrice()}
               columnTitle="Valor total"
@@ -186,7 +186,7 @@ export default function ResultParticipantRow({
               color="gray.700"
               fontWeight="medium"
             />
-          )}
+          )} */}
 
           {/* CHECKBOXES */}
           <Flex flexDir="column" gap={1} mt={{ base: 2, md: 0 }}>
@@ -209,7 +209,11 @@ export default function ResultParticipantRow({
             <Checkbox.Root
               colorPalette="purple"
               size="xs"
-              onCheckedChange={(e) => onCheckedChangeWinner(e.checked)}
+              onCheckedChange={(e) => {
+                onCheckedChangeWinner(e.checked)
+                onCheckedChangeIneligible(false)
+                onCheckedChangeDisqualified(false)
+              }}
               checked={winnerChecked}
             >
               <Checkbox.HiddenInput />
@@ -304,7 +308,7 @@ export default function ResultParticipantRow({
           </Flex>
         )}
 
-        {disqualificationChecked && (
+        {disqualificationChecked && !winnerChecked && (
           <Flex
             borderRadius="md"
             borderWidth="1px"
@@ -343,7 +347,7 @@ export default function ResultParticipantRow({
           </Flex>
         )}
 
-        {ineligibleChecked && (
+        {ineligibleChecked && !winnerChecked && (
           <Flex
             borderRadius="md"
             borderWidth="1px"

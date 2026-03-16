@@ -1,23 +1,46 @@
 "use client"
-import {
-  Icon,
-  Dialog,
-  Portal,
-  Flex,
-  Button,
-  CloseButton,
-  Text,
-} from "@chakra-ui/react"
-
-import { FaBoxes } from "react-icons/fa"
-import { TbAlignBoxLeftTopFilled } from "react-icons/tb"
+import { Icon, Dialog, Portal, Flex, Button, Text } from "@chakra-ui/react"
+import { doc, updateDoc } from "firebase/firestore"
+import { db } from "@/components/libs/firebaseinit"
 import { useState } from "react"
+import { TbAlignBoxLeftTopFilled } from "react-icons/tb"
 import FormResult from "./Components/FormResult/FormResult"
-
 import { motion } from "framer-motion"
 
-export default function ResultInsertForm({ open, bidding, onClose }) {
-  const [isOpen, setIsOpen] = useState(false)
+export default function ResultInsertForm({
+  open,
+  bidding,
+  onClose,
+  onResultSaved,
+  hasResult,
+}) {
+  const [disputeData, setDisputeData] = useState(null)
+
+  const handleDisputeDataChange = (data) => {
+    setDisputeData(data)
+  }
+
+  const handleUpdateResult = async () => {
+    const biddingRef = doc(db, "biddings", bidding.id)
+
+    if (!disputeData) {
+      alert("Insira resultado")
+      return
+    }
+
+    try {
+      await updateDoc(biddingRef, {
+        result: disputeData,
+        updatedAt: new Date(),
+      })
+
+      await onResultSaved()
+      console.log("Resultado salvo com sucesso!")
+      onClose()
+    } catch (error) {
+      console.log("Erro ao salvar:", error)
+    }
+  }
 
   const SlideFromTop = ({ children, delay = 0 }) => {
     return (
@@ -33,52 +56,60 @@ export default function ResultInsertForm({ open, bidding, onClose }) {
   }
 
   return (
-    <>
-      <SlideFromTop>
-        <Dialog.Root open={open} size={"full"}>
-          <Portal>
-            <Dialog.Backdrop />
-
-            <Dialog.Positioner>
-              <Dialog.Content
-                bg="white"
-                color="gray.800"
-                borderRadius="xl"
-                boxShadow="lg"
-                w={"full"}
-              >
-                <Dialog.Header>
-                  <Flex justifyContent={"space-between"} w={"100%"}>
-                    <Flex align={"center"} gap={3}>
-                      <Icon
-                        size={"xl"}
-                        colorPalette={"blue"}
-                        color={"blue.600"}
-                      >
-                        <TbAlignBoxLeftTopFilled />
-                      </Icon>
-                      <Dialog.Title>Inserir resultado</Dialog.Title>
-                      <Dialog.Title color={"blue.800"} textStyle={"underline"}>
-                        {`${bidding?.responsibleAgency} - ${bidding?.identificationNumber}`}
-                      </Dialog.Title>
-                    </Flex>
+    <SlideFromTop>
+      <Dialog.Root open={open} size={"full"}>
+        <Portal>
+          <Dialog.Backdrop />
+          <Dialog.Positioner>
+            <Dialog.Content
+              bg="white"
+              color="gray.800"
+              borderRadius="xl"
+              boxShadow="lg"
+              w={"full"}
+            >
+              <Dialog.Header>
+                <Flex justifyContent={"space-between"} w={"100%"}>
+                  <Flex align={"center"} gap={3}>
+                    <Icon size={"xl"} colorPalette={"blue"} color={"blue.600"}>
+                      <TbAlignBoxLeftTopFilled />
+                    </Icon>
+                    <Dialog.Title>Inserir resultado</Dialog.Title>
+                    <Dialog.Title color={"blue.800"} textStyle={"underline"}>
+                      {`${bidding?.responsibleAgency} - ${bidding?.identificationNumber}`}
+                    </Dialog.Title>
                   </Flex>
-                  <Dialog.CloseTrigger asChild>
-                    <Button colorPalette={"red"} onClick={() => onClose()}>
-                      <Text>Cancelar</Text>
-                    </Button>
-                  </Dialog.CloseTrigger>
-                </Dialog.Header>
-                <Dialog.Body>
-                  <Flex>
-                    <FormResult />
-                  </Flex>
-                </Dialog.Body>
-              </Dialog.Content>
-            </Dialog.Positioner>
-          </Portal>{" "}
-        </Dialog.Root>
-      </SlideFromTop>
-    </>
+                </Flex>
+                <Flex gap={2}>
+                  <Button
+                    colorPalette={"red"}
+                    onClick={() => onClose()}
+                    size={"sm"}
+                  >
+                    <Text>Cancelar</Text>
+                  </Button>
+                  <Button
+                    colorPalette={"blue"}
+                    onClick={handleUpdateResult}
+                    size={"sm"}
+                  >
+                    <Text>Salvar</Text>
+                  </Button>
+                </Flex>
+              </Dialog.Header>
+              <Dialog.Body>
+                <Flex>
+                  <FormResult
+                    hasResult={hasResult}
+                    bidding={bidding}
+                    onDataChange={handleDisputeDataChange}
+                  />
+                </Flex>
+              </Dialog.Body>
+            </Dialog.Content>
+          </Dialog.Positioner>
+        </Portal>
+      </Dialog.Root>
+    </SlideFromTop>
   )
 }

@@ -1,99 +1,66 @@
-"use client";
+"use client"
 
-import BiddingCalendarMenu from "../../../BiddingCalendar/components/BiddingCalendarMenu/BiddingCalendarMenu";
-import { Flex, Text, Tag, Box } from "@chakra-ui/react";
+import { Box, Flex, Text, Badge } from "@chakra-ui/react"
 
 export default function MobileCardTenderSummary({
-  orgao,
-  dateFormated,
-  fontWeight,
   bgColor,
+  fontWeight,
+  dateFormated,
+  orgao,
   flagToday,
   identificationNumber,
-  bgColorStatus,
   colorStatus,
+  bgColorStatus,
   biddingStatus,
   biddingType,
+  menu,
 }) {
   return (
-    <Flex
-      display={{ base: "flex", md: "none" }}
-      w={"100%"}
-      p="3"
-      bg="white"
-      mb="3"
-      borderRadius="xl"
-      boxShadow="0 1px 3px rgba(0,0,0,0.1)"
+    <Box
+      bg={bgColor}
+      borderRadius="md"
       border="1px solid"
-      borderColor="gray.100"
-      alignItems="flex-start"
-      gap="3"
+      borderColor="gray.200"
+      p={4}
+      mb={3}
+      boxShadow="sm"
     >
-      <Flex flexDir={"column"}>
-        {" "}
-        <Box
-          bg="blue.50"
-          color="blue.700"
-          px="2"
-          py="1"
-          borderRadius="md"
-          fontSize="xs"
-          fontWeight="bold"
-          minW="60px"
-          textAlign="center"
-        >
-          {dateFormated}
-        </Box>
-        <Text
-          color="red.500"
-          display={flagToday}
-          fontSize="xs"
-          mt="1"
-          pl={8}
-          bgColor={"red.100"}
-          fontWeight="bold"
-        >
-          Hoje
+      <Flex justify="space-between" align="center" mb={2}>
+        <Text fontWeight={fontWeight} fontSize="sm">
+          {identificationNumber || "N/A"}
         </Text>
-        <BiddingCalendarMenu />
+
+        {menu}
       </Flex>
 
-      <Flex flexDir="column" flex="1" minW="0">
-        <Text
-          fontSize="sm"
-          fontWeight="semibold"
-          color="gray.800"
-          mb="1"
-          noOfLines={1}
-        >
-          {orgao}
-        </Text>
+      <Text fontSize="sm" color="gray.700" mb={2}>
+        {orgao || "N/A"}
+      </Text>
 
-        <Flex alignItems="center" gap="2" mb="2">
-          <Text fontSize="xs" color="gray.600">
-            {identificationNumber}
-          </Text>
-          <Box w="1" h="1" bg="gray.300" borderRadius="full" />
-          <Text fontSize="xs" color="gray.500">
-            {biddingType}
-          </Text>
-        </Flex>
+      <Text fontSize="xs" color="gray.500" mb={2}>
+        {biddingType || "N/A"}
+      </Text>
 
-        <Tag.Root
-          size="sm"
-          variant="subtle"
+      <Flex justify="space-between" align="center">
+        <Text fontSize="xs">{dateFormated}</Text>
+
+        <Badge
           bg={bgColorStatus}
           color={colorStatus}
+          px={2}
+          py={1}
           borderRadius="full"
-          px="3"
-          alignSelf="flex-start"
-          fontWeight="bold"
-          fontSize="2xs"
-          textTransform="uppercase"
+          fontSize="xs"
         >
           {biddingStatus}
-        </Tag.Root>
+        </Badge>
       </Flex>
-    </Flex>
-  );
+
+      {flagToday === "flex" && (
+        <Flex mt={2}>
+          <Badge colorScheme="yellow">HOJE</Badge>
+        </Flex>
+      )}
+    </Box>
+  )
 }

@@ -10,8 +10,9 @@ import ResultLotItemRow from "./components/LotItemRow/ResultLotItemRow"
 
 import { FaUserPlus, FaBoxesStacked } from "react-icons/fa6"
 import { BsFillPlusCircleFill } from "react-icons/bs"
+import { MdDeleteForever } from "react-icons/md"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 
 const initialItemDispute = {
   type: "item",
@@ -52,10 +53,36 @@ const initialBatchDispute = {
   ],
 }
 
-export default function FormResult() {
+export default function FormResult({ bidding, onDataChange, hasResult }) {
   const [itemDispute, setItemDispute] = useState(initialItemDispute)
   const [batchDispute, setBatchDispute] = useState(initialBatchDispute)
   const [disputeType, setDisputeType] = useState("")
+
+  useEffect(() => {
+    if (!bidding?.result) return
+
+    const { type } = bidding.result
+
+    const timer = setTimeout(() => {
+      if (type === "item") {
+        setItemDispute(bidding.result)
+        setDisputeType("item")
+      } else if (type === "batch") {
+        setBatchDispute(bidding.result)
+        setDisputeType("batch")
+      }
+    }, 0)
+
+    return () => clearTimeout(timer)
+  }, [bidding?.result])
+
+  useEffect(() => {
+    if (!disputeType || !onDataChange) return
+
+    const activeData = disputeType === "item" ? itemDispute : batchDispute
+
+    onDataChange(activeData)
+  }, [itemDispute, batchDispute, disputeType, onDataChange])
 
   // type Item functions
 
@@ -111,6 +138,29 @@ export default function FormResult() {
     }))
   }
 
+  function handleDeleteParticipant(groupId, itemId, participantId) {
+    setItemDispute((prev) => ({
+      ...prev,
+      groups: prev.groups.map((group) => {
+        if (group.groupId !== groupId) return group
+
+        return {
+          ...group,
+          items: group.items.map((item) => {
+            if (item.itemId !== itemId) return item
+
+            return {
+              ...item,
+              participants: item.participants.filter(
+                (participant) => participant.id !== participantId
+              ),
+            }
+          }),
+        }
+      }),
+    }))
+  }
+
   function handleAddItem(groupId) {
     setItemDispute((prev) => ({
       ...prev,
@@ -132,6 +182,24 @@ export default function FormResult() {
             }
           : group
       ),
+    }))
+  }
+
+  function handleDeleteItem(groupId, itemId) {
+    setItemDispute((prev) => ({
+      ...prev,
+      groups: prev.groups.map((group) => {
+        groupId === group.groupId
+          ? {
+              ...group,
+              items: group.items.filter((item) => {
+                itemId !== item.itemId
+              }),
+            }
+          : {
+              group,
+            }
+      }),
     }))
   }
 
@@ -276,29 +344,19 @@ export default function FormResult() {
     }))
   }
 
-  function handleDeleteParticipant(groupId, itemId, participantId) {
+  function handleDeleteItem(groupId, itemId) {
     setItemDispute((prev) => ({
       ...prev,
-      groups: prev.groups.map((group) => {
-        if (group.groupId !== groupId) return group
-
-        return {
-          ...group,
-          items: group.items.map((item) => {
-            if (item.itemId !== itemId) return item
-
-            return {
-              ...item,
-              participants: item.participants.filter(
-                (participant) => participant.id !== participantId
-              ),
+      groups: prev.groups.map((group) =>
+        group.groupId === groupId
+          ? {
+              ...group,
+              items: group.items.filter((item) => item.itemId !== itemId),
             }
-          }),
-        }
-      }),
+          : group
+      ),
     }))
   }
-
   // type Batch functions
   function handleBatchItemChange(groupId, itemId, field, value) {
     setBatchDispute((prev) => ({
@@ -339,7 +397,12 @@ export default function FormResult() {
       ],
     }))
   }
-
+  function handleDeleteBatch(groupId) {
+    setBatchDispute((prev) => ({
+      ...prev,
+      groups: prev.groups.filter((group) => group.groupId !== groupId),
+    }))
+  }
   function handleAddItemToBatch(groupId) {
     setBatchDispute((prev) => ({
       ...prev,
@@ -363,35 +426,19 @@ export default function FormResult() {
     }))
   }
 
-  // function handleAddParticipantToBatch(groupId) {
-  //   setBatchDispute((prev) => ({
-  //     ...prev,
-  //     groups: prev.groups.map((group) =>
-  //       group.groupId === groupId
-  //         ? {
-  //             ...group,
-  //             participants: [
-  //               ...group.participants,
-  //               {
-  //                 id: crypto.randomUUID(),
-  //                 position: group.participants.length + 1,
-  //                 bidder: "",
-  //                 brand: "",
-  //                 price: "",
-  //                 isSelf: false,
-  //                 win: false,
-  //                 disqualified: false,
-  //                 disqualificationReason: "",
-  //                 ineligible: false,
-  //                 ineligibleReason: "",
-  //                 itemPrices: {}, // Objeto para armazenar preços por item
-  //               },
-  //             ],
-  //           }
-  //         : group
-  //     ),
-  //   }))
-  // }
+  function handleDeleteItemToBatch(groupId, itemId) {
+    setBatchDispute((prev) => ({
+      ...prev,
+      groups: prev.groups.map((group) =>
+        group.groupId === groupId
+          ? {
+              ...group,
+              items: group.items.filter((item) => item.itemId !== itemId),
+            }
+          : group
+      ),
+    }))
+  }
 
   function handleAddParticipantToBatch(groupId) {
     setBatchDispute((prev) => ({
@@ -552,7 +599,6 @@ export default function FormResult() {
     }))
   }
 
-  // 🎯 Função ÚNICA que atualiza tanto preço quanto marca
   function handleItemDetailChange(
     groupId,
     participantId,
@@ -570,10 +616,10 @@ export default function FormResult() {
                 participant.id === participantId
                   ? {
                       ...participant,
-                      // Mapeia o array itemPrices e atualiza o item específico
+
                       itemPrices: participant.itemPrices.map((itemPrice) =>
                         itemPrice.itemId === itemId
-                          ? { ...itemPrice, [field]: value } // field pode ser "price" ou "brand"
+                          ? { ...itemPrice, [field]: value }
                           : itemPrice
                       ),
                     }
@@ -594,17 +640,16 @@ export default function FormResult() {
     }
   }
 
-  // ========== RENDERIZAÇÃO ==========
-
   return (
     <Flex w="100%" py={4} px={5} flexDir="column">
       <Field.Root>
         <SelectTypeDispute
+          hasResult={hasResult}
           value={disputeType}
           onValueChange={handleTypeChange}
+          bidding={bidding}
         />
       </Field.Root>
-
       {disputeType === "item" && (
         <Flex mt={10} justify="center" align="center">
           <Flex flexDir="column" w="100%">
@@ -621,6 +666,9 @@ export default function FormResult() {
                           field,
                           value
                         )
+                      }
+                      deleteItem={() =>
+                        handleDeleteItem(group.groupId, item.itemId)
                       }
                     />
 
@@ -686,13 +734,8 @@ export default function FormResult() {
                           )
                         }
                         itemPrices={participant.itemPrices}
-                        onItemDetailChange={(
-                          itemId,
-                          field,
-                          value // ← NOME CORRETO!
-                        ) =>
+                        onItemDetailChange={(itemId, field, value) =>
                           handleItemDetailChange(
-                            // ← FUNÇÃO CORRETA!
                             group.groupId,
                             participant.id,
                             itemId,
@@ -825,6 +868,9 @@ export default function FormResult() {
                           field,
                           value
                         )
+                      }
+                      deleteItem={() =>
+                        handleDeleteItemToBatch(group.groupId, item.itemId)
                       }
                     />
                   ))}
@@ -987,6 +1033,38 @@ export default function FormResult() {
                     </Tooltip>
                   </Flex>
                 </Flex>
+                <Flex gap={2} ml={3} mt={3} align={"center"}>
+                  <Button
+                    variant="outline"
+                    colorPalette="blue"
+                    size="xs"
+                    h="8"
+                    w="10"
+                    onClick={() => handleDeleteBatch(group.groupId)}
+                    borderRadius="lg"
+                    borderWidth="1.5px"
+                    borderColor="red.200"
+                    bg="transparent"
+                    _hover={{
+                      bg: "red.50",
+                      borderColor: "red.400",
+                      transform: "scale(1.05)",
+                      boxShadow: "0 4px 12px rgba(0, 0, 0, 0.05)",
+                    }}
+                    _active={{
+                      bg: "red.100",
+                      transform: "scale(0.95)",
+                    }}
+                    transition="all 0.2s cubic-bezier(0.4, 0, 0.2, 1)"
+                  >
+                    <Icon color={"red.500"}>
+                      <MdDeleteForever />
+                    </Icon>
+                  </Button>
+                  <Text fontSize="sm" color="gray.600" fontWeight="normal">
+                    Excluir Lote
+                  </Text>
+                </Flex>
               </Flex>
             ))}
           </Flex>
@@ -1010,11 +1088,6 @@ export default function FormResult() {
           </Tooltip>
         </Flex>
       )}
-
-      <Text mt={6} fontSize="sm" whiteSpace="pre-wrap">
-        {disputeType === "item" && JSON.stringify(itemDispute, null, 2)}
-        {disputeType === "batch" && JSON.stringify(batchDispute, null, 2)}
-      </Text>
     </Flex>
   )
 }
