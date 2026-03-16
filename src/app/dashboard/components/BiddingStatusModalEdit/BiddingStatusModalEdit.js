@@ -68,10 +68,48 @@ export default function BiddingStatusModalEdit({
     setShowResultSucess(true)
   }
 
+  // const handleStatusUpdate = async () => {
+  //   if (!selectedStatus) {
+  //     setShowAlertErrorStatus(true)
+
+  //     return
+  //   }
+
+  //   const biddingRef = doc(db, "biddings", biddingData.id)
+
+  //   const updatePayload = {
+  //     updatedAt: Timestamp.now(),
+  //   }
+
+  //   const resultValues = ["win", "loss", "pending"]
+
+  //   if (resultValues.includes(selectedStatus)) {
+  //     updatePayload.result = selectedStatus
+  //     updatePayload.status = "finished"
+  //   } else {
+  //     updatePayload.status = selectedStatus
+  //   }
+
+  //   updatePayload.statusHistory = arrayUnion({
+  //     id: uuidv4(),
+  //     previousStatus: biddingData.status,
+  //     newStatus: updatePayload.status,
+  //     result: updatePayload.result || null,
+  //     note: note || "",
+  //     createdAt: Timestamp.now(),
+  //   })
+
+  //   await updateDoc(biddingRef, updatePayload)
+  //   setShowAlertSucess(true)
+
+  //   setTimeout(() => {
+  //     refresh()
+  //     onClose()
+  //   }, 2000)
+  // }
   const handleStatusUpdate = async () => {
     if (!selectedStatus) {
       setShowAlertErrorStatus(true)
-
       return
     }
 
@@ -90,16 +128,34 @@ export default function BiddingStatusModalEdit({
       updatePayload.status = selectedStatus
     }
 
+    // 👇 TRATAMENTO DA DATA DE REABERTURA
+    if (selectedStatus === "suspended" || selectedStatus === "reopened") {
+      if (!undefinedDate && !reopeningDate) {
+        setShowAlertErrorDate(true)
+        return
+      }
+
+      if (!undefinedDate) {
+        const reopeningDateTime = new Date(`${reopeningDate}T${reopeningTime}`)
+
+        updatePayload.reopeningDate = Timestamp.fromDate(reopeningDateTime)
+      } else {
+        updatePayload.reopeningDate = null
+      }
+    }
+
     updatePayload.statusHistory = arrayUnion({
       id: uuidv4(),
       previousStatus: biddingData.status,
       newStatus: updatePayload.status,
       result: updatePayload.result || null,
       note: note || "",
+      reopeningDate: updatePayload.reopeningDate || null,
       createdAt: Timestamp.now(),
     })
 
     await updateDoc(biddingRef, updatePayload)
+
     setShowAlertSucess(true)
 
     setTimeout(() => {
@@ -160,7 +216,6 @@ export default function BiddingStatusModalEdit({
                     </Text>
                   </Flex>
                 </Flex>
-
                 <Flex
                   p={4}
                   justifyContent={"left"}
@@ -393,6 +448,8 @@ export default function BiddingStatusModalEdit({
                 Salvar
               </Button>
             </Dialog.Footer>
+            {JSON.stringify(biddingData.statusHistory)}
+
             <Dialog.CloseTrigger asChild>
               <CloseButton size="sm" />
             </Dialog.CloseTrigger>
