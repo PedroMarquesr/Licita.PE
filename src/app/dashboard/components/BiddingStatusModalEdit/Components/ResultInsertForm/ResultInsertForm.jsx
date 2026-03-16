@@ -7,7 +7,12 @@ import { TbAlignBoxLeftTopFilled } from "react-icons/tb";
 import FormResult from "./Components/FormResult/FormResult";
 import { motion } from "framer-motion";
 
-export default function ResultInsertForm({ open, bidding, onClose }) {
+export default function ResultInsertForm({
+  open,
+  bidding,
+  onClose,
+  onResultSaved,
+}) {
   const [disputeData, setDisputeData] = useState(null);
 
   const handleDisputeDataChange = (data) => {
@@ -27,6 +32,8 @@ export default function ResultInsertForm({ open, bidding, onClose }) {
         result: disputeData,
         updatedAt: new Date(),
       });
+
+      await onResultSaved();
       console.log("Resultado salvo com sucesso!");
       onClose();
     } catch (error) {
@@ -93,10 +100,9 @@ export default function ResultInsertForm({ open, bidding, onClose }) {
                 <Flex>
                   <FormResult
                     bidding={bidding}
-                    onDataChange={handleDisputeDataChange} // ← Passa a função diretamente
+                    onDataChange={handleDisputeDataChange}
                   />
                 </Flex>
-                {JSON.stringify(disputeData)}
               </Dialog.Body>
             </Dialog.Content>
           </Dialog.Positioner>

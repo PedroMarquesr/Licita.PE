@@ -45,8 +45,13 @@ export default function BiddingStatusModalEdit({
   const [showAlertErrorStatus, setShowAlertErrorStatus] = useState(false);
   const [showAlertErrorDate, setShowAlertErrorDate] = useState(false);
   const [showAlertSucess, setShowAlertSucess] = useState(false);
+  const [showResultSucess, setShowResultSucess] = useState(false);
   const [undefinedDate, setUndefinedDate] = useState(false);
   const [showInsertResult, setShowInsertResult] = useState(false);
+
+  const handleResultSaved = () => {
+    setShowResultSucess(true);
+  };
 
   const handleStatusUpdate = async () => {
     if (!selectedStatus) {
@@ -202,13 +207,19 @@ export default function BiddingStatusModalEdit({
                         <Button
                           onClick={() => setShowInsertResult(!showInsertResult)}
                         >
-                          Inserir Resultado
+                          <Text>
+                            {" "}
+                            {biddingData.result
+                              ? "Editar resultado"
+                              : "Inserir resultado"}
+                          </Text>
                         </Button>
                       </SlideFromTop>
                       <ResultInsertForm
                         bidding={biddingData}
                         open={showInsertResult}
                         onClose={() => setShowInsertResult(!showInsertResult)}
+                        onResultSaved={() => handleResultSaved()}
                       />
                     </Box>
                   )}
@@ -335,6 +346,12 @@ export default function BiddingStatusModalEdit({
                   description={"Status atualizado com sucesso"}
                   status={"success"}
                   openAlert={showAlertSucess}
+                  setOpenAlert={setShowAlertSucess}
+                />
+                <AlertCustom
+                  description={"Resultado inserido com sucesso"}
+                  status={"success"}
+                  openAlert={showResultSucess}
                   setOpenAlert={setShowAlertSucess}
                 />
               </Flex>

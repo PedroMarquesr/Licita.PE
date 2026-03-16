@@ -59,13 +59,29 @@ export default function FormResult({ bidding, onDataChange }) {
   const [disputeType, setDisputeType] = useState("");
 
   useEffect(() => {
+    if (!bidding?.result) return;
+
+    const { type } = bidding.result;
+
+    const timer = setTimeout(() => {
+      if (type === "item") {
+        setItemDispute(bidding.result);
+        setDisputeType("item");
+      } else if (type === "batch") {
+        setBatchDispute(bidding.result);
+        setDisputeType("batch");
+      }
+    }, 0);
+
+    return () => clearTimeout(timer);
+  }, [bidding?.result]);
+
+  useEffect(() => {
     if (!disputeType || !onDataChange) return;
 
-    // Pega o estado completo (já tem type e groups)
     const activeData = disputeType === "item" ? itemDispute : batchDispute;
 
-    // Envia diretamente o objeto completo
-    onDataChange(activeData); // ← Agora envia { type, groups }
+    onDataChange(activeData);
   }, [itemDispute, batchDispute, disputeType, onDataChange]);
 
   // type Item functions
@@ -630,6 +646,7 @@ export default function FormResult({ bidding, onDataChange }) {
         <SelectTypeDispute
           value={disputeType}
           onValueChange={handleTypeChange}
+          bidding={bidding}
         />
       </Field.Root>
       {disputeType === "item" && (
