@@ -1,45 +1,46 @@
-"use client";
-import { Icon, Dialog, Portal, Flex, Button, Text } from "@chakra-ui/react";
-import { doc, updateDoc } from "firebase/firestore";
-import { db } from "@/components/libs/firebaseinit";
-import { useState } from "react";
-import { TbAlignBoxLeftTopFilled } from "react-icons/tb";
-import FormResult from "./Components/FormResult/FormResult";
-import { motion } from "framer-motion";
+"use client"
+import { Icon, Dialog, Portal, Flex, Button, Text } from "@chakra-ui/react"
+import { doc, updateDoc } from "firebase/firestore"
+import { db } from "@/components/libs/firebaseinit"
+import { useState } from "react"
+import { TbAlignBoxLeftTopFilled } from "react-icons/tb"
+import FormResult from "./Components/FormResult/FormResult"
+import { motion } from "framer-motion"
 
 export default function ResultInsertForm({
   open,
   bidding,
   onClose,
   onResultSaved,
+  hasResult,
 }) {
-  const [disputeData, setDisputeData] = useState(null);
+  const [disputeData, setDisputeData] = useState(null)
 
   const handleDisputeDataChange = (data) => {
-    setDisputeData(data);
-  };
+    setDisputeData(data)
+  }
 
   const handleUpdateResult = async () => {
-    const biddingRef = doc(db, "biddings", bidding.id);
+    const biddingRef = doc(db, "biddings", bidding.id)
 
     if (!disputeData) {
-      alert("Insira resultado");
-      return;
+      alert("Insira resultado")
+      return
     }
 
     try {
       await updateDoc(biddingRef, {
         result: disputeData,
         updatedAt: new Date(),
-      });
+      })
 
-      await onResultSaved();
-      console.log("Resultado salvo com sucesso!");
-      onClose();
+      await onResultSaved()
+      console.log("Resultado salvo com sucesso!")
+      onClose()
     } catch (error) {
-      console.log("Erro ao salvar:", error);
+      console.log("Erro ao salvar:", error)
     }
-  };
+  }
 
   const SlideFromTop = ({ children, delay = 0 }) => {
     return (
@@ -51,8 +52,8 @@ export default function ResultInsertForm({
       >
         {children}
       </motion.div>
-    );
-  };
+    )
+  }
 
   return (
     <SlideFromTop>
@@ -99,6 +100,7 @@ export default function ResultInsertForm({
               <Dialog.Body>
                 <Flex>
                   <FormResult
+                    hasResult={hasResult}
                     bidding={bidding}
                     onDataChange={handleDisputeDataChange}
                   />
@@ -109,5 +111,5 @@ export default function ResultInsertForm({
         </Portal>
       </Dialog.Root>
     </SlideFromTop>
-  );
+  )
 }

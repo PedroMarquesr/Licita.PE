@@ -1,18 +1,18 @@
-"use client";
+"use client"
 
-import { Flex, Field, Icon, Button, Text } from "@chakra-ui/react";
-import { Tooltip } from "@/components/ui/tooltip";
+import { Flex, Field, Icon, Button, Text } from "@chakra-ui/react"
+import { Tooltip } from "@/components/ui/tooltip"
 
-import SelectTypeDispute from "./components/SelectTypeDispute/SelectTypeDispute";
-import ResultItemRow from "./components/ResultItemRow/ResultItemRow";
-import ResultParticipantRow from "./components/ResultParticipantRow/ResultParticipantRow";
-import ResultLotItemRow from "./components/LotItemRow/ResultLotItemRow";
+import SelectTypeDispute from "./components/SelectTypeDispute/SelectTypeDispute"
+import ResultItemRow from "./components/ResultItemRow/ResultItemRow"
+import ResultParticipantRow from "./components/ResultParticipantRow/ResultParticipantRow"
+import ResultLotItemRow from "./components/LotItemRow/ResultLotItemRow"
 
-import { FaUserPlus, FaBoxesStacked } from "react-icons/fa6";
-import { BsFillPlusCircleFill } from "react-icons/bs";
-import { MdDeleteForever } from "react-icons/md";
+import { FaUserPlus, FaBoxesStacked } from "react-icons/fa6"
+import { BsFillPlusCircleFill } from "react-icons/bs"
+import { MdDeleteForever } from "react-icons/md"
 
-import { useState, useEffect } from "react";
+import { useState, useEffect } from "react"
 
 const initialItemDispute = {
   type: "item",
@@ -31,7 +31,7 @@ const initialItemDispute = {
       ],
     },
   ],
-};
+}
 
 const initialBatchDispute = {
   type: "batch",
@@ -51,38 +51,38 @@ const initialBatchDispute = {
       ],
     },
   ],
-};
+}
 
-export default function FormResult({ bidding, onDataChange }) {
-  const [itemDispute, setItemDispute] = useState(initialItemDispute);
-  const [batchDispute, setBatchDispute] = useState(initialBatchDispute);
-  const [disputeType, setDisputeType] = useState("");
+export default function FormResult({ bidding, onDataChange, hasResult }) {
+  const [itemDispute, setItemDispute] = useState(initialItemDispute)
+  const [batchDispute, setBatchDispute] = useState(initialBatchDispute)
+  const [disputeType, setDisputeType] = useState("")
 
   useEffect(() => {
-    if (!bidding?.result) return;
+    if (!bidding?.result) return
 
-    const { type } = bidding.result;
+    const { type } = bidding.result
 
     const timer = setTimeout(() => {
       if (type === "item") {
-        setItemDispute(bidding.result);
-        setDisputeType("item");
+        setItemDispute(bidding.result)
+        setDisputeType("item")
       } else if (type === "batch") {
-        setBatchDispute(bidding.result);
-        setDisputeType("batch");
+        setBatchDispute(bidding.result)
+        setDisputeType("batch")
       }
-    }, 0);
+    }, 0)
 
-    return () => clearTimeout(timer);
-  }, [bidding?.result]);
+    return () => clearTimeout(timer)
+  }, [bidding?.result])
 
   useEffect(() => {
-    if (!disputeType || !onDataChange) return;
+    if (!disputeType || !onDataChange) return
 
-    const activeData = disputeType === "item" ? itemDispute : batchDispute;
+    const activeData = disputeType === "item" ? itemDispute : batchDispute
 
-    onDataChange(activeData);
-  }, [itemDispute, batchDispute, disputeType, onDataChange]);
+    onDataChange(activeData)
+  }, [itemDispute, batchDispute, disputeType, onDataChange])
 
   // type Item functions
 
@@ -94,12 +94,12 @@ export default function FormResult({ bidding, onDataChange }) {
           ? {
               ...group,
               items: group.items.map((item) =>
-                item.itemId === itemId ? { ...item, [field]: value } : item,
+                item.itemId === itemId ? { ...item, [field]: value } : item
               ),
             }
-          : group,
+          : group
       ),
-    }));
+    }))
   }
 
   function handleAddParticipant(groupId, itemId) {
@@ -130,35 +130,35 @@ export default function FormResult({ bidding, onDataChange }) {
                         },
                       ],
                     }
-                  : item,
+                  : item
               ),
             }
-          : group,
+          : group
       ),
-    }));
+    }))
   }
 
   function handleDeleteParticipant(groupId, itemId, participantId) {
     setItemDispute((prev) => ({
       ...prev,
       groups: prev.groups.map((group) => {
-        if (group.groupId !== groupId) return group;
+        if (group.groupId !== groupId) return group
 
         return {
           ...group,
           items: group.items.map((item) => {
-            if (item.itemId !== itemId) return item;
+            if (item.itemId !== itemId) return item
 
             return {
               ...item,
               participants: item.participants.filter(
-                (participant) => participant.id !== participantId,
+                (participant) => participant.id !== participantId
               ),
-            };
+            }
           }),
-        };
+        }
       }),
-    }));
+    }))
   }
 
   function handleAddItem(groupId) {
@@ -180,9 +180,9 @@ export default function FormResult({ bidding, onDataChange }) {
                 },
               ],
             }
-          : group,
+          : group
       ),
-    }));
+    }))
   }
 
   function handleDeleteItem(groupId, itemId) {
@@ -193,14 +193,14 @@ export default function FormResult({ bidding, onDataChange }) {
           ? {
               ...group,
               items: group.items.filter((item) => {
-                itemId !== item.itemId;
+                itemId !== item.itemId
               }),
             }
           : {
               group,
-            };
+            }
       }),
-    }));
+    }))
   }
 
   function handleParticipantChange(
@@ -208,7 +208,7 @@ export default function FormResult({ bidding, onDataChange }) {
     itemId,
     participantId,
     field,
-    value,
+    value
   ) {
     setItemDispute((prev) => ({
       ...prev,
@@ -223,27 +223,27 @@ export default function FormResult({ bidding, onDataChange }) {
                       participants: item.participants.map((participant) =>
                         participant.id === participantId
                           ? { ...participant, [field]: value }
-                          : participant,
+                          : participant
                       ),
                     }
-                  : item,
+                  : item
               ),
             }
-          : group,
+          : group
       ),
-    }));
+    }))
   }
 
   function handleSelectSelf(groupId, itemId, participantId, checked) {
     setItemDispute((prev) => ({
       ...prev,
       groups: prev.groups.map((group) => {
-        if (group.groupId !== groupId) return group;
+        if (group.groupId !== groupId) return group
 
         return {
           ...group,
           items: group.items.map((item) => {
-            if (item.itemId !== itemId) return item;
+            if (item.itemId !== itemId) return item
 
             return {
               ...item,
@@ -251,23 +251,23 @@ export default function FormResult({ bidding, onDataChange }) {
                 ...participant,
                 isSelf: checked ? participant.id === participantId : false,
               })),
-            };
+            }
           }),
-        };
+        }
       }),
-    }));
+    }))
   }
 
   function handleSelectWinner(groupId, itemId, participantId, checked) {
     setItemDispute((prev) => ({
       ...prev,
       groups: prev.groups.map((group) => {
-        if (group.groupId !== groupId) return group;
+        if (group.groupId !== groupId) return group
 
         return {
           ...group,
           items: group.items.map((item) => {
-            if (item.itemId !== itemId) return item;
+            if (item.itemId !== itemId) return item
 
             return {
               ...item,
@@ -275,11 +275,11 @@ export default function FormResult({ bidding, onDataChange }) {
                 ...participant,
                 win: checked ? participant.id === participantId : false,
               })),
-            };
+            }
           }),
-        };
+        }
       }),
-    }));
+    }))
   }
 
   function handleSelectDisqualified(groupId, itemId, participantId, checked) {
@@ -302,15 +302,15 @@ export default function FormResult({ bidding, onDataChange }) {
                                 ? participant.disqualificationReason
                                 : "",
                             }
-                          : participant,
+                          : participant
                       ),
                     }
-                  : item,
+                  : item
               ),
             }
-          : group,
+          : group
       ),
-    }));
+    }))
   }
 
   function handleSelectIneligible(groupId, itemId, participantId, checked) {
@@ -333,15 +333,15 @@ export default function FormResult({ bidding, onDataChange }) {
                                 ? participant.ineligibleReason
                                 : "",
                             }
-                          : participant,
+                          : participant
                       ),
                     }
-                  : item,
+                  : item
               ),
             }
-          : group,
+          : group
       ),
-    }));
+    }))
   }
 
   function handleDeleteItem(groupId, itemId) {
@@ -353,9 +353,9 @@ export default function FormResult({ bidding, onDataChange }) {
               ...group,
               items: group.items.filter((item) => item.itemId !== itemId),
             }
-          : group,
+          : group
       ),
-    }));
+    }))
   }
   // type Batch functions
   function handleBatchItemChange(groupId, itemId, field, value) {
@@ -366,12 +366,12 @@ export default function FormResult({ bidding, onDataChange }) {
           ? {
               ...group,
               items: group.items.map((item) =>
-                item.itemId === itemId ? { ...item, [field]: value } : item,
+                item.itemId === itemId ? { ...item, [field]: value } : item
               ),
             }
-          : group,
+          : group
       ),
-    }));
+    }))
   }
   //
 
@@ -395,13 +395,13 @@ export default function FormResult({ bidding, onDataChange }) {
           ],
         },
       ],
-    }));
+    }))
   }
   function handleDeleteBatch(groupId) {
     setBatchDispute((prev) => ({
       ...prev,
       groups: prev.groups.filter((group) => group.groupId !== groupId),
-    }));
+    }))
   }
   function handleAddItemToBatch(groupId) {
     setBatchDispute((prev) => ({
@@ -421,9 +421,9 @@ export default function FormResult({ bidding, onDataChange }) {
                 },
               ],
             }
-          : group,
+          : group
       ),
-    }));
+    }))
   }
 
   function handleDeleteItemToBatch(groupId, itemId) {
@@ -435,9 +435,9 @@ export default function FormResult({ bidding, onDataChange }) {
               ...group,
               items: group.items.filter((item) => item.itemId !== itemId),
             }
-          : group,
+          : group
       ),
-    }));
+    }))
   }
 
   function handleAddParticipantToBatch(groupId) {
@@ -469,9 +469,9 @@ export default function FormResult({ bidding, onDataChange }) {
                 },
               ],
             }
-          : group,
+          : group
       ),
-    }));
+    }))
   }
 
   function handleParticipantChangeBatch(groupId, participantId, field, value) {
@@ -484,19 +484,19 @@ export default function FormResult({ bidding, onDataChange }) {
               participants: group.participants.map((participant) =>
                 participant.id === participantId
                   ? { ...participant, [field]: value }
-                  : participant,
+                  : participant
               ),
             }
-          : group,
+          : group
       ),
-    }));
+    }))
   }
 
   function handleSelectSelfBatch(groupId, participantId, checked) {
     setBatchDispute((prev) => ({
       ...prev,
       groups: prev.groups.map((group) => {
-        if (group.groupId !== groupId) return group;
+        if (group.groupId !== groupId) return group
 
         return {
           ...group,
@@ -504,16 +504,16 @@ export default function FormResult({ bidding, onDataChange }) {
             ...participant,
             isSelf: checked ? participant.id === participantId : false,
           })),
-        };
+        }
       }),
-    }));
+    }))
   }
 
   function handleSelectWinnerBatch(groupId, participantId, checked) {
     setBatchDispute((prev) => ({
       ...prev,
       groups: prev.groups.map((group) => {
-        if (group.groupId !== groupId) return group;
+        if (group.groupId !== groupId) return group
 
         return {
           ...group,
@@ -521,9 +521,9 @@ export default function FormResult({ bidding, onDataChange }) {
             ...participant,
             win: checked ? participant.id === participantId : false,
           })),
-        };
+        }
       }),
-    }));
+    }))
   }
 
   function handleSelectDisqualifiedBatch(groupId, participantId, checked) {
@@ -542,12 +542,12 @@ export default function FormResult({ bidding, onDataChange }) {
                         ? participant.disqualificationReason
                         : "",
                     }
-                  : participant,
+                  : participant
               ),
             }
-          : group,
+          : group
       ),
-    }));
+    }))
   }
 
   function handleSelectIneligibleBatch(groupId, participantId, checked) {
@@ -566,12 +566,12 @@ export default function FormResult({ bidding, onDataChange }) {
                         ? participant.ineligibleReason
                         : "",
                     }
-                  : participant,
+                  : participant
               ),
             }
-          : group,
+          : group
       ),
-    }));
+    }))
   }
 
   function handleDeleteParticipantBatch(groupId, participantId) {
@@ -582,21 +582,21 @@ export default function FormResult({ bidding, onDataChange }) {
           ? {
               ...group,
               participants: group.participants.filter(
-                (participant) => participant.id !== participantId,
+                (participant) => participant.id !== participantId
               ),
             }
-          : group,
+          : group
       ),
-    }));
+    }))
   }
 
   function handleLotNumberChange(groupId, value) {
     setBatchDispute((prev) => ({
       ...prev,
       groups: prev.groups.map((group) =>
-        group.groupId === groupId ? { ...group, lotNumber: value } : group,
+        group.groupId === groupId ? { ...group, lotNumber: value } : group
       ),
-    }));
+    }))
   }
 
   function handleItemDetailChange(
@@ -604,7 +604,7 @@ export default function FormResult({ bidding, onDataChange }) {
     participantId,
     itemId,
     field,
-    value,
+    value
   ) {
     setBatchDispute((prev) => ({
       ...prev,
@@ -620,23 +620,23 @@ export default function FormResult({ bidding, onDataChange }) {
                       itemPrices: participant.itemPrices.map((itemPrice) =>
                         itemPrice.itemId === itemId
                           ? { ...itemPrice, [field]: value }
-                          : itemPrice,
+                          : itemPrice
                       ),
                     }
-                  : participant,
+                  : participant
               ),
             }
-          : group,
+          : group
       ),
-    }));
+    }))
   }
   function handleTypeChange(value) {
-    setDisputeType(value);
+    setDisputeType(value)
 
     if (value === "item") {
-      setItemDispute(initialItemDispute);
+      setItemDispute(initialItemDispute)
     } else if (value === "batch") {
-      setBatchDispute(initialBatchDispute);
+      setBatchDispute(initialBatchDispute)
     }
   }
 
@@ -644,6 +644,7 @@ export default function FormResult({ bidding, onDataChange }) {
     <Flex w="100%" py={4} px={5} flexDir="column">
       <Field.Root>
         <SelectTypeDispute
+          hasResult={hasResult}
           value={disputeType}
           onValueChange={handleTypeChange}
           bidding={bidding}
@@ -663,7 +664,7 @@ export default function FormResult({ bidding, onDataChange }) {
                           group.groupId,
                           item.itemId,
                           field,
-                          value,
+                          value
                         )
                       }
                       deleteItem={() =>
@@ -682,7 +683,7 @@ export default function FormResult({ bidding, onDataChange }) {
                             item.itemId,
                             participant.id,
                             field,
-                            value,
+                            value
                           )
                         }
                         mb={2}
@@ -692,7 +693,7 @@ export default function FormResult({ bidding, onDataChange }) {
                             group.groupId,
                             item.itemId,
                             participant.id,
-                            checked,
+                            checked
                           )
                         }
                         isSelfChecked={participant.isSelf}
@@ -701,7 +702,7 @@ export default function FormResult({ bidding, onDataChange }) {
                             group.groupId,
                             item.itemId,
                             participant.id,
-                            checked,
+                            checked
                           )
                         }
                         winnerChecked={participant.win}
@@ -710,7 +711,7 @@ export default function FormResult({ bidding, onDataChange }) {
                             group.groupId,
                             item.itemId,
                             participant.id,
-                            checked,
+                            checked
                           )
                         }
                         disqualificationChecked={participant.disqualified}
@@ -720,7 +721,7 @@ export default function FormResult({ bidding, onDataChange }) {
                             group.groupId,
                             item.itemId,
                             participant.id,
-                            checked,
+                            checked
                           )
                         }
                         ineligibleChecked={participant.ineligible}
@@ -729,7 +730,7 @@ export default function FormResult({ bidding, onDataChange }) {
                           handleDeleteParticipant(
                             group.groupId,
                             item.itemId,
-                            participant.id,
+                            participant.id
                           )
                         }
                         itemPrices={participant.itemPrices}
@@ -739,7 +740,7 @@ export default function FormResult({ bidding, onDataChange }) {
                             participant.id,
                             itemId,
                             field,
-                            value,
+                            value
                           )
                         }
                       />
@@ -865,7 +866,7 @@ export default function FormResult({ bidding, onDataChange }) {
                           group.groupId,
                           item.itemId,
                           field,
-                          value,
+                          value
                         )
                       }
                       deleteItem={() =>
@@ -887,7 +888,7 @@ export default function FormResult({ bidding, onDataChange }) {
                           group.groupId,
                           participant.id,
                           field,
-                          value,
+                          value
                         )
                       }
                       mb={2}
@@ -896,7 +897,7 @@ export default function FormResult({ bidding, onDataChange }) {
                         handleSelectSelfBatch(
                           group.groupId,
                           participant.id,
-                          checked,
+                          checked
                         )
                       }
                       isSelfChecked={participant.isSelf}
@@ -904,7 +905,7 @@ export default function FormResult({ bidding, onDataChange }) {
                         handleSelectWinnerBatch(
                           group.groupId,
                           participant.id,
-                          checked,
+                          checked
                         )
                       }
                       winnerChecked={participant.win}
@@ -912,7 +913,7 @@ export default function FormResult({ bidding, onDataChange }) {
                         handleSelectDisqualifiedBatch(
                           group.groupId,
                           participant.id,
-                          checked,
+                          checked
                         )
                       }
                       disqualificationChecked={participant.disqualified}
@@ -921,7 +922,7 @@ export default function FormResult({ bidding, onDataChange }) {
                         handleSelectIneligibleBatch(
                           group.groupId,
                           participant.id,
-                          checked,
+                          checked
                         )
                       }
                       ineligibleChecked={participant.ineligible}
@@ -929,7 +930,7 @@ export default function FormResult({ bidding, onDataChange }) {
                       deleteParticipant={() =>
                         handleDeleteParticipantBatch(
                           group.groupId,
-                          participant.id,
+                          participant.id
                         )
                       }
                       groupId={group.groupId}
@@ -940,7 +941,7 @@ export default function FormResult({ bidding, onDataChange }) {
                           participant.id,
                           itemId,
                           field,
-                          value,
+                          value
                         )
                       }
                     />
@@ -1088,5 +1089,5 @@ export default function FormResult({ bidding, onDataChange }) {
         </Flex>
       )}
     </Flex>
-  );
+  )
 }

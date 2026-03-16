@@ -1,15 +1,20 @@
-"use client";
+"use client"
 
-import { NativeSelect, Field, Switch, Flex, Text } from "@chakra-ui/react";
-import { useState, useEffect } from "react";
+import { NativeSelect, Field, Switch, Flex, Text } from "@chakra-ui/react"
+import { useState, useEffect } from "react"
 
-export default function SelectTypeDispute({ onValueChange, value, bidding }) {
-  const [allowEdit, setAllowEdit] = useState(!bidding?.result);
+export default function SelectTypeDispute({
+  onValueChange,
+  value,
+  bidding,
+  hasResult,
+}) {
+  const [allowEdit, setAllowEdit] = useState(!bidding?.result)
 
   const optionsTypeDispute = [
     { label: "Item", value: "item" },
     { label: "Lote", value: "batch" },
-  ];
+  ]
 
   return (
     <Flex align="center" gap={4} w="100%">
@@ -19,7 +24,7 @@ export default function SelectTypeDispute({ onValueChange, value, bidding }) {
           <NativeSelect.Field
             value={value}
             onChange={(e) => onValueChange(e.target.value)}
-            disabled={!allowEdit}
+            disabled={hasResult}
             bg="white"
             color="gray.800"
             borderColor="gray.500"
@@ -51,5 +56,5 @@ export default function SelectTypeDispute({ onValueChange, value, bidding }) {
         </Switch.Root>
       )}
     </Flex>
-  );
+  )
 }
