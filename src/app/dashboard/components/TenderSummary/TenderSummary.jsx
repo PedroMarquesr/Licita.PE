@@ -96,12 +96,23 @@ export default function TenderSummary() {
 
       querySnapshot.forEach((doc) => {
         const data = doc.data()
+
         listaTemporaria.push({
           id: doc.id,
           ...data,
           disputeDate: data.disputeDate?.toDate?.() || data.disputeDate,
+
           formattedDate:
             data.disputeDate?.toDate?.()?.toLocaleDateString("pt-BR") || "",
+
+          formattedTime:
+            data.disputeDate
+              ?.toDate?.()
+              ?.toLocaleTimeString("pt-BR", {
+                hour: "2-digit",
+                minute: "2-digit",
+              })
+              .replace(":", "h") || "",
         })
       })
 
@@ -151,12 +162,23 @@ export default function TenderSummary() {
 
       querySnapshot.forEach((doc) => {
         const data = doc.data()
+
         listaTemporaria.push({
           id: doc.id,
           ...data,
           disputeDate: data.disputeDate?.toDate?.() || data.disputeDate,
+
           formattedDate:
             data.disputeDate?.toDate?.()?.toLocaleDateString("pt-BR") || "",
+
+          formattedTime:
+            data.disputeDate
+              ?.toDate?.()
+              ?.toLocaleTimeString("pt-BR", {
+                hour: "2-digit",
+                minute: "2-digit",
+              })
+              .replace(":", "h") || "",
         })
       })
 
@@ -376,9 +398,6 @@ export default function TenderSummary() {
     setStatusModalEditOpen(true)
   }
 
-  const refreshPage = () => {
-    window.location.reload()
-  }
   return (
     <Flex
       flexDir={"column"}
@@ -507,9 +526,10 @@ export default function TenderSummary() {
                   </GridItem>
                   <GridItem>
                     <Text fontWeight="bold" color="gray.600">
-                      Editar
+                      Horário
                     </Text>
                   </GridItem>
+
                   <GridItem>
                     <Text fontWeight="bold" color="gray.600">
                       Ação
@@ -616,20 +636,22 @@ export default function TenderSummary() {
                     >
                       <Text>{bidding.formattedDate}</Text>
                     </GridItem>
-                    <GridItem fontSize={"x-small"}>
-                      <IconButton
-                        aria-label="Search database"
-                        onClick={() => handleEdit(bidding.id)}
-                        size={"2xs"}
-                      >
-                        <CiEdit />
-                      </IconButton>
+
+                    <GridItem
+                      fontSize={"x-small"}
+                      fontWeight={
+                        checkIfToday(bidding.disputeDate) ? "bold" : "normal"
+                      }
+                    >
+                      <Text>{bidding.formattedTime}</Text>
                     </GridItem>
+
                     <GridItem fontSize={"x-small"}>
-                      {/* ↓ Ação para abrir o menu de calendário, passando o ID da licitação */}
+                      {/* ↓↓↓↓ Vamos rever isso */}
                       <BiddingCalendarMenu
                         biddingId={bidding.id}
                         onClickAt={() => handleOpenStatusModal(bidding.id)}
+                        handleEdit={() => handleEdit(bidding.id)}
                       />
                     </GridItem>
                   </Grid>
@@ -655,8 +677,6 @@ export default function TenderSummary() {
                     colorStatus={
                       bidding.status === "finished"
                         ? "green.800"
-                        : bidding.status === "finished"
-                        ? "red.800"
                         : bidding.status === "suspended"
                         ? "yellow.800"
                         : bidding.status === "Aguardando atualização"
@@ -676,6 +696,13 @@ export default function TenderSummary() {
                     }
                     biddingStatus={getBiddingDisplayStatus(bidding) || "N/A"}
                     biddingType={bidding.biddingType}
+                    menu={
+                      <BiddingCalendarMenu
+                        biddingId={bidding.id}
+                        onClickAt={() => handleOpenStatusModal(bidding.id)}
+                        handleEdit={() => handleEdit(bidding.id)}
+                      />
+                    }
                   />
                 </Box>
               ))}
