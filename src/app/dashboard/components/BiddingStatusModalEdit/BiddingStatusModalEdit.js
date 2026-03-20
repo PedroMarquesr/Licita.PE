@@ -408,7 +408,7 @@ export default function BiddingStatusModalEdit({
                 Salvar
               </Button>
             </Dialog.Footer>
-            {JSON.stringify(biddingData.statusHistory)}
+            {/* {JSON.stringify(biddingData.statusHistory)} */}
 
             <Dialog.CloseTrigger asChild>
               <CloseButton size="sm" />
