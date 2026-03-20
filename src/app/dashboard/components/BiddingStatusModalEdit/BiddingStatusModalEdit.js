@@ -68,45 +68,6 @@ export default function BiddingStatusModalEdit({
     setShowResultSucess(true)
   }
 
-  // const handleStatusUpdate = async () => {
-  //   if (!selectedStatus) {
-  //     setShowAlertErrorStatus(true)
-
-  //     return
-  //   }
-
-  //   const biddingRef = doc(db, "biddings", biddingData.id)
-
-  //   const updatePayload = {
-  //     updatedAt: Timestamp.now(),
-  //   }
-
-  //   const resultValues = ["win", "loss", "pending"]
-
-  //   if (resultValues.includes(selectedStatus)) {
-  //     updatePayload.result = selectedStatus
-  //     updatePayload.status = "finished"
-  //   } else {
-  //     updatePayload.status = selectedStatus
-  //   }
-
-  //   updatePayload.statusHistory = arrayUnion({
-  //     id: uuidv4(),
-  //     previousStatus: biddingData.status,
-  //     newStatus: updatePayload.status,
-  //     result: updatePayload.result || null,
-  //     note: note || "",
-  //     createdAt: Timestamp.now(),
-  //   })
-
-  //   await updateDoc(biddingRef, updatePayload)
-  //   setShowAlertSucess(true)
-
-  //   setTimeout(() => {
-  //     refresh()
-  //     onClose()
-  //   }, 2000)
-  // }
   const handleStatusUpdate = async () => {
     if (!selectedStatus) {
       setShowAlertErrorStatus(true)
@@ -128,7 +89,6 @@ export default function BiddingStatusModalEdit({
       updatePayload.status = selectedStatus
     }
 
-    // 👇 TRATAMENTO DA DATA DE REABERTURA
     if (selectedStatus === "suspended" || selectedStatus === "reopened") {
       if (!undefinedDate && !reopeningDate) {
         setShowAlertErrorDate(true)

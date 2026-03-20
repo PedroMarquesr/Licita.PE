@@ -58,7 +58,7 @@ export default function OverviewSimple() {
       overflow="hidden"
     >
       <HeaderPage
-        titleHeader="Dashboard"
+        titleHeader="Página inicial"
         subTitleHeader="Visão geral das licitações e atividades recentes"
       />
 

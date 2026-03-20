@@ -34,7 +34,7 @@ export default function MenuDashboardMb() {
   }
 
   const menuItems = [
-    { icon: MdDashboard, label: "Dashboard", link: "/dashboard" },
+    { icon: MdDashboard, label: "Página inicial", link: "/dashboard" },
     {
       icon: FaPlus,
       label: "Cadastro de licitação",
