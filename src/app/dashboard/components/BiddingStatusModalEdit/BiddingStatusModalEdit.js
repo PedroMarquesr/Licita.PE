@@ -64,6 +64,7 @@ export default function BiddingStatusModalEdit({
 
     return false;
   };
+
   const handleResultSaved = () => {
     setShowResultSucess(true);
   };

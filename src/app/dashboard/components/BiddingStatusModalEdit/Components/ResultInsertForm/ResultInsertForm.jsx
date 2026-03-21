@@ -1,11 +1,19 @@
-"use client"
-import { Icon, Dialog, Portal, Flex, Button, Text } from "@chakra-ui/react"
-import { doc, updateDoc } from "firebase/firestore"
-import { db } from "@/components/libs/firebaseinit"
-import { useState } from "react"
-import { TbAlignBoxLeftTopFilled } from "react-icons/tb"
-import FormResult from "./Components/FormResult/FormResult"
-import { motion } from "framer-motion"
+"use client";
+import {
+  Icon,
+  Dialog,
+  Portal,
+  Flex,
+  Button,
+  Text,
+  Box,
+} from "@chakra-ui/react";
+import { doc, updateDoc } from "firebase/firestore";
+import { db } from "@/components/libs/firebaseinit";
+import { useState } from "react";
+import { TbAlignBoxLeftTopFilled } from "react-icons/tb";
+import FormResult from "./Components/FormResult/FormResult";
+import { motion } from "framer-motion";
 
 export default function ResultInsertForm({
   open,
@@ -14,33 +22,33 @@ export default function ResultInsertForm({
   onResultSaved,
   hasResult,
 }) {
-  const [disputeData, setDisputeData] = useState(null)
+  const [disputeData, setDisputeData] = useState(null);
 
   const handleDisputeDataChange = (data) => {
-    setDisputeData(data)
-  }
+    setDisputeData(data);
+  };
 
   const handleUpdateResult = async () => {
-    const biddingRef = doc(db, "biddings", bidding.id)
+    const biddingRef = doc(db, "biddings", bidding.id);
 
     if (!disputeData) {
-      alert("Insira resultado")
-      return
+      alert("Insira resultado");
+      return;
     }
 
     try {
       await updateDoc(biddingRef, {
         result: disputeData,
         updatedAt: new Date(),
-      })
+      });
 
-      await onResultSaved()
-      console.log("Resultado salvo com sucesso!")
-      onClose()
+      await onResultSaved();
+      console.log("Resultado salvo com sucesso!");
+      onClose();
     } catch (error) {
-      console.log("Erro ao salvar:", error)
+      console.log("Erro ao salvar:", error);
     }
-  }
+  };
 
   const SlideFromTop = ({ children, delay = 0 }) => {
     return (
@@ -52,8 +60,8 @@ export default function ResultInsertForm({
       >
         {children}
       </motion.div>
-    )
-  }
+    );
+  };
 
   return (
     <SlideFromTop>
@@ -69,32 +77,38 @@ export default function ResultInsertForm({
               w={"full"}
             >
               <Dialog.Header>
-                <Flex justifyContent={"space-between"} w={"100%"}>
-                  <Flex align={"center"} gap={3}>
-                    <Icon size={"xl"} colorPalette={"blue"} color={"blue.600"}>
-                      <TbAlignBoxLeftTopFilled />
-                    </Icon>
-                    <Dialog.Title>Inserir resultado</Dialog.Title>
-                    <Dialog.Title color={"blue.800"} textStyle={"underline"}>
-                      {`${bidding?.responsibleAgency} - ${bidding?.identificationNumber}`}
-                    </Dialog.Title>
+                <Flex flexDir={{ base: "column", md: "row" }}>
+                  <Flex justifyContent={"space-between"} w={"100%"}>
+                    <Flex align={"center"} gap={3}>
+                      <Icon
+                        size={"xl"}
+                        colorPalette={"blue"}
+                        color={"blue.600"}
+                      >
+                        <TbAlignBoxLeftTopFilled />
+                      </Icon>
+                      <Dialog.Title>Inserir resultado</Dialog.Title>
+                      <Dialog.Title color={"blue.800"} textStyle={"underline"}>
+                        {`${bidding?.responsibleAgency} - ${bidding?.identificationNumber}`}
+                      </Dialog.Title>
+                    </Flex>
                   </Flex>
-                </Flex>
-                <Flex gap={2}>
-                  <Button
-                    colorPalette={"red"}
-                    onClick={() => onClose()}
-                    size={"sm"}
-                  >
-                    <Text>Cancelar</Text>
-                  </Button>
-                  <Button
-                    colorPalette={"blue"}
-                    onClick={handleUpdateResult}
-                    size={"sm"}
-                  >
-                    <Text>Salvar</Text>
-                  </Button>
+                  <Flex gap={2}>
+                    <Button
+                      colorPalette={"red"}
+                      onClick={() => onClose()}
+                      size={"sm"}
+                    >
+                      <Text>Cancelar</Text>
+                    </Button>
+                    <Button
+                      colorPalette={"blue"}
+                      onClick={handleUpdateResult}
+                      size={"sm"}
+                    >
+                      <Text>Salvar</Text>
+                    </Button>
+                  </Flex>
                 </Flex>
               </Dialog.Header>
               <Dialog.Body>
@@ -111,5 +125,5 @@ export default function ResultInsertForm({
         </Portal>
       </Dialog.Root>
     </SlideFromTop>
-  )
+  );
 }

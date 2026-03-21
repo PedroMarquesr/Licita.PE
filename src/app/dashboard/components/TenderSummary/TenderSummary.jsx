@@ -83,7 +83,6 @@ export default function TenderSummary() {
       querySnapshot.forEach((doc) => {
         const data = doc.data();
 
-        // Função para converter data para Date
         const toDate = (dateValue) => {
           if (!dateValue) return null;
           if (dateValue.toDate) return dateValue.toDate();
@@ -92,7 +91,6 @@ export default function TenderSummary() {
           return null;
         };
 
-        // PRIORIDADE: usar reopeningDate se existir, senão usa disputeDate
         let displayDate = null;
         let displayDateValue = null;
 
@@ -124,7 +122,14 @@ export default function TenderSummary() {
         });
       });
 
-      setBiddings(listaTemporaria);
+      const hiddenBiddings =
+        JSON.parse(localStorage.getItem("hiddenBiddings")) || [];
+
+      const listaFiltrada = listaTemporaria.filter(
+        (item) => !hiddenBiddings.includes(item.id),
+      );
+
+      setBiddings(listaFiltrada);
     } catch (error) {
       console.error("Erro ao buscar dados: ", error);
       if (error.code === "failed-precondition") {
@@ -209,13 +214,32 @@ export default function TenderSummary() {
         });
       });
 
-      setBiddings(listaTemporaria);
+      const hiddenBiddings =
+        JSON.parse(localStorage.getItem("hiddenBiddings")) || [];
+
+      const listaFiltrada = listaTemporaria.filter(
+        (item) => !hiddenBiddings.includes(item.id),
+      );
+
+      setBiddings(listaFiltrada);
     } catch (error) {
       console.error("Erro na busca alternativa: ", error);
       setError(error.message);
     } finally {
       setLoading(false);
     }
+  };
+  const deleteBidding = (id) => {
+    const newBiddings = biddings.filter((bidding) => bidding.id !== id);
+    setBiddings(newBiddings);
+
+    const hiddenBiddings =
+      JSON.parse(localStorage.getItem("hiddenBiddings")) || [];
+
+    localStorage.setItem(
+      "hiddenBiddings",
+      JSON.stringify([...hiddenBiddings, id]),
+    );
   };
 
   useEffect(() => {
@@ -365,7 +389,6 @@ export default function TenderSummary() {
       setModalOpen(false);
       setEdit(false);
 
-      // Recarregar os dados
       if (timeRange === "week") {
         fetchBiddingsByWeek();
       } else {
@@ -642,6 +665,7 @@ export default function TenderSummary() {
                         biddingId={bidding.id}
                         onClickAt={() => handleOpenStatusModal(bidding.id)}
                         handleEdit={() => handleEdit(bidding.id)}
+                        deleteBidding={() => deleteBidding(bidding.id)}
                       />
                     </GridItem>
                   </Grid>
