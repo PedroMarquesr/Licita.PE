@@ -1,19 +1,20 @@
-"use client"
+"use client";
 
-import { Button, Menu, Text, Flex, Box } from "@chakra-ui/react"
-import { useRouter } from "next/navigation"
-import { HiOutlineDotsVertical } from "react-icons/hi"
-import { MdEdit } from "react-icons/md"
-import { FaTrash } from "react-icons/fa"
-import { FaMagnifyingGlass } from "react-icons/fa6"
-import { TbPlayerTrackNextFilled } from "react-icons/tb"
+import { Button, Menu, Text, Flex, Box } from "@chakra-ui/react";
+import { useRouter } from "next/navigation";
+import { HiOutlineDotsVertical } from "react-icons/hi";
+import { MdEdit } from "react-icons/md";
+import { FaTrash } from "react-icons/fa";
+import { FaMagnifyingGlass } from "react-icons/fa6";
+import { TbPlayerTrackNextFilled } from "react-icons/tb";
 
 export default function BiddingCalendarMenu({
   biddingId,
   onClickAt,
   handleEdit,
+  deleteBidding,
 }) {
-  const router = useRouter()
+  const router = useRouter();
 
   return (
     <Menu.Root positioning={{ placement: "bottom-end" }}>
@@ -114,6 +115,7 @@ export default function BiddingCalendarMenu({
             <Menu.Separator my={1} borderColor="gray.200" />
 
             <Menu.Item
+              onClick={deleteBidding}
               value="delete"
               py={2}
               px={3}
@@ -134,5 +136,5 @@ export default function BiddingCalendarMenu({
         </Menu.Content>
       </Menu.Positioner>
     </Menu.Root>
-  )
+  );
 }
