@@ -716,6 +716,7 @@ export default function TenderSummary() {
                         biddingId={bidding.id}
                         onClickAt={() => handleOpenStatusModal(bidding.id)}
                         handleEdit={() => handleEdit(bidding.id)}
+                        deleteBidding={() => deleteBidding(bidding.id)}
                       />
                     }
                   />
