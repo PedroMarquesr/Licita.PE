@@ -77,7 +77,11 @@ export default function ResultInsertForm({
               w={"full"}
             >
               <Dialog.Header>
-                <Flex flexDir={{ base: "column", md: "row" }}>
+                <Flex
+                  flexDir={{ base: "column", md: "row" }}
+                  justify={"space-evenly"}
+                  w={"100%"}
+                >
                   <Flex justifyContent={"space-between"} w={"100%"}>
                     <Flex align={"center"} gap={3}>
                       <Icon
