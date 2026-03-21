@@ -1,6 +1,6 @@
-"use client"
+"use client";
 
-import { Box, Flex, Text, Badge } from "@chakra-ui/react"
+import { Box, Flex, Text, Badge } from "@chakra-ui/react";
 
 export default function MobileCardTenderSummary({
   bgColor,
@@ -14,6 +14,7 @@ export default function MobileCardTenderSummary({
   biddingStatus,
   biddingType,
   menu,
+  formattedTime,
 }) {
   return (
     <Box
@@ -42,8 +43,10 @@ export default function MobileCardTenderSummary({
       </Text>
 
       <Flex justify="space-between" align="center">
-        <Text fontSize="xs">{dateFormated}</Text>
-
+        <Box>
+          <Text fontSize="xs">{dateFormated}</Text>
+          <Text fontSize="xs">{formattedTime}</Text>
+        </Box>
         <Badge
           bg={bgColorStatus}
           color={colorStatus}
@@ -62,5 +65,5 @@ export default function MobileCardTenderSummary({
         </Flex>
       )}
     </Box>
-  )
+  );
 }
