@@ -13,7 +13,7 @@ import {
 } from "@chakra-ui/react";
 import { FaChevronDown } from "react-icons/fa";
 
-export default function InputsFilters() {
+export default function InputsFilters({ filters, setFilters }) {
   return (
     <Flex
       gap={6}

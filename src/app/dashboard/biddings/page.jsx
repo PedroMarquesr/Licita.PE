@@ -16,47 +16,33 @@ import HeaderPage from "../components/HeaderPage/HeaderPage";
 import StatusTabs from "./components/StatusTabs/StatusTabs";
 import InputsFilters from "./components/InputsFilters/InputsFilters";
 import TitleRows from "./components/TitleRows/TitleRows";
-import BiddingCalendar from "../components/BiddingCalendar/BiddingCalendar";
-import { FiMoreVertical } from "react-icons/fi";
-
+import BiddingCalendarMenu from "../components/BiddingCalendar/components/BiddingCalendarMenu/BiddingCalendarMenu";
+import { getBiddingDisplayStatus } from "@/utils/biddingStatus";
 import { collection, getDocs, query } from "firebase/firestore";
 import { db } from "@/components/libs/firebaseinit";
 
 import { useState, useEffect } from "react";
 
 export default function BiddingPage() {
+  const [biddings, setBiddings] = useState([]);
+  const [filters, setFilters] = useState({
+    search: "",
+    status: "",
+  });
+
   const getDisputeDate = (data) => {
     const value = data.disputeDate;
 
-    if (value.toDate) return value.toDate(); // Timestamp Firestore
+    if (value.toDate) return value.toDate();
     if (value.seconds) return new Date(value.seconds * 1000);
     if (value instanceof Date) return value;
   };
-  const [biddings, setBiddings] = useState([]);
-  const [filters, setFilters] = useState({});
 
   useEffect(() => {
     async function fetchData() {
       try {
         const q = query(collection(db, "biddings"));
         const snapshot = await getDocs(q);
-
-        // const list = snapshot.docs.map((doc) => ({
-        //   id: doc.id,
-        //   displayDate: displayDate,
-        //   formattedDate: displayDate
-        //     ? displayDate.toLocaleDateString("pt-BR")
-        //     : "",
-        //   formattedTime: displayDate
-        //     ? displayDate
-        //         .toLocaleTimeString("pt-BR", {
-        //           hour: "2-digit",
-        //           minute: "2-digit",
-        //         })
-        //         .replace(":", "h")
-        //     : "",
-        //   ...doc.data(),
-        // }));
 
         const list = snapshot.docs.map((doc) => {
           const data = doc.data();
@@ -65,6 +51,7 @@ export default function BiddingPage() {
 
           return {
             id: doc.id,
+
             ...data,
             displayDate,
             formattedDate: displayDate
@@ -89,6 +76,58 @@ export default function BiddingPage() {
     fetchData();
   }, []);
 
+  const filteredBiddings = biddings.filter((bidding) => {
+    const matchesSearch =
+      !filters.search ||
+      bidding.identificationNumber
+        ?.toLowerCase()
+        .includes(filters.search.toLowerCase()) ||
+      bidding.responsibleAgency
+        ?.toLowerCase()
+        .includes(filters.search.toLowerCase());
+
+    let matchesStatus = true;
+
+    if (filters.status === "VENCEDOR") {
+      matchesStatus = isWinner(bidding);
+    } else if (filters.status) {
+      matchesStatus = getBiddingDisplayStatus(bidding) === filters.status;
+    }
+
+    return matchesSearch && matchesStatus;
+  });
+
+  const suspendedCount = biddings.filter((bidding) => {
+    return getBiddingDisplayStatus(bidding) === "Suspensa";
+  }).length;
+
+  const finishedCount = biddings.filter((bidding) => {
+    return getBiddingDisplayStatus(bidding) === "Finalizada";
+  }).length;
+
+  const inProgressCount = biddings.filter((bidding) => {
+    return getBiddingDisplayStatus(bidding) === "Aguardando atualização";
+  }).length;
+
+  const underAnalysisCount = biddings.filter((bidding) => {
+    return getBiddingDisplayStatus(bidding) === "Aguardando aprovação";
+  }).length;
+
+  function isWinner(bidding) {
+    return bidding.groups?.some((group) =>
+      group.items?.some((item) =>
+        item.participants?.some(
+          (participant) => participant.isSelf && participant.win === true,
+        ),
+      ),
+    );
+  }
+
+  // Eu tenho o atributo isWinner, acredito que ja consigo usar o length
+  // Não esquece de ver isso
+
+  const winnerCount = biddings.filter(isWinner).length;
+
   return (
     <Flex flexDir="column" w="100%" minH="100vh" bg="gray.50">
       <HeaderPage
@@ -106,27 +145,57 @@ export default function BiddingPage() {
         py={{ base: "4", md: "6" }}
       >
         <Flex gap={3} flexWrap="wrap" justify="center" w="100%">
-          <StatusTabs statusName={"Todos"} icon={"all"} amount={"5"} />
+          <StatusTabs
+            statusName={"Todos"}
+            icon={"all"}
+            amount={biddings.length}
+            isActive={filters.status === ""}
+            onClick={() => setFilters({ ...filters, status: "" })}
+          />
           <StatusTabs
             statusName={"Em andamento"}
             icon={"inProgress"}
-            amount={"5"}
+            amount={inProgressCount}
+            isActive={filters.status === "Aguardando atualização"}
+            onClick={() =>
+              setFilters({ ...filters, status: "Aguardando atualização" })
+            }
           />
           <StatusTabs
             statusName={"Em análise"}
             icon={"underAnalysis"}
-            amount={"5"}
+            amount={underAnalysisCount}
+            isActive={filters.status === "Aguardando aprovação"}
+            onClick={() =>
+              setFilters({ ...filters, status: "Aguardando aprovação" })
+            }
           />
           <StatusTabs
             statusName={"Finalizadas"}
+            isActive={filters.status === "Finalizada"}
             icon={"finished"}
-            amount={"5"}
+            amount={finishedCount}
+            onClick={() => setFilters({ ...filters, status: "Finalizada" })}
           />
-          <StatusTabs statusName={"Vencidos"} icon={"victory"} amount={"5"} />
+
+          <StatusTabs
+            statusName={"Vencidos"}
+            icon={"victory"}
+            amount={winnerCount}
+            isActive={filters.status === "VENCEDOR"}
+            onClick={() => setFilters({ ...filters, status: "VENCEDOR" })}
+          />
+          <StatusTabs
+            statusName={"Suspensos"}
+            icon={"suspended"}
+            isActive={filters.status === "Suspensa"}
+            amount={suspendedCount}
+            onClick={() => setFilters({ ...filters, status: "Suspensa" })}
+          />
         </Flex>
 
         <Flex w="100%" mt={6} justify="center">
-          <InputsFilters />
+          <InputsFilters filters={filters} setFilters={setFilters} />
         </Flex>
 
         <Separator my={6} borderColor="gray.200" borderWidth="1px" />
@@ -144,13 +213,13 @@ export default function BiddingPage() {
         >
           <TitleRows />
 
-          {biddings.map((bidding, index) => (
+          {filteredBiddings.map((bidding, index) => (
             <Grid
               key={bidding.id}
               templateColumns="repeat(7, 1fr)"
               gap={4}
               px={6}
-              py={4}
+              py={2}
               borderBottomWidth={index < biddings.length - 1 ? "1px" : "0"}
               borderBottomColor="gray.100"
               _hover={{ bg: "gray.50" }}
@@ -172,24 +241,24 @@ export default function BiddingPage() {
               <Box>
                 <Badge
                   bg={
-                    bidding.status === "Em andamento"
+                    getBiddingDisplayStatus(bidding) === "Em andamento"
                       ? "blue.50"
-                      : bidding.status === "Em análise"
+                      : getBiddingDisplayStatus(bidding) === "Suspensa"
                         ? "yellow.50"
-                        : bidding.status === "Finalizada"
+                        : getBiddingDisplayStatus(bidding) === "Finalizada"
                           ? "green.50"
                           : bidding.status === "Vencida"
                             ? "red.50"
                             : "gray.50"
                   }
                   color={
-                    bidding.status === "Em andamento"
+                    getBiddingDisplayStatus(bidding) === "Em andamento"
                       ? "blue.700"
-                      : bidding.status === "Em análise"
+                      : getBiddingDisplayStatus(bidding) === "Suspensa"
                         ? "yellow.700"
-                        : bidding.status === "Finalizada"
+                        : getBiddingDisplayStatus(bidding) === "Finalizada"
                           ? "green.700"
-                          : bidding.status === "Vencida"
+                          : getBiddingDisplayStatus(bidding) === "Vencida"
                             ? "red.700"
                             : "gray.600"
                   }
@@ -199,7 +268,7 @@ export default function BiddingPage() {
                   fontSize="xs"
                   fontWeight="medium"
                 >
-                  {bidding.status || "Pendente"}
+                  {getBiddingDisplayStatus(bidding) || "Pendente"}
                 </Badge>
               </Box>
               <Flex direction="column">
@@ -212,18 +281,12 @@ export default function BiddingPage() {
                   </Text>
                 )}
               </Flex>
-              <Button
-                variant="ghost"
-                size="sm"
-                color="gray.500"
-                _hover={{ bg: "gray.100", color: "blue.600" }}
-                p={2}
-                minW="auto"
-                h="auto"
-                borderRadius="md"
-              >
-                <Icon as={FiMoreVertical} boxSize={4} />
-              </Button>
+              <BiddingCalendarMenu
+                biddingId={bidding.id}
+                onClickAt={() => handleOpenStatusModal(bidding.id)}
+                handleEdit={() => handleEdit(bidding.id)}
+                deleteBidding={() => deleteBidding(bidding.id)}
+              />
             </Grid>
           ))}
         </Flex>
@@ -232,7 +295,7 @@ export default function BiddingPage() {
             Nenhum processo encontrado
           </Text>
         ) : (
-          <Text>{biddings.length} processos carregados</Text>
+          <Text>{filteredBiddings.length} processos encontrados</Text>
         )}
       </Flex>
     </Flex>
