@@ -27,6 +27,7 @@ import {
   getDocs,
   query,
   doc,
+  deleteDoc,
   updateDoc,
   Timestamp,
 } from "firebase/firestore";
@@ -35,7 +36,6 @@ import useStore from "@/components/globalStates/store";
 import { useRouter } from "next/navigation";
 
 import { useState, useEffect } from "react";
-import Home from "@/app/page";
 
 export default function BiddingPage() {
   const user = useStore((state) => state.user);
@@ -54,6 +54,10 @@ export default function BiddingPage() {
   const [biddings, setBiddings] = useState([]);
   const [loading, setLoading] = useState(true);
 
+  // ✅ Estado para o modal de confirmação de exclusão
+  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
+  const [biddingToDelete, setBiddingToDelete] = useState(null);
+
   const [filters, setFilters] = useState({
     search: "",
     status: "",
@@ -62,9 +66,38 @@ export default function BiddingPage() {
     modalidadeFilter: "",
   });
 
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+  useEffect(() => {
+    if (!user) {
+      router.push("/");
+    }
+  }, [user]);
+
+  // ✅ Abre o modal de confirmação guardando o id a ser deletado
+  const handleDeleteClick = (biddingId) => {
+    setBiddingToDelete(biddingId);
+    setDeleteModalOpen(true);
+  };
+
+  const deleteBiddingOfApp = async () => {
+    try {
+      await deleteDoc(doc(db, "biddings", biddingToDelete));
+      setBiddings((prev) =>
+        prev.filter((bidding) => bidding.id !== biddingToDelete),
+      );
+    } catch (error) {
+      console.error("Erro ao deletar processo:", error);
+    } finally {
+      setDeleteModalOpen(false);
+      setBiddingToDelete(null);
+    }
+  };
+
   const getDisputeDate = (data) => {
     const value = data.disputeDate;
-
     if (value.toDate) return value.toDate();
     if (value.seconds) return new Date(value.seconds * 1000);
     if (value instanceof Date) return value;
@@ -74,17 +107,9 @@ export default function BiddingPage() {
     if (!dateString) return null;
 
     try {
-      if (dateString?.toDate) {
-        return dateString;
-      }
-
-      if (dateString instanceof Date) {
-        return Timestamp.fromDate(dateString);
-      }
-
-      if (dateString?.seconds) {
-        return dateString;
-      }
+      if (dateString?.toDate) return dateString;
+      if (dateString instanceof Date) return Timestamp.fromDate(dateString);
+      if (dateString?.seconds) return dateString;
 
       const dateTimeString =
         timeString && timeString !== "00:00"
@@ -147,9 +172,7 @@ export default function BiddingPage() {
           disputeDateValue,
           disputeTimeValue,
         );
-        if (disputeTimestamp) {
-          updateData.disputeDate = disputeTimestamp;
-        }
+        if (disputeTimestamp) updateData.disputeDate = disputeTimestamp;
 
         const proposalDateValue = updatedBidding.proposalDeadlineDate;
         const proposalTimeValue =
@@ -158,13 +181,11 @@ export default function BiddingPage() {
           proposalDateValue,
           proposalTimeValue,
         );
-        if (proposalTimestamp) {
+        if (proposalTimestamp)
           updateData.proposalDeadlineDate = proposalTimestamp;
-        }
       }
 
       await updateDoc(biddingRef, updateData);
-      console.log("Documento atualizado com sucesso!");
 
       setModalOpen(false);
       setEdit(false);
@@ -196,7 +217,6 @@ export default function BiddingPage() {
 
       const list = snapshot.docs.map((doc) => {
         const data = doc.data();
-
         const displayDate = getDisputeDate(data);
 
         return {
@@ -214,7 +234,6 @@ export default function BiddingPage() {
                 })
                 .replace(":", "h")
             : "",
-
           isWinner: data.isWinner ?? checkIsWinner(data),
         };
       });
@@ -226,10 +245,6 @@ export default function BiddingPage() {
       setLoading(false);
     }
   };
-
-  useEffect(() => {
-    fetchData();
-  }, []);
 
   const handleOpenStatusModal = (biddingId) => {
     const selectedBidding = biddings.find((b) => b.id === biddingId);
@@ -244,10 +259,6 @@ export default function BiddingPage() {
       setModalOpen(true);
       setShowButtonEdit(true);
     }
-  };
-
-  const deleteBidding = (biddingId) => {
-    console.log("Deletar licitação:", biddingId);
   };
 
   const filteredBiddings = biddings.filter((bidding) => {
@@ -274,7 +285,6 @@ export default function BiddingPage() {
       !filters.modalidadeFilter ||
       bidding.biddingType === filters.modalidadeFilter;
 
-    // ✅ CORREÇÃO: isWinner agora é lido corretamente, então esse filtro funciona
     let matchesStatus = true;
 
     if (filters.status === "VENCEDOR") {
@@ -294,25 +304,23 @@ export default function BiddingPage() {
     );
   });
 
-  const suspendedCount = biddings.filter((bidding) => {
-    return getBiddingDisplayStatus(bidding) === "Suspensa";
-  }).length;
-
-  const finishedCount = biddings.filter((bidding) => {
-    return getBiddingDisplayStatus(bidding) === "Finalizada";
-  }).length;
-
-  const inProgressCount = biddings.filter((bidding) => {
-    return getBiddingDisplayStatus(bidding) === "Aguardando atualização";
-  }).length;
-
-  const underAnalysisCount = biddings.filter((bidding) => {
-    return getBiddingDisplayStatus(bidding) === "Aguardando aprovação";
-  }).length;
-
-  const winnerCount = biddings.filter(
-    (bidding) => bidding.isWinner === true,
+  const suspendedCount = biddings.filter(
+    (b) => getBiddingDisplayStatus(b) === "Suspensa",
   ).length;
+
+  const finishedCount = biddings.filter(
+    (b) => getBiddingDisplayStatus(b) === "Finalizada",
+  ).length;
+
+  const inProgressCount = biddings.filter(
+    (b) => getBiddingDisplayStatus(b) === "Aguardando atualização",
+  ).length;
+
+  const underAnalysisCount = biddings.filter(
+    (b) => getBiddingDisplayStatus(b) === "Aguardando aprovação",
+  ).length;
+
+  const winnerCount = biddings.filter((b) => b.isWinner === true).length;
 
   if (loading) {
     return (
@@ -331,9 +339,7 @@ export default function BiddingPage() {
       </Flex>
     );
   }
-  if (!user) {
-    return router.push("/");
-  }
+
   return (
     <Flex flexDir="column" w="100%" minH="100vh" bg="gray.50">
       <HeaderPage
@@ -436,7 +442,6 @@ export default function BiddingPage() {
               <Text fontSize="sm" fontWeight="medium" color="gray.800">
                 {bidding.identificationNumber || "—"}
               </Text>
-
               <Text fontSize="sm" color="gray.600">
                 {bidding.biddingType || "—"}
               </Text>
@@ -493,7 +498,7 @@ export default function BiddingPage() {
                 biddingId={bidding.id}
                 onClickAt={() => handleOpenStatusModal(bidding.id)}
                 handleEdit={() => handleEdit(bidding.id)}
-                deleteBidding={() => deleteBidding(bidding.id)}
+                deleteBidding={() => handleDeleteClick(bidding.id)}
               />
             </Grid>
           ))}
@@ -507,6 +512,59 @@ export default function BiddingPage() {
           <Text>{filteredBiddings.length} processos encontrados</Text>
         )}
       </Flex>
+
+      {/* ✅ Modal de Confirmação de Exclusão */}
+      <Dialog.Root
+        open={deleteModalOpen}
+        onOpenChange={(e) => setDeleteModalOpen(e.open)}
+        motionPreset="scale"
+      >
+        <Portal>
+          <Dialog.Backdrop />
+          <Dialog.Positioner>
+            <Dialog.Content
+              bg="white"
+              color="gray.800"
+              borderRadius="xl"
+              boxShadow="lg"
+              maxW="400px"
+              w="90%"
+            >
+              <Dialog.Header>
+                <Dialog.Title>Excluir licitação</Dialog.Title>
+              </Dialog.Header>
+
+              <Dialog.Body>
+                <Text color="gray.600" fontSize="sm">
+                  Tem certeza que deseja excluir esta licitação? Essa ação não
+                  pode ser desfeita.
+                </Text>
+              </Dialog.Body>
+
+              <Dialog.Footer>
+                <Flex gap={3} justify="flex-end">
+                  <Button
+                    variant="outline"
+                    color={"gray.600"}
+                    onClick={() => setDeleteModalOpen(false)}
+                    _hover={{ color: "gray.100" }}
+                  >
+                    Cancelar
+                  </Button>
+                  <Button
+                    bgColor="red.500"
+                    color="white"
+                    _hover={{ bgColor: "red.600" }}
+                    onClick={deleteBiddingOfApp}
+                  >
+                    Excluir
+                  </Button>
+                </Flex>
+              </Dialog.Footer>
+            </Dialog.Content>
+          </Dialog.Positioner>
+        </Portal>
+      </Dialog.Root>
 
       {/* Modal de Edição */}
       {modalOpen && (
@@ -530,9 +588,7 @@ export default function BiddingPage() {
 
                   <Flex gap={3}>
                     <Button
-                      onClick={() => {
-                        updateBidding(biddingData);
-                      }}
+                      onClick={() => updateBidding(biddingData)}
                       bgColor={"blue.500"}
                       color={"white"}
                       _hover={{ bgColor: "blue.600" }}
@@ -583,4 +639,3 @@ export default function BiddingPage() {
     </Flex>
   );
 }
-// http://localhost:3000/dashboard/biddings
