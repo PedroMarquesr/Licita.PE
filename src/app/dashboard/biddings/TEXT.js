@@ -14,7 +14,6 @@ import {
 } from "@chakra-ui/react";
 
 import HeaderPage from "../components/HeaderPage/HeaderPage";
-
 import StatusTabs from "./components/StatusTabs/StatusTabs";
 import InputsFilters from "./components/InputsFilters/InputsFilters";
 import TitleRows from "./components/TitleRows/TitleRows";
@@ -27,20 +26,14 @@ import {
   getDocs,
   query,
   doc,
-  deleteDoc,
   updateDoc,
   Timestamp,
 } from "firebase/firestore";
 import { db } from "@/components/libs/firebaseinit";
-import useStore from "@/components/globalStates/store";
-import { useRouter } from "next/navigation";
 
 import { useState, useEffect } from "react";
 
 export default function BiddingPage() {
-  const user = useStore((state) => state.user);
-  const router = useRouter();
-
   // Estados para o modal de status
   const [statusModalEditOpen, setStatusModalEditOpen] = useState(false);
 
@@ -54,50 +47,17 @@ export default function BiddingPage() {
   const [biddings, setBiddings] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  // ✅ Estado para o modal de confirmação de exclusão
-  const [deleteModalOpen, setDeleteModalOpen] = useState(false);
-  const [biddingToDelete, setBiddingToDelete] = useState(null);
-
   const [filters, setFilters] = useState({
     search: "",
-    status: "",
+    status: "", // Apenas para os tabs
     agency: "",
     city: "",
-    modalidadeFilter: "",
+    modalidadeFilter: "", // Apenas para o filtro de modalidade
   });
-
-  useEffect(() => {
-    fetchData();
-  }, []);
-
-  useEffect(() => {
-    if (!user) {
-      router.push("/");
-    }
-  }, [user]);
-
-  // ✅ Abre o modal de confirmação guardando o id a ser deletado
-  const handleDeleteClick = (biddingId) => {
-    setBiddingToDelete(biddingId);
-    setDeleteModalOpen(true);
-  };
-
-  const deleteBiddingOfApp = async () => {
-    try {
-      await deleteDoc(doc(db, "biddings", biddingToDelete));
-      setBiddings((prev) =>
-        prev.filter((bidding) => bidding.id !== biddingToDelete),
-      );
-    } catch (error) {
-      console.error("Erro ao deletar processo:", error);
-    } finally {
-      setDeleteModalOpen(false);
-      setBiddingToDelete(null);
-    }
-  };
 
   const getDisputeDate = (data) => {
     const value = data.disputeDate;
+
     if (value.toDate) return value.toDate();
     if (value.seconds) return new Date(value.seconds * 1000);
     if (value instanceof Date) return value;
@@ -107,9 +67,17 @@ export default function BiddingPage() {
     if (!dateString) return null;
 
     try {
-      if (dateString?.toDate) return dateString;
-      if (dateString instanceof Date) return Timestamp.fromDate(dateString);
-      if (dateString?.seconds) return dateString;
+      if (dateString?.toDate) {
+        return dateString;
+      }
+
+      if (dateString instanceof Date) {
+        return Timestamp.fromDate(dateString);
+      }
+
+      if (dateString?.seconds) {
+        return dateString;
+      }
 
       const dateTimeString =
         timeString && timeString !== "00:00"
@@ -172,7 +140,9 @@ export default function BiddingPage() {
           disputeDateValue,
           disputeTimeValue,
         );
-        if (disputeTimestamp) updateData.disputeDate = disputeTimestamp;
+        if (disputeTimestamp) {
+          updateData.disputeDate = disputeTimestamp;
+        }
 
         const proposalDateValue = updatedBidding.proposalDeadlineDate;
         const proposalTimeValue =
@@ -181,11 +151,13 @@ export default function BiddingPage() {
           proposalDateValue,
           proposalTimeValue,
         );
-        if (proposalTimestamp)
+        if (proposalTimestamp) {
           updateData.proposalDeadlineDate = proposalTimestamp;
+        }
       }
 
       await updateDoc(biddingRef, updateData);
+      console.log("Documento atualizado com sucesso!");
 
       setModalOpen(false);
       setEdit(false);
@@ -198,16 +170,6 @@ export default function BiddingPage() {
     }
   };
 
-  const checkIsWinner = (biddingData) => {
-    return biddingData.result?.groups?.some((group) =>
-      group.items?.some((item) =>
-        item.participants?.some(
-          (participant) => participant.isSelf && participant.win === true,
-        ),
-      ),
-    );
-  };
-
   const fetchData = async () => {
     try {
       setLoading(true);
@@ -217,7 +179,18 @@ export default function BiddingPage() {
 
       const list = snapshot.docs.map((doc) => {
         const data = doc.data();
+
         const displayDate = getDisputeDate(data);
+
+        const checkIsWinner = (biddingData) => {
+          return biddingData.groups?.some((group) =>
+            group.items?.some((item) =>
+              item.participants?.some(
+                (participant) => participant.isSelf && participant.win === true,
+              ),
+            ),
+          );
+        };
 
         return {
           id: doc.id,
@@ -234,10 +207,9 @@ export default function BiddingPage() {
                 })
                 .replace(":", "h")
             : "",
-          isWinner: data.isWinner ?? checkIsWinner(data),
+          isWinner: checkIsWinner(data),
         };
       });
-
       setBiddings(list);
     } catch (error) {
       console.error("Erro ao buscar processos:", error);
@@ -245,6 +217,10 @@ export default function BiddingPage() {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    fetchData();
+  }, []);
 
   const handleOpenStatusModal = (biddingId) => {
     const selectedBidding = biddings.find((b) => b.id === biddingId);
@@ -260,6 +236,20 @@ export default function BiddingPage() {
       setShowButtonEdit(true);
     }
   };
+
+  const deleteBidding = (biddingId) => {
+    console.log("Deletar licitação:", biddingId);
+  };
+
+  function isWinner(bidding) {
+    return bidding.groups?.some((group) =>
+      group.items?.some((item) =>
+        item.participants?.some(
+          (participant) => participant.isSelf && participant.win === true,
+        ),
+      ),
+    );
+  }
 
   const filteredBiddings = biddings.filter((bidding) => {
     const matchesSearch =
@@ -285,12 +275,10 @@ export default function BiddingPage() {
       !filters.modalidadeFilter ||
       bidding.biddingType === filters.modalidadeFilter;
 
+    // Lógica ORIGINAL que funcionava
     let matchesStatus = true;
-
     if (filters.status === "VENCEDOR") {
-      matchesStatus = bidding.isWinner === true;
-    } else if (filters.status === "Vencida") {
-      matchesStatus = getBiddingDisplayStatus(bidding) === "Vencida";
+      matchesStatus = bidding.isWinner;
     } else if (filters.status) {
       matchesStatus = getBiddingDisplayStatus(bidding) === filters.status;
     }
@@ -304,23 +292,23 @@ export default function BiddingPage() {
     );
   });
 
-  const suspendedCount = biddings.filter(
-    (b) => getBiddingDisplayStatus(b) === "Suspensa",
-  ).length;
+  const suspendedCount = biddings.filter((bidding) => {
+    return getBiddingDisplayStatus(bidding) === "Suspensa";
+  }).length;
 
-  const finishedCount = biddings.filter(
-    (b) => getBiddingDisplayStatus(b) === "Finalizada",
-  ).length;
+  const finishedCount = biddings.filter((bidding) => {
+    return getBiddingDisplayStatus(bidding) === "Finalizada";
+  }).length;
 
-  const inProgressCount = biddings.filter(
-    (b) => getBiddingDisplayStatus(b) === "Aguardando atualização",
-  ).length;
+  const inProgressCount = biddings.filter((bidding) => {
+    return getBiddingDisplayStatus(bidding) === "Aguardando atualização";
+  }).length;
 
-  const underAnalysisCount = biddings.filter(
-    (b) => getBiddingDisplayStatus(b) === "Aguardando aprovação",
-  ).length;
+  const underAnalysisCount = biddings.filter((bidding) => {
+    return getBiddingDisplayStatus(bidding) === "Aguardando aprovação";
+  }).length;
 
-  const winnerCount = biddings.filter((b) => b.isWinner === true).length;
+  const winnerCount = biddings.filter((bidding) => bidding.isWinner).length;
 
   if (loading) {
     return (
@@ -389,6 +377,7 @@ export default function BiddingPage() {
             amount={finishedCount}
             onClick={() => setFilters({ ...filters, status: "Finalizada" })}
           />
+
           <StatusTabs
             statusName={"Vencidos"}
             icon={"victory"}
@@ -431,9 +420,7 @@ export default function BiddingPage() {
               gap={4}
               px={6}
               py={2}
-              borderBottomWidth={
-                index < filteredBiddings.length - 1 ? "1px" : "0"
-              }
+              borderBottomWidth={index < biddings.length - 1 ? "1px" : "0"}
               borderBottomColor="gray.100"
               _hover={{ bg: "gray.50" }}
               transition="all 0.2s"
@@ -498,12 +485,11 @@ export default function BiddingPage() {
                 biddingId={bidding.id}
                 onClickAt={() => handleOpenStatusModal(bidding.id)}
                 handleEdit={() => handleEdit(bidding.id)}
-                deleteBidding={() => handleDeleteClick(bidding.id)}
+                deleteBidding={() => deleteBidding(bidding.id)}
               />
             </Grid>
           ))}
         </Flex>
-
         {biddings.length === 0 ? (
           <Text color="gray.500" fontSize="sm">
             Nenhum processo encontrado
@@ -512,59 +498,6 @@ export default function BiddingPage() {
           <Text>{filteredBiddings.length} processos encontrados</Text>
         )}
       </Flex>
-
-      {/* ✅ Modal de Confirmação de Exclusão */}
-      <Dialog.Root
-        open={deleteModalOpen}
-        onOpenChange={(e) => setDeleteModalOpen(e.open)}
-        motionPreset="scale"
-      >
-        <Portal>
-          <Dialog.Backdrop />
-          <Dialog.Positioner>
-            <Dialog.Content
-              bg="white"
-              color="gray.800"
-              borderRadius="xl"
-              boxShadow="lg"
-              maxW="400px"
-              w="90%"
-            >
-              <Dialog.Header>
-                <Dialog.Title>Excluir licitação</Dialog.Title>
-              </Dialog.Header>
-
-              <Dialog.Body>
-                <Text color="gray.600" fontSize="sm">
-                  Tem certeza que deseja excluir esta licitação? Essa ação não
-                  pode ser desfeita.
-                </Text>
-              </Dialog.Body>
-
-              <Dialog.Footer>
-                <Flex gap={3} justify="flex-end">
-                  <Button
-                    variant="outline"
-                    color={"gray.600"}
-                    onClick={() => setDeleteModalOpen(false)}
-                    _hover={{ color: "gray.100" }}
-                  >
-                    Cancelar
-                  </Button>
-                  <Button
-                    bgColor="red.500"
-                    color="white"
-                    _hover={{ bgColor: "red.600" }}
-                    onClick={deleteBiddingOfApp}
-                  >
-                    Excluir
-                  </Button>
-                </Flex>
-              </Dialog.Footer>
-            </Dialog.Content>
-          </Dialog.Positioner>
-        </Portal>
-      </Dialog.Root>
 
       {/* Modal de Edição */}
       {modalOpen && (
@@ -588,7 +521,9 @@ export default function BiddingPage() {
 
                   <Flex gap={3}>
                     <Button
-                      onClick={() => updateBidding(biddingData)}
+                      onClick={() => {
+                        updateBidding(biddingData);
+                      }}
                       bgColor={"blue.500"}
                       color={"white"}
                       _hover={{ bgColor: "blue.600" }}

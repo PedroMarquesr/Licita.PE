@@ -27,6 +27,13 @@ export default function ResultInsertForm({
   const handleDisputeDataChange = (data) => {
     setDisputeData(data);
   };
+  function checkIfWinner(data) {
+    return data.groups?.some((group) =>
+      group.items?.some((item) =>
+        item.participants?.some((p) => p.isSelf && p.win === true),
+      ),
+    );
+  }
 
   const handleUpdateResult = async () => {
     const biddingRef = doc(db, "biddings", bidding.id);
@@ -36,9 +43,12 @@ export default function ResultInsertForm({
       return;
     }
 
+    const isWinner = checkIfWinner(disputeData);
+
     try {
       await updateDoc(biddingRef, {
         result: disputeData,
+        isWinner: isWinner,
         updatedAt: new Date(),
       });
 
@@ -49,7 +59,6 @@ export default function ResultInsertForm({
       console.log("Erro ao salvar:", error);
     }
   };
-
   const SlideFromTop = ({ children, delay = 0 }) => {
     return (
       <motion.div

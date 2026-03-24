@@ -659,15 +659,16 @@ export default function TenderSummary() {
                     >
                       <Text>{bidding.formattedTime}</Text>
                     </GridItem>
-
-                    <GridItem fontSize={"x-small"}>
-                      <BiddingCalendarMenu
-                        biddingId={bidding.id}
-                        onClickAt={() => handleOpenStatusModal(bidding.id)}
-                        handleEdit={() => handleEdit(bidding.id)}
-                        deleteBidding={() => deleteBidding(bidding.id)}
-                      />
-                    </GridItem>
+                    <Flex justify={"center"}>
+                      <GridItem fontSize={"x-small"}>
+                        <BiddingCalendarMenu
+                          biddingId={bidding.id}
+                          onClickAt={() => handleOpenStatusModal(bidding.id)}
+                          handleEdit={() => handleEdit(bidding.id)}
+                          deleteBidding={() => deleteBidding(bidding.id)}
+                        />
+                      </GridItem>
+                    </Flex>
                   </Grid>
                 ))}
               </Box>
