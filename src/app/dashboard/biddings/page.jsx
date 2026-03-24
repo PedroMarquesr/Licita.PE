@@ -14,6 +14,7 @@ import {
 } from "@chakra-ui/react";
 
 import HeaderPage from "../components/HeaderPage/HeaderPage";
+
 import StatusTabs from "./components/StatusTabs/StatusTabs";
 import InputsFilters from "./components/InputsFilters/InputsFilters";
 import TitleRows from "./components/TitleRows/TitleRows";
@@ -30,10 +31,16 @@ import {
   Timestamp,
 } from "firebase/firestore";
 import { db } from "@/components/libs/firebaseinit";
+import useStore from "@/components/globalStates/store";
+import { useRouter } from "next/navigation";
 
 import { useState, useEffect } from "react";
+import Home from "@/app/page";
 
 export default function BiddingPage() {
+  const user = useStore((state) => state.user);
+  const router = useRouter();
+
   // Estados para o modal de status
   const [statusModalEditOpen, setStatusModalEditOpen] = useState(false);
 
@@ -49,10 +56,10 @@ export default function BiddingPage() {
 
   const [filters, setFilters] = useState({
     search: "",
-    status: "", // Apenas para os tabs
+    status: "",
     agency: "",
     city: "",
-    modalidadeFilter: "", // Apenas para o filtro de modalidade
+    modalidadeFilter: "",
   });
 
   const getDisputeDate = (data) => {
@@ -170,6 +177,16 @@ export default function BiddingPage() {
     }
   };
 
+  const checkIsWinner = (biddingData) => {
+    return biddingData.result?.groups?.some((group) =>
+      group.items?.some((item) =>
+        item.participants?.some(
+          (participant) => participant.isSelf && participant.win === true,
+        ),
+      ),
+    );
+  };
+
   const fetchData = async () => {
     try {
       setLoading(true);
@@ -181,16 +198,6 @@ export default function BiddingPage() {
         const data = doc.data();
 
         const displayDate = getDisputeDate(data);
-
-        const checkIsWinner = (biddingData) => {
-          return biddingData.groups?.some((group) =>
-            group.items?.some((item) =>
-              item.participants?.some(
-                (participant) => participant.isSelf && participant.win === true,
-              ),
-            ),
-          );
-        };
 
         return {
           id: doc.id,
@@ -207,9 +214,11 @@ export default function BiddingPage() {
                 })
                 .replace(":", "h")
             : "",
-          isWinner: checkIsWinner(data),
+
+          isWinner: data.isWinner ?? checkIsWinner(data),
         };
       });
+
       setBiddings(list);
     } catch (error) {
       console.error("Erro ao buscar processos:", error);
@@ -241,16 +250,6 @@ export default function BiddingPage() {
     console.log("Deletar licitação:", biddingId);
   };
 
-  function isWinner(bidding) {
-    return bidding.groups?.some((group) =>
-      group.items?.some((item) =>
-        item.participants?.some(
-          (participant) => participant.isSelf && participant.win === true,
-        ),
-      ),
-    );
-  }
-
   const filteredBiddings = biddings.filter((bidding) => {
     const matchesSearch =
       !filters.search ||
@@ -275,10 +274,13 @@ export default function BiddingPage() {
       !filters.modalidadeFilter ||
       bidding.biddingType === filters.modalidadeFilter;
 
-    // Lógica ORIGINAL que funcionava
+    // ✅ CORREÇÃO: isWinner agora é lido corretamente, então esse filtro funciona
     let matchesStatus = true;
+
     if (filters.status === "VENCEDOR") {
-      matchesStatus = bidding.isWinner;
+      matchesStatus = bidding.isWinner === true;
+    } else if (filters.status === "Vencida") {
+      matchesStatus = getBiddingDisplayStatus(bidding) === "Vencida";
     } else if (filters.status) {
       matchesStatus = getBiddingDisplayStatus(bidding) === filters.status;
     }
@@ -308,7 +310,9 @@ export default function BiddingPage() {
     return getBiddingDisplayStatus(bidding) === "Aguardando aprovação";
   }).length;
 
-  const winnerCount = biddings.filter((bidding) => bidding.isWinner).length;
+  const winnerCount = biddings.filter(
+    (bidding) => bidding.isWinner === true,
+  ).length;
 
   if (loading) {
     return (
@@ -327,7 +331,9 @@ export default function BiddingPage() {
       </Flex>
     );
   }
-
+  if (!user) {
+    return router.push("/");
+  }
   return (
     <Flex flexDir="column" w="100%" minH="100vh" bg="gray.50">
       <HeaderPage
@@ -377,7 +383,6 @@ export default function BiddingPage() {
             amount={finishedCount}
             onClick={() => setFilters({ ...filters, status: "Finalizada" })}
           />
-
           <StatusTabs
             statusName={"Vencidos"}
             icon={"victory"}
@@ -420,7 +425,9 @@ export default function BiddingPage() {
               gap={4}
               px={6}
               py={2}
-              borderBottomWidth={index < biddings.length - 1 ? "1px" : "0"}
+              borderBottomWidth={
+                index < filteredBiddings.length - 1 ? "1px" : "0"
+              }
               borderBottomColor="gray.100"
               _hover={{ bg: "gray.50" }}
               transition="all 0.2s"
@@ -429,6 +436,7 @@ export default function BiddingPage() {
               <Text fontSize="sm" fontWeight="medium" color="gray.800">
                 {bidding.identificationNumber || "—"}
               </Text>
+
               <Text fontSize="sm" color="gray.600">
                 {bidding.biddingType || "—"}
               </Text>
@@ -490,6 +498,7 @@ export default function BiddingPage() {
             </Grid>
           ))}
         </Flex>
+
         {biddings.length === 0 ? (
           <Text color="gray.500" fontSize="sm">
             Nenhum processo encontrado
@@ -574,3 +583,4 @@ export default function BiddingPage() {
     </Flex>
   );
 }
+// http://localhost:3000/dashboard/biddings

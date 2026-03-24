@@ -1,50 +1,50 @@
-"use client"
+"use client";
 
-import { Flex } from "@chakra-ui/react"
-import HeaderPage from "./components/HeaderPage/HeaderPage"
-import CardOverview from "./components/CardOverview/CardOverview"
-import TenderSummary from "./components/TenderSummary/TenderSummary"
+import { Flex } from "@chakra-ui/react";
+import HeaderPage from "./components/HeaderPage/HeaderPage";
+import CardOverview from "./components/CardOverview/CardOverview";
+import TenderSummary from "./components/TenderSummary/TenderSummary";
 
-import { collection, getDocs } from "firebase/firestore"
-import { db } from "@/components/libs/firebaseinit"
+import { collection, getDocs } from "firebase/firestore";
+import { db } from "@/components/libs/firebaseinit";
 
-import { useEffect, useState } from "react"
-import { useRouter } from "next/navigation"
-import useStore from "@/components/globalStates/store"
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import useStore from "@/components/globalStates/store";
 
-import { IoMdTrendingUp } from "react-icons/io"
-import { HiMiniDocumentChartBar } from "react-icons/hi2"
-import { RiTimer2Fill } from "react-icons/ri"
+import { IoMdTrendingUp } from "react-icons/io";
+import { HiMiniDocumentChartBar } from "react-icons/hi2";
+import { RiTimer2Fill } from "react-icons/ri";
 
 export default function OverviewSimple() {
-  const [totalBiddings, setTotalBiddings] = useState(0)
+  const [totalBiddings, setTotalBiddings] = useState(0);
 
-  const user = useStore((state) => state.user)
-  const router = useRouter()
+  const user = useStore((state) => state.user);
+  const router = useRouter();
 
   useEffect(() => {
     if (!user) {
-      router.push("/")
+      router.push("/");
     }
-  }, [user, router])
+  }, [user, router]);
 
   useEffect(() => {
-    if (!user) return
+    if (!user) return;
 
     const fetchBiddings = async () => {
       try {
-        const querySnapshot = await getDocs(collection(db, "biddings"))
-        setTotalBiddings(querySnapshot.size)
+        const querySnapshot = await getDocs(collection(db, "biddings"));
+        setTotalBiddings(querySnapshot.size);
       } catch (error) {
-        console.error("Erro ao buscar editais:", error)
+        console.error("Erro ao buscar editais:", error);
       }
-    }
+    };
 
-    fetchBiddings()
-  }, [user])
+    fetchBiddings();
+  }, [user]);
 
   if (!user) {
-    return null
+    return null;
   }
 
   return (
@@ -66,7 +66,7 @@ export default function OverviewSimple() {
         gap={4}
         flexDir={{ base: "column", md: "row" }}
         mt="3%"
-        w={{ base: "100%", md: "auto" }}
+        w={{ base: "100%", md: "100%" }}
       >
         <CardOverview
           cardTitle="Editais cadastrados"
@@ -76,7 +76,7 @@ export default function OverviewSimple() {
           bgColor="blue.100"
         />
 
-        <CardOverview
+        {/* <CardOverview
           cardTitle="Em Análise"
           cardContent="5"
           cardIcon={<HiMiniDocumentChartBar />}
@@ -91,12 +91,12 @@ export default function OverviewSimple() {
           bgIconColor="purple.500"
           bgColor="purple.100"
           cardSubTitle="de sucesso neste mês"
-        />
+        /> */}
       </Flex>
 
       <Flex w="95%" mt="3%">
         <TenderSummary />
       </Flex>
     </Flex>
-  )
+  );
 }
